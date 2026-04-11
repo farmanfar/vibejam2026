@@ -28,7 +28,8 @@ export class MenuScene extends Scene {
 
     // Play button (filled, Balatro style)
     new PixelButton(this, width / 2, height * 0.52, 'PLAY', () => {
-      this.scene.start('Shop', { round: 1, gold: 10, lives: 3, team: [] });
+      const runId = crypto.randomUUID();
+      this.scene.start('Shop', { stage: 1, gold: 10, wins: 0, losses: 0, team: [], runId });
     }, { style: 'filled', scale: 4, bg: Theme.accent, width: 180, height: 48 });
 
     // Version / credits

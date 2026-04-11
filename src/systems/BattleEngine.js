@@ -6,20 +6,18 @@ import { WARRIORS, SYNERGIES } from '../config/warriors.js';
  * Generates a step-by-step log for animated playback.
  */
 export class BattleEngine {
-  /** Generate an enemy team scaled to the round */
-  generateEnemyTeam(round) {
-    const teamSize = Math.min(5, 1 + Math.floor(round / 2));
-    const maxTier = Math.min(4, Math.floor(round / 2));
+  generateEnemyTeam(stage) {
+    const teamSize = Math.min(5, 1 + Math.floor(stage / 2));
+    const maxTier = Math.min(4, Math.floor(stage / 2));
     const pool = WARRIORS.filter(w => w.tier <= maxTier);
 
     const team = [];
     for (let i = 0; i < teamSize; i++) {
       const base = pool[Math.floor(Math.random() * pool.length)];
-      // Scale stats slightly with round
       team.push({
         ...base,
-        hp: base.hp + Math.floor(round * 0.5),
-        atk: base.atk + Math.floor(round * 0.3),
+        hp: base.hp + Math.floor(stage * 0.5),
+        atk: base.atk + Math.floor(stage * 0.3),
       });
     }
     return team;

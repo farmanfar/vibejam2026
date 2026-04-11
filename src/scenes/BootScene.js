@@ -1,6 +1,7 @@
 import { Scene } from 'phaser';
 import { PixelFont, FONT_KEY } from '../ui/PixelFont.js';
 import { Theme } from '../ui/Theme.js';
+import { initAuth } from '../supabase.js';
 
 export class BootScene extends Scene {
   constructor() {
@@ -44,6 +45,7 @@ export class BootScene extends Scene {
   create() {
     // Initialize the bitmap font from embedded glyph data
     PixelFont.init(this);
+    initAuth();
 
     // Show a quick loading flash then proceed
     const { width, height } = this.cameras.main;
