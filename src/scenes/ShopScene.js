@@ -162,7 +162,7 @@ export class ShopScene extends Scene {
   async _startBattle() {
     if (this.team.length === 0) return
 
-    if (this.fightBtn) this.fightBtn.setDisabled()
+    if (this.fightBtn) this.fightBtn.setEnabled(false)
     const { width } = this.cameras.main
     const findingText = new PixelLabel(this, width / 2 + 130, 510, 'FINDING OPPONENT...', {
       scale: 1, color: 'muted', align: 'center',
