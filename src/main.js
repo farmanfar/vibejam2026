@@ -5,6 +5,9 @@ import { ShopScene } from './scenes/ShopScene.js';
 import { BattleScene } from './scenes/BattleScene.js';
 import { GameOverScene } from './scenes/GameOverScene.js';
 import { HallOfFameScene } from './scenes/HallOfFameScene.js';
+import { SettingsScene } from './scenes/SettingsScene.js';
+import { UnitLabScene } from './scenes/UnitLabScene.js';
+import { LayoutEditor } from './systems/LayoutEditor.js';
 
 const config = {
   type: AUTO,
@@ -18,7 +21,8 @@ const config = {
     mode: Scale.FIT,
     autoCenter: Scale.CENTER_BOTH,
   },
-  scene: [BootScene, MenuScene, ShopScene, BattleScene, GameOverScene, HallOfFameScene],
+  scene: [BootScene, MenuScene, ShopScene, BattleScene, GameOverScene, HallOfFameScene, SettingsScene, UnitLabScene],
 };
 
 const game = new Game(config);
+LayoutEditor.init(game);

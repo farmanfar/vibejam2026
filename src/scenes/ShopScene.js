@@ -5,7 +5,9 @@ import {
 import { ShopManager } from '../systems/ShopManager.js'
 import { GhostManager } from '../systems/GhostManager.js'
 import { BattleEngine } from '../systems/BattleEngine.js'
-import { WARRIORS } from '../config/warriors.js'
+import { getEnabledWarriors } from '../config/warriors.js'
+import { LayoutEditor } from '../systems/LayoutEditor.js'
+import { getUnitTextureKey } from '../rendering/UnitArt.js'
 
 export class ShopScene extends Scene {
   constructor() {
@@ -19,7 +21,8 @@ export class ShopScene extends Scene {
     this.losses = data.losses || 0
     this.runId = data.runId
     this.team = data.team || []
-    this.shop = new ShopManager(WARRIORS, this.stage)
+    this.availableWarriors = getEnabledWarriors()
+    this.shop = new ShopManager(this.availableWarriors, this.stage)
     this.shopOffer = this.shop.roll()
 
     this.teamCountLabel = null
@@ -31,40 +34,65 @@ export class ShopScene extends Scene {
   create() {
     const { width, height } = this.cameras.main
 
+    console.log(`[Shop] Creating shop scene — stage ${this.stage}, gold ${this.gold}, team size ${this.team.length}`)
+
     const headerPanel = new PixelPanel(this, 0, 0, width, 32, {
       bg: Theme.panelBg, border: Theme.panelBorder,
     })
+    LayoutEditor.register(this, 'headerPanel', headerPanel, 0, 0)
 
-    new PixelLabel(this, 12, 8, `STAGE ${this.stage}`, { scale: 2, color: 'accent' })
+    const stageLabel = new PixelLabel(this, 12, 8, `STAGE ${this.stage}`, { scale: 2, color: 'accent' })
+    LayoutEditor.register(this, 'stageLabel', stageLabel, 12, 8)
+
     this.goldLabel = new PixelLabel(this, width / 2, 8, `GOLD: ${this.gold}`, {
       scale: 2, tint: Theme.warning, align: 'center',
     })
-    new PixelLabel(this, width - 12, 8, `LIVES: ${3 - this.losses}`, {
+    LayoutEditor.register(this, 'goldLabel', this.goldLabel, width / 2, 8)
+
+    const livesLabel = new PixelLabel(this, width - 12, 8, `LIVES: ${3 - this.losses}`, {
       scale: 2, color: 'error', align: 'right',
     })
+    LayoutEditor.register(this, 'livesLabel', livesLabel, width - 12, 8)
 
-    this.add.image(width / 2, 72, 'merchant_placeholder').setScale(1.5)
-    new PixelLabel(this, width / 2, 115, '"Choose your warriors wisely..."', {
+    const merchantKey = this.textures.exists('merchant') ? 'merchant' : 'merchant_placeholder'
+    const merchant = this.add.image(width / 2, 72, merchantKey).setScale(1.5)
+    LayoutEditor.register(this, 'merchant', merchant, width / 2, 72)
+
+    const merchantQuote = new PixelLabel(this, width / 2, 115, '"Choose your warriors wisely..."', {
       scale: 2, color: 'muted', align: 'center',
     })
+    LayoutEditor.register(this, 'merchantQuote', merchantQuote, width / 2, 115)
 
     this.cardGroup = this.add.group()
     this._drawShopCards()
 
-    new PixelPanel(this, 16, 340, width - 32, 100, { title: 'YOUR TEAM' })
+    const teamPanel = new PixelPanel(this, 16, 340, width - 32, 100, { title: 'YOUR TEAM' })
+    LayoutEditor.register(this, 'teamPanel', teamPanel, 16, 340)
+
     this._drawTeamBench()
 
     this.rerollBtn = new PixelButton(this, width / 2 - 130, 475, 'REROLL (1g)', () => {
       this._reroll()
     }, { style: 'filled', scale: 2, bg: Theme.accentDim, width: 140, height: 32 })
+    LayoutEditor.register(this, 'rerollBtn', this.rerollBtn, width / 2 - 130, 475)
 
     this.fightBtn = new PixelButton(this, width / 2 + 130, 475, 'FIGHT!', () => {
       this._startBattle()
     }, { style: 'filled', scale: 3, bg: Theme.accent, width: 160, height: 40 })
+    LayoutEditor.register(this, 'fightBtn', this.fightBtn, width / 2 + 130, 475)
 
     this.teamCountLabel = new PixelLabel(this, width / 2, 475, `${this.team.length}/5`, {
       scale: 2, color: 'muted', align: 'center',
     })
+    LayoutEditor.register(this, 'teamCount', this.teamCountLabel, width / 2, 475)
+
+    // Shutdown cleanup
+    this.events.once('shutdown', () => {
+      console.log('[Shop] Shutdown — cleaning up')
+      LayoutEditor.unregisterScene('Shop')
+    })
+
+    console.log('[Shop] Scene created successfully')
   }
 
   _drawShopCards() {
@@ -83,6 +111,7 @@ export class ShopScene extends Scene {
       const card = new WarriorCard(this, x, y, warrior, {
         onClick: () => this._buyWarrior(i),
       })
+      LayoutEditor.register(this, `card_${i}`, card, x, y)
       this.cards.push(card)
     })
   }
@@ -103,8 +132,7 @@ export class ShopScene extends Scene {
 
       if (this.team[i]) {
         const w = this.team[i]
-        const tier = w.tier ?? 0
-        const sprite = this.add.image(x, y - 6, `warrior_placeholder_${tier}`).setScale(1.3)
+        const sprite = this.add.image(x, y - 6, getUnitTextureKey(this, w, 'shop bench')).setScale(1.3)
         const name = this.add.bitmapText(x, y + 22, FONT_KEY, w.name, 7 * 1)
           .setOrigin(0.5).setTint(Theme.primaryText)
         this.benchGroup.add(sprite)
@@ -175,7 +203,8 @@ export class ShopScene extends Scene {
         stage: this.stage, gold: this.gold, wins: this.wins, losses: this.losses,
         team: this.team, runId: this.runId, opponent,
       })
-    } catch (_) {
+    } catch (e) {
+      console.error('[Shop] Ghost matchmaking failed, using AI opponent:', e)
       const opponent = new BattleEngine().generateEnemyTeam(this.stage)
       this.scene.start('Battle', {
         stage: this.stage, gold: this.gold, wins: this.wins, losses: this.losses,

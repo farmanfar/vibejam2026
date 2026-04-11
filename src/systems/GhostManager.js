@@ -83,10 +83,14 @@ async function submitChampion(runId, roster, wins, losses) {
   }
 }
 
+/**
+ * Fetch the leaderboard.
+ * @returns {Promise<object[]|null>} Array of entries on success (may be empty), null on error/offline.
+ */
 async function fetchLeaderboard() {
   if (!supabase) {
     console.warn('[Ghost] Leaderboard skipped — no supabase')
-    return []
+    return null
   }
   try {
     console.log('[Ghost] Fetching leaderboard...')
@@ -98,13 +102,13 @@ async function fetchLeaderboard() {
       .limit(50)
     if (error) {
       console.error('[Ghost] Leaderboard error:', error.message)
-      return []
+      return null
     }
     console.log(`[Ghost] Leaderboard: ${data.length} entries`)
     return data
   } catch (e) {
     console.error('[Ghost] Leaderboard exception:', e)
-    return []
+    return null
   }
 }
 

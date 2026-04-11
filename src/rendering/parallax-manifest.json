@@ -1,0 +1,247 @@
+{
+  "apocalyptic-highway": [
+    "parallax1.png",
+    "parallax2.png",
+    "parallax3.png",
+    "parallax4.png",
+    "parallax5.png",
+    "parallax6.png"
+  ],
+  "beneath": [
+    "background.png",
+    "bridge.png",
+    "cages.png",
+    "fog.png",
+    "fogin front.png",
+    "pillars.png"
+  ],
+  "caged-swamps-green": [
+    "6 sky1.png",
+    "5 real far1.png",
+    "4 far1.png",
+    "3 far mid1.png",
+    "2 mid1.png",
+    "1 close1.png"
+  ],
+  "caged-swamps-orange": [
+    "6 sky2.png",
+    "5 real far2.png",
+    "4 far2.png",
+    "3 far mid2.png",
+    "2 mid2.png",
+    "1 close2.png"
+  ],
+  "camp-forest": [
+    "bg.png",
+    "bg1.png",
+    "bg2.png",
+    "bg3.png",
+    "bg4.png"
+  ],
+  "city-tileset": [
+    "City Background.png",
+    "City Background Layer (works with peaks of lightning pack).png"
+  ],
+  "dark-edition": [
+    "1-Background.png",
+    "2-super far.png",
+    "4-far light.png",
+    "3-far.png",
+    "5-close.png",
+    "6-close light.png",
+    "7-tileset.png"
+  ],
+  "dream-catchers": [
+    "Parallax Background-BG.png",
+    "Parallax Background-F2.png",
+    "Parallax Background-Fog.png",
+    "Parallax Background-M3.png",
+    "Parallax Background-M1.png",
+    "Parallax Background-M2.png",
+    "Parallax Background-F0.png",
+    "Parallax Background-F1.png"
+  ],
+  "gears-blue": [
+    "7 sky1.png",
+    "6 BG gears1.png",
+    "5 BG gears1.png",
+    "4 mid1.png",
+    "3 close but further1.png",
+    "2 close again1.png",
+    "1 close1.png"
+  ],
+  "gears-green": [
+    "7 sky2.png",
+    "6 BG gears2.png",
+    "5 BG gears2.png",
+    "4 mid2.png",
+    "3 close but further2.png",
+    "2 close again2.png",
+    "1 close2.png"
+  ],
+  "gears-orange": [
+    "7 sky3.png",
+    "6 BG gears3.png",
+    "5 BG gears3.png",
+    "4 mid3.png",
+    "3 close but further3.png",
+    "2 close again3.png",
+    "1 close3.png"
+  ],
+  "mountain-city-1": [
+    "BG1.png",
+    "Sun1.png",
+    "Clouds 2.png",
+    "Clouds1.png",
+    "Mid Mountain1.png",
+    "Home1.png",
+    "Fog1.png",
+    "Mid Homes1.png",
+    "Dense Atmosphere1.png"
+  ],
+  "mountain-city-2": [
+    "BG2.png",
+    "Sun2.png",
+    "Clouds 3.png",
+    "Clouds2.png",
+    "Dense Atmosphere2.png",
+    "Mid Mountain2.png",
+    "Fog2.png",
+    "Home2.png",
+    "Mid Homes2.png"
+  ],
+  "mountain-city-3": [
+    "BG3.png",
+    "Sun3.png",
+    "Clouds 4.png",
+    "Clouds3.png",
+    "Dense Atmosphere3.png",
+    "Dense Atmosphere4.png",
+    "Mid Mountain3.png",
+    "Mid Homes3.png",
+    "Fog3.png",
+    "Home3.png"
+  ],
+  "mountain-city-4": [
+    "BG4.png",
+    "Sun4.png",
+    "Clouds 5.png",
+    "Clouds4.png",
+    "Fog4.png",
+    "Home4.png",
+    "Mid Mountain4.png",
+    "Mid Homes4.png"
+  ],
+  "mountain-pass": [
+    "06 - clouds.png",
+    "02 - dense atmosphere.png",
+    "03 - Sun.png",
+    "05 - back rocks.png",
+    "04 - rocks.png",
+    "01 - below fog.png"
+  ],
+  "mountain-villagers-1": [
+    "BG1.png",
+    "Sun1.png",
+    "dense atmostphere1.png",
+    "Far1.png",
+    "Fog1.png",
+    "Mid1.png",
+    "FG1.png"
+  ],
+  "mountain-villagers-2": [
+    "BG2.png",
+    "Sun2.png",
+    "dense atmostphere2.png",
+    "Far2.png",
+    "Fog2.png",
+    "Mid2.png",
+    "FG2.png"
+  ],
+  "mountain-villagers-3": [
+    "BG3.png",
+    "Sun3.png",
+    "dense atmostphere3.png",
+    "Far3.png",
+    "Mid3.png",
+    "Fog3.png",
+    "FG3.png"
+  ],
+  "mountain-villagers-4": [
+    "BG4.png",
+    "Sun4.png",
+    "dense atmostphere4.png",
+    "Far4.png",
+    "Mid4.png",
+    "Fog4.png",
+    "FG4.png"
+  ],
+  "peaks-lightning": [
+    "1- Background - Sky (1).png",
+    "2 -Background - Mountains (2).png",
+    "3 -Foreground - Mountains (3).png",
+    "5- Fog (5).png",
+    "4- Ground (4).png"
+  ],
+  "sword-1": [
+    "BG1.png",
+    "Sun1.png",
+    "Mid1.png",
+    "Far1.png",
+    "Dense Atmostphere1.png",
+    "Close1.png",
+    "Fog1.png"
+  ],
+  "sword-2": [
+    "BG2.png",
+    "Close2.png",
+    "Dense Atmostphere2.png",
+    "Far2.png",
+    "Fog2.png",
+    "Mid2.png",
+    "Sun2.png"
+  ],
+  "sword-3": [
+    "BG3.png",
+    "Close3.png",
+    "Dense Atmostphere3.png",
+    "Far3.png",
+    "Fog3.png",
+    "Mid3.png",
+    "Sun3.png"
+  ],
+  "sword-4": [
+    "BG4.png",
+    "Close4.png",
+    "Dense Atmostphere4.png",
+    "Far4.png",
+    "Fog4.png",
+    "Mid4.png",
+    "Sun4.png"
+  ],
+  "teepee-blue": [
+    "5 sky.png",
+    "4 super far.png",
+    "3 far.png",
+    "2 mid.png",
+    "1 close.png"
+  ],
+  "teepee-purple": [
+    "5 sky.png",
+    "4 super far.png",
+    "3 far.png",
+    "2 mid.png",
+    "1 close.png"
+  ],
+  "the-hanger": [
+    "Flatten Image1.png",
+    "Sprite Sheet 313x192 .png"
+  ],
+  "vic-para": [
+    "layer 1.png",
+    "layer 2.png",
+    "layer 3.png",
+    "layer 4.png",
+    "layer 5.png"
+  ]
+}

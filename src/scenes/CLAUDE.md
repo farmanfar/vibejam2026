@@ -26,6 +26,7 @@ Scenes pass state via `init(data)` with: `{ stage, gold, wins, losses, team, run
 - No scene uses `this.load` for external assets — everything is generated textures from BootScene.
 - Scanline overlay (CRT effect) on Menu, GameOver, HallOfFame screens.
 - Survivors carry over between battles (damaged units keep reduced HP).
+- **LayoutEditor registration:** all authored UI elements must be registered with `LayoutEditor.register(this, 'elementId', element, defaultX, defaultY)`. Hook `this.events.once('shutdown', () => LayoutEditor.unregisterScene(this.scene.key))` for cleanup. Do NOT register decorative elements (scanlines, grid lines, dividers).
 
 ## Upcoming Changes
 

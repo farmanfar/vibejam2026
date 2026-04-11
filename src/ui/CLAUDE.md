@@ -35,6 +35,7 @@ All components extend `GameObjects.Container` and call `scene.add.existing(this)
 
 ## Rules
 
-- All new components must follow the Container pattern (extend `GameObjects.Container`, add children, call `scene.add.existing`).
+- All new components must follow the Container pattern (extend `GameObjects.Container`, add children, call `scene.add.existing`). Exception: PixelLabel extends BitmapText directly.
 - Use `Theme` constants for all colors — no hardcoded hex values except in Theme.js itself.
 - Export new components from `index.js` barrel file.
+- **LayoutEditor:** components are NOT responsible for registering themselves — the scene that creates them calls `LayoutEditor.register()`. Components just need to be movable (settable x/y), which all GameObjects already are.

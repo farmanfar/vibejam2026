@@ -33,8 +33,62 @@ Each subdirectory has its own CLAUDE.md with subsystem-specific rules.
 src/
 ├── main.js              # Phaser Game config (960x540, pixelArt, scene order)
 ├── supabase.js          # Supabase client, anonymous auth
-├── config/              # Data definitions (warriors, synergies, future: commanders)
-├── scenes/              # Phaser Scenes (Boot, Menu, Shop, Battle, GameOver, HallOfFame)
-├── systems/             # Game logic (BattleEngine, ShopManager, GhostManager)
+├── config/              # Data definitions (warriors, synergies, layout-overrides.json)
+├── scenes/              # Phaser Scenes (Boot, Menu, Shop, Battle, GameOver, HallOfFame, Settings)
+├── systems/             # Game logic (BattleEngine, ShopManager, GhostManager, LayoutEditor)
 └── ui/                  # PixelUI components (Theme, Font, Button, Label, Panel, etc.)
 ```
+
+## Workflow
+
+This is a Codex-reviewed project. Follow this loop:
+
+1. **Plan mode always.** Plan tests that prove success. Log EVERYTHING — positions, state transitions, decisions, fallbacks. Codex will review, so make the plan unambiguous.
+2. Codex reviews plan, gives feedback.
+3. Improve plan knowing Codex will look again.
+4. Codex gives second feedback pass.
+5. Get plan 1000% right. No living in revision loops.
+6. Implementation (suggest Sonnet when work is mechanical / no design ambiguity).
+7. Codex reviews implementation.
+8. Ship — or fix and re-review.
+
+**Do NOT invoke Codex, codex:rescue, or any Codex-related tooling from Claude Code.** The user handles plan/code review externally by copy-pasting to Codex.
+
+## Logging
+
+Log aggressively. The user debugs by pasting console output — silent failures are invisible.
+
+- **Every layout-managed element:** `[Layout] Scene.ElementId at (x, y)`
+- **Every state transition:** scene changes, W/L updates, gold changes
+- **Every network call:** before, result, error with context
+- **Every fallback path:** log WHY the fallback was taken
+- **Every error:** never `catch (_) {}` — always `catch (e) { console.error('[System] context:', e) }`
+- **System prefixes:** `[Layout]`, `[Editor]`, `[Auth]`, `[Ghost]`, `[Shop]`, `[Battle]`, `[Menu]`
+
+## UI / Visual Work
+
+Claude is weak at spatial layout. The **F2 Layout Editor** exists so the user does visual positioning.
+
+- The `frontend-design` skill has limited utility for Phaser canvas rendering — it's designed for HTML/CSS, not game engine UIs.
+- Every authored UI element must be registered with LayoutEditor for F2 editing.
+- Decorative elements (scanlines, grid lines, dividers) are NOT registered.
+
+## F2 Layout Editor
+
+Runtime debug tool — press **F2** to toggle edit mode.
+
+- **Hotkeys (edit mode only):**
+  - **F2** — toggle edit mode on/off
+  - **`[` / `]`** — scale selected element down / up (10% per step)
+  - **G** — cycle grid snap: OFF → 8px → 16px → 32px → OFF
+  - **R** — reset selected element to default position + scale
+  - **Escape** — deselect current element
+- **Registered elements:** panels, labels, buttons, cards. NOT combat sprites, health bars, or decorative primitives.
+- **Edit mode:** disables all game input (prevents buy/sell/reroll). Drag elements freely. Green position labels + yellow selection highlight.
+- **Persistence:** positions + scale saved to **localStorage** immediately. Survives page refresh.
+- **Buttons:** Export JSON, Reset Scene (current scene to defaults), Clear All (all scenes).
+- **Export:** click "Export" in edit mode (or `LayoutEditor.exportJSON()` in console). Copy into `src/config/layout-overrides.json`.
+- **Load priority:** localStorage > layout-overrides.json > hardcoded defaults.
+- **For publish:** commit `layout-overrides.json` with the user's preferred positions. Clear localStorage.
+- **Console commands:** `LayoutEditor.exportJSON()`, `LayoutEditor.clearAll()`
+- **Scene lifecycle:** each scene calls `LayoutEditor.unregisterScene()` on shutdown. No stale refs.

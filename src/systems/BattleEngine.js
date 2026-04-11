@@ -1,4 +1,4 @@
-import { WARRIORS, SYNERGIES } from '../config/warriors.js';
+import { getEnabledWarriors, SYNERGIES } from '../config/warriors.js';
 
 /**
  * Auto-battle resolution engine.
@@ -9,7 +9,8 @@ export class BattleEngine {
   generateEnemyTeam(stage) {
     const teamSize = Math.min(5, 1 + Math.floor(stage / 2));
     const maxTier = Math.min(4, Math.floor(stage / 2));
-    const pool = WARRIORS.filter(w => w.tier <= maxTier);
+    const pool = getEnabledWarriors().filter(w => w.tier <= maxTier);
+    if (pool.length === 0) return [];
 
     const team = [];
     for (let i = 0; i < teamSize; i++) {

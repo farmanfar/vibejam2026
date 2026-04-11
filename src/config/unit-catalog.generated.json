@@ -1,0 +1,2555 @@
+{
+  "generatedAt": "2026-04-11T23:32:48.045Z",
+  "sourceRoot": "public/assets/warriors/source",
+  "runtimeRoot": "public/assets/warriors/runtime",
+  "entries": [
+    {
+      "id": "starter_hero",
+      "name": "Starter Pack Hero",
+      "category": "Units & Combatants",
+      "pack": "Stranded Starter Pack v1.1",
+      "sourceDir": "01 Stranded - Starter Pack v1.1/Hero",
+      "enabled": true,
+      "status": "missing_source_dir",
+      "sourceProjectPath": null,
+      "warnings": [],
+      "errors": [
+        "Missing source directory: public\\assets\\warriors\\source\\01 Stranded - Starter Pack v1.1\\Hero"
+      ],
+      "art": {
+        "portraitPath": null,
+        "sheetPath": null,
+        "metaPath": null,
+        "defaultClip": null,
+        "tags": [],
+        "clips": [],
+        "frames": [],
+        "frameWidth": 0,
+        "frameHeight": 0,
+        "totalFrames": 0
+      }
+    },
+    {
+      "id": "starter_companion",
+      "name": "Starter Pack Companion",
+      "category": "Units & Combatants",
+      "pack": "Stranded Starter Pack v1.1",
+      "sourceDir": "01 Stranded - Starter Pack v1.1/Hero",
+      "enabled": true,
+      "status": "missing_source_dir",
+      "sourceProjectPath": null,
+      "warnings": [],
+      "errors": [
+        "Missing source directory: public\\assets\\warriors\\source\\01 Stranded - Starter Pack v1.1\\Hero"
+      ],
+      "art": {
+        "portraitPath": null,
+        "sheetPath": null,
+        "metaPath": null,
+        "defaultClip": null,
+        "tags": [],
+        "clips": [],
+        "frames": [],
+        "frameWidth": 0,
+        "frameHeight": 0,
+        "totalFrames": 0
+      }
+    },
+    {
+      "id": "archer",
+      "name": "Archer Enemy",
+      "category": "Units & Combatants",
+      "pack": "Stranded Starter Pack v1.1",
+      "sourceDir": "01 Stranded - Starter Pack v1.1/Enemies/Archer",
+      "enabled": true,
+      "status": "missing_source_dir",
+      "sourceProjectPath": null,
+      "warnings": [],
+      "errors": [
+        "Missing source directory: public\\assets\\warriors\\source\\01 Stranded - Starter Pack v1.1\\Enemies\\Archer"
+      ],
+      "art": {
+        "portraitPath": null,
+        "sheetPath": null,
+        "metaPath": null,
+        "defaultClip": null,
+        "tags": [],
+        "clips": [],
+        "frames": [],
+        "frameWidth": 0,
+        "frameHeight": 0,
+        "totalFrames": 0
+      }
+    },
+    {
+      "id": "guard",
+      "name": "Guard Enemy",
+      "category": "Units & Combatants",
+      "pack": "Stranded Starter Pack v1.1",
+      "sourceDir": "01 Stranded - Starter Pack v1.1/Enemies/Guard",
+      "enabled": true,
+      "status": "missing_source_dir",
+      "sourceProjectPath": null,
+      "warnings": [],
+      "errors": [
+        "Missing source directory: public\\assets\\warriors\\source\\01 Stranded - Starter Pack v1.1\\Enemies\\Guard"
+      ],
+      "art": {
+        "portraitPath": null,
+        "sheetPath": null,
+        "metaPath": null,
+        "defaultClip": null,
+        "tags": [],
+        "clips": [],
+        "frames": [],
+        "frameWidth": 0,
+        "frameHeight": 0,
+        "totalFrames": 0
+      }
+    },
+    {
+      "id": "warrior",
+      "name": "Warrior Enemy",
+      "category": "Units & Combatants",
+      "pack": "Stranded Starter Pack v1.1",
+      "sourceDir": "01 Stranded - Starter Pack v1.1/Enemies/Warrior",
+      "enabled": true,
+      "status": "missing_source_dir",
+      "sourceProjectPath": null,
+      "warnings": [],
+      "errors": [
+        "Missing source directory: public\\assets\\warriors\\source\\01 Stranded - Starter Pack v1.1\\Enemies\\Warrior"
+      ],
+      "art": {
+        "portraitPath": null,
+        "sheetPath": null,
+        "metaPath": null,
+        "defaultClip": null,
+        "tags": [],
+        "clips": [],
+        "frames": [],
+        "frameWidth": 0,
+        "frameHeight": 0,
+        "totalFrames": 0
+      }
+    },
+    {
+      "id": "hero",
+      "name": "Hero Sprite (Advanced)",
+      "category": "Units & Combatants",
+      "pack": "Stranded 04 - Hero Sprite",
+      "sourceDir": "Stranded 04 - Hero sprite",
+      "enabled": true,
+      "status": "missing_source_dir",
+      "sourceProjectPath": null,
+      "warnings": [],
+      "errors": [
+        "Missing source directory: public\\assets\\warriors\\source\\Stranded 04 - Hero sprite"
+      ],
+      "art": {
+        "portraitPath": null,
+        "sheetPath": null,
+        "metaPath": null,
+        "defaultClip": null,
+        "tags": [],
+        "clips": [],
+        "frames": [],
+        "frameWidth": 0,
+        "frameHeight": 0,
+        "totalFrames": 0
+      }
+    },
+    {
+      "id": "dust_warrior",
+      "name": "Dust Warrior",
+      "category": "Units & Combatants",
+      "pack": "Dust Warrior",
+      "sourceDir": "Dust Warrior",
+      "enabled": true,
+      "status": "missing_source_dir",
+      "sourceProjectPath": null,
+      "warnings": [],
+      "errors": [
+        "Missing source directory: public\\assets\\warriors\\source\\Dust Warrior"
+      ],
+      "art": {
+        "portraitPath": null,
+        "sheetPath": null,
+        "metaPath": null,
+        "defaultClip": null,
+        "tags": [],
+        "clips": [],
+        "frames": [],
+        "frameWidth": 0,
+        "frameHeight": 0,
+        "totalFrames": 0
+      }
+    },
+    {
+      "id": "dust_jumper",
+      "name": "Dust Jumper",
+      "category": "Units & Combatants",
+      "pack": "06 Dust Jumper",
+      "sourceDir": "06 Stranded -Dust Jumper",
+      "enabled": true,
+      "status": "missing_source_dir",
+      "sourceProjectPath": null,
+      "warnings": [],
+      "errors": [
+        "Missing source directory: public\\assets\\warriors\\source\\06 Stranded -Dust Jumper"
+      ],
+      "art": {
+        "portraitPath": null,
+        "sheetPath": null,
+        "metaPath": null,
+        "defaultClip": null,
+        "tags": [],
+        "clips": [],
+        "frames": [],
+        "frameWidth": 0,
+        "frameHeight": 0,
+        "totalFrames": 0
+      }
+    },
+    {
+      "id": "dust_burrow",
+      "name": "Dust Burrow Enemy",
+      "category": "Units & Combatants",
+      "pack": "STRANDED - Dust Burrow Enemy",
+      "sourceDir": "STRANDED - Dust Burrow Enemy",
+      "enabled": true,
+      "status": "missing_source_dir",
+      "sourceProjectPath": null,
+      "warnings": [],
+      "errors": [
+        "Missing source directory: public\\assets\\warriors\\source\\STRANDED - Dust Burrow Enemy"
+      ],
+      "art": {
+        "portraitPath": null,
+        "sheetPath": null,
+        "metaPath": null,
+        "defaultClip": null,
+        "tags": [],
+        "clips": [],
+        "frames": [],
+        "frameWidth": 0,
+        "frameHeight": 0,
+        "totalFrames": 0
+      }
+    },
+    {
+      "id": "circle_bot",
+      "name": "Circle Bot",
+      "category": "Units & Combatants",
+      "pack": "Robots",
+      "sourceDir": "Robots/Circle Bot",
+      "enabled": true,
+      "status": "missing_source_dir",
+      "sourceProjectPath": null,
+      "warnings": [],
+      "errors": [
+        "Missing source directory: public\\assets\\warriors\\source\\Robots\\Circle Bot"
+      ],
+      "art": {
+        "portraitPath": null,
+        "sheetPath": null,
+        "metaPath": null,
+        "defaultClip": null,
+        "tags": [],
+        "clips": [],
+        "frames": [],
+        "frameWidth": 0,
+        "frameHeight": 0,
+        "totalFrames": 0
+      }
+    },
+    {
+      "id": "delivery_bot",
+      "name": "Delivery Bot",
+      "category": "Units & Combatants",
+      "pack": "Robots",
+      "sourceDir": "Robots/Delivery Bot",
+      "enabled": true,
+      "status": "missing_source_dir",
+      "sourceProjectPath": null,
+      "warnings": [],
+      "errors": [
+        "Missing source directory: public\\assets\\warriors\\source\\Robots\\Delivery Bot"
+      ],
+      "art": {
+        "portraitPath": null,
+        "sheetPath": null,
+        "metaPath": null,
+        "defaultClip": null,
+        "tags": [],
+        "clips": [],
+        "frames": [],
+        "frameWidth": 0,
+        "frameHeight": 0,
+        "totalFrames": 0
+      }
+    },
+    {
+      "id": "guard_robot",
+      "name": "Guard Robot",
+      "category": "Units & Combatants",
+      "pack": "Robots",
+      "sourceDir": "Robots/Guard Robot",
+      "enabled": true,
+      "status": "missing_source_dir",
+      "sourceProjectPath": null,
+      "warnings": [],
+      "errors": [
+        "Missing source directory: public\\assets\\warriors\\source\\Robots\\Guard Robot"
+      ],
+      "art": {
+        "portraitPath": null,
+        "sheetPath": null,
+        "metaPath": null,
+        "defaultClip": null,
+        "tags": [],
+        "clips": [],
+        "frames": [],
+        "frameWidth": 0,
+        "frameHeight": 0,
+        "totalFrames": 0
+      }
+    },
+    {
+      "id": "planter_bot",
+      "name": "Planter Bot",
+      "category": "Units & Combatants",
+      "pack": "Robots",
+      "sourceDir": "Robots/Planter Bot",
+      "enabled": true,
+      "status": "missing_source_dir",
+      "sourceProjectPath": null,
+      "warnings": [],
+      "errors": [
+        "Missing source directory: public\\assets\\warriors\\source\\Robots\\Planter Bot"
+      ],
+      "art": {
+        "portraitPath": null,
+        "sheetPath": null,
+        "metaPath": null,
+        "defaultClip": null,
+        "tags": [],
+        "clips": [],
+        "frames": [],
+        "frameWidth": 0,
+        "frameHeight": 0,
+        "totalFrames": 0
+      }
+    },
+    {
+      "id": "rusty_robot",
+      "name": "Rusty Robot",
+      "category": "Units & Combatants",
+      "pack": "Robots",
+      "sourceDir": "Robots/Rusty Robot",
+      "enabled": true,
+      "status": "missing_source_dir",
+      "sourceProjectPath": null,
+      "warnings": [],
+      "errors": [
+        "Missing source directory: public\\assets\\warriors\\source\\Robots\\Rusty Robot"
+      ],
+      "art": {
+        "portraitPath": null,
+        "sheetPath": null,
+        "metaPath": null,
+        "defaultClip": null,
+        "tags": [],
+        "clips": [],
+        "frames": [],
+        "frameWidth": 0,
+        "frameHeight": 0,
+        "totalFrames": 0
+      }
+    },
+    {
+      "id": "big_bug",
+      "name": "Big Bug",
+      "category": "Units & Combatants",
+      "pack": "STRANDED - Insect Enemy Pack",
+      "sourceDir": "STRANDED - Insect Enemy Pack/Big Bug",
+      "enabled": true,
+      "status": "missing_source_dir",
+      "sourceProjectPath": null,
+      "warnings": [],
+      "errors": [
+        "Missing source directory: public\\assets\\warriors\\source\\STRANDED - Insect Enemy Pack\\Big Bug"
+      ],
+      "art": {
+        "portraitPath": null,
+        "sheetPath": null,
+        "metaPath": null,
+        "defaultClip": null,
+        "tags": [],
+        "clips": [],
+        "frames": [],
+        "frameWidth": 0,
+        "frameHeight": 0,
+        "totalFrames": 0
+      }
+    },
+    {
+      "id": "medium_bug_1",
+      "name": "Medium Bug 1",
+      "category": "Units & Combatants",
+      "pack": "STRANDED - Insect Enemy Pack",
+      "sourceDir": "STRANDED - Insect Enemy Pack/Medium Bug",
+      "enabled": true,
+      "status": "missing_source_dir",
+      "sourceProjectPath": null,
+      "warnings": [],
+      "errors": [
+        "Missing source directory: public\\assets\\warriors\\source\\STRANDED - Insect Enemy Pack\\Medium Bug"
+      ],
+      "art": {
+        "portraitPath": null,
+        "sheetPath": null,
+        "metaPath": null,
+        "defaultClip": null,
+        "tags": [],
+        "clips": [],
+        "frames": [],
+        "frameWidth": 0,
+        "frameHeight": 0,
+        "totalFrames": 0
+      }
+    },
+    {
+      "id": "medium_bug_2",
+      "name": "Medium Bug 2",
+      "category": "Units & Combatants",
+      "pack": "STRANDED - Insect Enemy Pack",
+      "sourceDir": "STRANDED - Insect Enemy Pack/Medium bug 2",
+      "enabled": true,
+      "status": "missing_source_dir",
+      "sourceProjectPath": null,
+      "warnings": [],
+      "errors": [
+        "Missing source directory: public\\assets\\warriors\\source\\STRANDED - Insect Enemy Pack\\Medium bug 2"
+      ],
+      "art": {
+        "portraitPath": null,
+        "sheetPath": null,
+        "metaPath": null,
+        "defaultClip": null,
+        "tags": [],
+        "clips": [],
+        "frames": [],
+        "frameWidth": 0,
+        "frameHeight": 0,
+        "totalFrames": 0
+      }
+    },
+    {
+      "id": "small_bug",
+      "name": "Small Bug",
+      "category": "Units & Combatants",
+      "pack": "STRANDED - Insect Enemy Pack",
+      "sourceDir": "STRANDED - Insect Enemy Pack/Small Bug",
+      "enabled": true,
+      "status": "missing_source_dir",
+      "sourceProjectPath": null,
+      "warnings": [],
+      "errors": [
+        "Missing source directory: public\\assets\\warriors\\source\\STRANDED - Insect Enemy Pack\\Small Bug"
+      ],
+      "art": {
+        "portraitPath": null,
+        "sheetPath": null,
+        "metaPath": null,
+        "defaultClip": null,
+        "tags": [],
+        "clips": [],
+        "frames": [],
+        "frameWidth": 0,
+        "frameHeight": 0,
+        "totalFrames": 0
+      }
+    },
+    {
+      "id": "relic_minion_1",
+      "name": "Relic Minion 1",
+      "category": "Units & Combatants",
+      "pack": "STRANDED - Relic Minions",
+      "sourceDir": "STRANDED - Relic Minions/Minion 1",
+      "enabled": true,
+      "status": "missing_source_dir",
+      "sourceProjectPath": null,
+      "warnings": [],
+      "errors": [
+        "Missing source directory: public\\assets\\warriors\\source\\STRANDED - Relic Minions\\Minion 1"
+      ],
+      "art": {
+        "portraitPath": null,
+        "sheetPath": null,
+        "metaPath": null,
+        "defaultClip": null,
+        "tags": [],
+        "clips": [],
+        "frames": [],
+        "frameWidth": 0,
+        "frameHeight": 0,
+        "totalFrames": 0
+      }
+    },
+    {
+      "id": "relic_minion_2",
+      "name": "Relic Minion 2 (Bomber)",
+      "category": "Units & Combatants",
+      "pack": "STRANDED - Relic Minions",
+      "sourceDir": "STRANDED - Relic Minions/Minion 2",
+      "enabled": true,
+      "status": "missing_source_dir",
+      "sourceProjectPath": null,
+      "warnings": [],
+      "errors": [
+        "Missing source directory: public\\assets\\warriors\\source\\STRANDED - Relic Minions\\Minion 2"
+      ],
+      "art": {
+        "portraitPath": null,
+        "sheetPath": null,
+        "metaPath": null,
+        "defaultClip": null,
+        "tags": [],
+        "clips": [],
+        "frames": [],
+        "frameWidth": 0,
+        "frameHeight": 0,
+        "totalFrames": 0
+      }
+    },
+    {
+      "id": "relic_minion_3",
+      "name": "Relic Minion 3 (Ranged)",
+      "category": "Units & Combatants",
+      "pack": "STRANDED - Relic Minions",
+      "sourceDir": "STRANDED - Relic Minions/Minion 3",
+      "enabled": true,
+      "status": "missing_source_dir",
+      "sourceProjectPath": null,
+      "warnings": [],
+      "errors": [
+        "Missing source directory: public\\assets\\warriors\\source\\STRANDED - Relic Minions\\Minion 3"
+      ],
+      "art": {
+        "portraitPath": null,
+        "sheetPath": null,
+        "metaPath": null,
+        "defaultClip": null,
+        "tags": [],
+        "clips": [],
+        "frames": [],
+        "frameWidth": 0,
+        "frameHeight": 0,
+        "totalFrames": 0
+      }
+    },
+    {
+      "id": "tribe_hunter",
+      "name": "Tribe Hunter",
+      "category": "Units & Combatants",
+      "pack": "Stranded Pack 3",
+      "sourceDir": "Stranded Pack 3/Enemies",
+      "enabled": true,
+      "status": "missing_source_dir",
+      "sourceProjectPath": null,
+      "warnings": [],
+      "errors": [
+        "Missing source directory: public\\assets\\warriors\\source\\Stranded Pack 3\\Enemies"
+      ],
+      "art": {
+        "portraitPath": null,
+        "sheetPath": null,
+        "metaPath": null,
+        "defaultClip": null,
+        "tags": [],
+        "clips": [],
+        "frames": [],
+        "frameWidth": 0,
+        "frameHeight": 0,
+        "totalFrames": 0
+      }
+    },
+    {
+      "id": "tribe_tamed_beast",
+      "name": "Tribe Tamed Beast",
+      "category": "Units & Combatants",
+      "pack": "Stranded Pack 3",
+      "sourceDir": "Stranded Pack 3/Enemies",
+      "enabled": true,
+      "status": "missing_source_dir",
+      "sourceProjectPath": null,
+      "warnings": [],
+      "errors": [
+        "Missing source directory: public\\assets\\warriors\\source\\Stranded Pack 3\\Enemies"
+      ],
+      "art": {
+        "portraitPath": null,
+        "sheetPath": null,
+        "metaPath": null,
+        "defaultClip": null,
+        "tags": [],
+        "clips": [],
+        "frames": [],
+        "frameWidth": 0,
+        "frameHeight": 0,
+        "totalFrames": 0
+      }
+    },
+    {
+      "id": "tribe_warrior",
+      "name": "Tribe Warrior",
+      "category": "Units & Combatants",
+      "pack": "Stranded Pack 3",
+      "sourceDir": "Stranded Pack 3/Enemies",
+      "enabled": true,
+      "status": "missing_source_dir",
+      "sourceProjectPath": null,
+      "warnings": [],
+      "errors": [
+        "Missing source directory: public\\assets\\warriors\\source\\Stranded Pack 3\\Enemies"
+      ],
+      "art": {
+        "portraitPath": null,
+        "sheetPath": null,
+        "metaPath": null,
+        "defaultClip": null,
+        "tags": [],
+        "clips": [],
+        "frames": [],
+        "frameWidth": 0,
+        "frameHeight": 0,
+        "totalFrames": 0
+      }
+    },
+    {
+      "id": "archer_2",
+      "name": "Archer (Char Pack 2)",
+      "category": "Units & Combatants",
+      "pack": "DARK Character Pack 2",
+      "sourceDir": "08 DARK - Character Pack 2/Character/Archer",
+      "enabled": true,
+      "status": "missing_source_dir",
+      "sourceProjectPath": null,
+      "warnings": [],
+      "errors": [
+        "Missing source directory: public\\assets\\warriors\\source\\08 DARK - Character Pack 2\\Character\\Archer"
+      ],
+      "art": {
+        "portraitPath": null,
+        "sheetPath": null,
+        "metaPath": null,
+        "defaultClip": null,
+        "tags": [],
+        "clips": [],
+        "frames": [],
+        "frameWidth": 0,
+        "frameHeight": 0,
+        "totalFrames": 0
+      }
+    },
+    {
+      "id": "bomb_droid",
+      "name": "Bomb Droid",
+      "category": "Units & Combatants",
+      "pack": "DARK Character Pack 2",
+      "sourceDir": "08 DARK - Character Pack 2/Character/Bomb Droid",
+      "enabled": true,
+      "status": "missing_source_dir",
+      "sourceProjectPath": null,
+      "warnings": [],
+      "errors": [
+        "Missing source directory: public\\assets\\warriors\\source\\08 DARK - Character Pack 2\\Character\\Bomb Droid"
+      ],
+      "art": {
+        "portraitPath": null,
+        "sheetPath": null,
+        "metaPath": null,
+        "defaultClip": null,
+        "tags": [],
+        "clips": [],
+        "frames": [],
+        "frameWidth": 0,
+        "frameHeight": 0,
+        "totalFrames": 0
+      }
+    },
+    {
+      "id": "dagger_mushroom",
+      "name": "Dagger Mushroom",
+      "category": "Units & Combatants",
+      "pack": "DARK Character Pack 2",
+      "sourceDir": "08 DARK - Character Pack 2/Character/Dagger Mushroom",
+      "enabled": true,
+      "status": "missing_source_dir",
+      "sourceProjectPath": null,
+      "warnings": [],
+      "errors": [
+        "Missing source directory: public\\assets\\warriors\\source\\08 DARK - Character Pack 2\\Character\\Dagger Mushroom"
+      ],
+      "art": {
+        "portraitPath": null,
+        "sheetPath": null,
+        "metaPath": null,
+        "defaultClip": null,
+        "tags": [],
+        "clips": [],
+        "frames": [],
+        "frameWidth": 0,
+        "frameHeight": 0,
+        "totalFrames": 0
+      }
+    },
+    {
+      "id": "ghoul",
+      "name": "Ghoul",
+      "category": "Units & Combatants",
+      "pack": "DARK Character Pack 3",
+      "sourceDir": "DARK - Character Pack 3/Ghoul",
+      "enabled": true,
+      "status": "missing_source_dir",
+      "sourceProjectPath": null,
+      "warnings": [],
+      "errors": [
+        "Missing source directory: public\\assets\\warriors\\source\\DARK - Character Pack 3\\Ghoul"
+      ],
+      "art": {
+        "portraitPath": null,
+        "sheetPath": null,
+        "metaPath": null,
+        "defaultClip": null,
+        "tags": [],
+        "clips": [],
+        "frames": [],
+        "frameWidth": 0,
+        "frameHeight": 0,
+        "totalFrames": 0
+      }
+    },
+    {
+      "id": "spitter",
+      "name": "Spitter",
+      "category": "Units & Combatants",
+      "pack": "DARK Character Pack 3",
+      "sourceDir": "DARK - Character Pack 3/Spitter",
+      "enabled": true,
+      "status": "missing_source_dir",
+      "sourceProjectPath": null,
+      "warnings": [],
+      "errors": [
+        "Missing source directory: public\\assets\\warriors\\source\\DARK - Character Pack 3\\Spitter"
+      ],
+      "art": {
+        "portraitPath": null,
+        "sheetPath": null,
+        "metaPath": null,
+        "defaultClip": null,
+        "tags": [],
+        "clips": [],
+        "frames": [],
+        "frameWidth": 0,
+        "frameHeight": 0,
+        "totalFrames": 0
+      }
+    },
+    {
+      "id": "summoner",
+      "name": "Summoner",
+      "category": "Units & Combatants",
+      "pack": "DARK Character Pack 3",
+      "sourceDir": "DARK - Character Pack 3/Summoner",
+      "enabled": true,
+      "status": "missing_source_dir",
+      "sourceProjectPath": null,
+      "warnings": [],
+      "errors": [
+        "Missing source directory: public\\assets\\warriors\\source\\DARK - Character Pack 3\\Summoner"
+      ],
+      "art": {
+        "portraitPath": null,
+        "sheetPath": null,
+        "metaPath": null,
+        "defaultClip": null,
+        "tags": [],
+        "clips": [],
+        "frames": [],
+        "frameWidth": 0,
+        "frameHeight": 0,
+        "totalFrames": 0
+      }
+    },
+    {
+      "id": "ball_tank",
+      "name": "Ball Tank",
+      "category": "Units & Combatants",
+      "pack": "DARK Character Pack 4",
+      "sourceDir": "Dark Series Char pack 4 v1.1",
+      "enabled": true,
+      "status": "missing_source_dir",
+      "sourceProjectPath": null,
+      "warnings": [],
+      "errors": [
+        "Missing source directory: public\\assets\\warriors\\source\\Dark Series Char pack 4 v1.1"
+      ],
+      "art": {
+        "portraitPath": null,
+        "sheetPath": null,
+        "metaPath": null,
+        "defaultClip": null,
+        "tags": [],
+        "clips": [],
+        "frames": [],
+        "frameWidth": 0,
+        "frameHeight": 0,
+        "totalFrames": 0
+      }
+    },
+    {
+      "id": "dark_mec",
+      "name": "Dark Mec",
+      "category": "Units & Combatants",
+      "pack": "DARK Character Pack 4",
+      "sourceDir": "Dark Series Char pack 4 v1.1",
+      "enabled": true,
+      "status": "missing_source_dir",
+      "sourceProjectPath": null,
+      "warnings": [],
+      "errors": [
+        "Missing source directory: public\\assets\\warriors\\source\\Dark Series Char pack 4 v1.1"
+      ],
+      "art": {
+        "portraitPath": null,
+        "sheetPath": null,
+        "metaPath": null,
+        "defaultClip": null,
+        "tags": [],
+        "clips": [],
+        "frames": [],
+        "frameWidth": 0,
+        "frameHeight": 0,
+        "totalFrames": 0
+      }
+    },
+    {
+      "id": "shielder",
+      "name": "Shielder",
+      "category": "Units & Combatants",
+      "pack": "DARK Character Pack 4",
+      "sourceDir": "Dark Series Char pack 4 v1.1",
+      "enabled": true,
+      "status": "missing_source_dir",
+      "sourceProjectPath": null,
+      "warnings": [],
+      "errors": [
+        "Missing source directory: public\\assets\\warriors\\source\\Dark Series Char pack 4 v1.1"
+      ],
+      "art": {
+        "portraitPath": null,
+        "sheetPath": null,
+        "metaPath": null,
+        "defaultClip": null,
+        "tags": [],
+        "clips": [],
+        "frames": [],
+        "frameWidth": 0,
+        "frameHeight": 0,
+        "totalFrames": 0
+      }
+    },
+    {
+      "id": "hive",
+      "name": "The Hive",
+      "category": "Units & Combatants",
+      "pack": "DARK Character Pack 4",
+      "sourceDir": "Dark Series Char pack 4 v1.1",
+      "enabled": true,
+      "status": "missing_source_dir",
+      "sourceProjectPath": null,
+      "warnings": [],
+      "errors": [
+        "Missing source directory: public\\assets\\warriors\\source\\Dark Series Char pack 4 v1.1"
+      ],
+      "art": {
+        "portraitPath": null,
+        "sheetPath": null,
+        "metaPath": null,
+        "defaultClip": null,
+        "tags": [],
+        "clips": [],
+        "frames": [],
+        "frameWidth": 0,
+        "frameHeight": 0,
+        "totalFrames": 0
+      }
+    },
+    {
+      "id": "wasp",
+      "name": "Wasp",
+      "category": "Units & Combatants",
+      "pack": "DARK Character Pack 4",
+      "sourceDir": "Dark Series Char pack 4 v1.1",
+      "enabled": true,
+      "status": "missing_source_dir",
+      "sourceProjectPath": null,
+      "warnings": [],
+      "errors": [
+        "Missing source directory: public\\assets\\warriors\\source\\Dark Series Char pack 4 v1.1"
+      ],
+      "art": {
+        "portraitPath": null,
+        "sheetPath": null,
+        "metaPath": null,
+        "defaultClip": null,
+        "tags": [],
+        "clips": [],
+        "frames": [],
+        "frameWidth": 0,
+        "frameHeight": 0,
+        "totalFrames": 0
+      }
+    },
+    {
+      "id": "dual_slicer",
+      "name": "Dual Slicer",
+      "category": "Units & Combatants",
+      "pack": "DARK Character Pack 5",
+      "sourceDir": "The DARK Series - Character Pack 5",
+      "enabled": true,
+      "status": "missing_source_dir",
+      "sourceProjectPath": null,
+      "warnings": [],
+      "errors": [
+        "Missing source directory: public\\assets\\warriors\\source\\The DARK Series - Character Pack 5"
+      ],
+      "art": {
+        "portraitPath": null,
+        "sheetPath": null,
+        "metaPath": null,
+        "defaultClip": null,
+        "tags": [],
+        "clips": [],
+        "frames": [],
+        "frameWidth": 0,
+        "frameHeight": 0,
+        "totalFrames": 0
+      }
+    },
+    {
+      "id": "heavy_slicer",
+      "name": "Heavy Slicer",
+      "category": "Units & Combatants",
+      "pack": "DARK Character Pack 5",
+      "sourceDir": "The DARK Series - Character Pack 5",
+      "enabled": true,
+      "status": "missing_source_dir",
+      "sourceProjectPath": null,
+      "warnings": [],
+      "errors": [
+        "Missing source directory: public\\assets\\warriors\\source\\The DARK Series - Character Pack 5"
+      ],
+      "art": {
+        "portraitPath": null,
+        "sheetPath": null,
+        "metaPath": null,
+        "defaultClip": null,
+        "tags": [],
+        "clips": [],
+        "frames": [],
+        "frameWidth": 0,
+        "frameHeight": 0,
+        "totalFrames": 0
+      }
+    },
+    {
+      "id": "slicer_bot",
+      "name": "Slicer Bot",
+      "category": "Units & Combatants",
+      "pack": "DARK Character Pack 5",
+      "sourceDir": "The DARK Series - Character Pack 5",
+      "enabled": true,
+      "status": "missing_source_dir",
+      "sourceProjectPath": null,
+      "warnings": [],
+      "errors": [
+        "Missing source directory: public\\assets\\warriors\\source\\The DARK Series - Character Pack 5"
+      ],
+      "art": {
+        "portraitPath": null,
+        "sheetPath": null,
+        "metaPath": null,
+        "defaultClip": null,
+        "tags": [],
+        "clips": [],
+        "frames": [],
+        "frameWidth": 0,
+        "frameHeight": 0,
+        "totalFrames": 0
+      }
+    },
+    {
+      "id": "evil_crow",
+      "name": "Evil Crow",
+      "category": "Units & Combatants",
+      "pack": "DARK Character Pack 7",
+      "sourceDir": "The DARK Series - Character Pack 7/Evil Crow",
+      "enabled": true,
+      "status": "missing_source_dir",
+      "sourceProjectPath": null,
+      "warnings": [],
+      "errors": [
+        "Missing source directory: public\\assets\\warriors\\source\\The DARK Series - Character Pack 7\\Evil Crow"
+      ],
+      "art": {
+        "portraitPath": null,
+        "sheetPath": null,
+        "metaPath": null,
+        "defaultClip": null,
+        "tags": [],
+        "clips": [],
+        "frames": [],
+        "frameWidth": 0,
+        "frameHeight": 0,
+        "totalFrames": 0
+      }
+    },
+    {
+      "id": "kamikaze_crow",
+      "name": "Kamikaze Crow",
+      "category": "Units & Combatants",
+      "pack": "DARK Character Pack 7",
+      "sourceDir": "The DARK Series - Character Pack 7/Kami-Kaze Crow",
+      "enabled": true,
+      "status": "missing_source_dir",
+      "sourceProjectPath": null,
+      "warnings": [],
+      "errors": [
+        "Missing source directory: public\\assets\\warriors\\source\\The DARK Series - Character Pack 7\\Kami-Kaze Crow"
+      ],
+      "art": {
+        "portraitPath": null,
+        "sheetPath": null,
+        "metaPath": null,
+        "defaultClip": null,
+        "tags": [],
+        "clips": [],
+        "frames": [],
+        "frameWidth": 0,
+        "frameHeight": 0,
+        "totalFrames": 0
+      }
+    },
+    {
+      "id": "orb_mage",
+      "name": "Orb Mage",
+      "category": "Units & Combatants",
+      "pack": "All 3 Sprites",
+      "sourceDir": "All 3 Sprites/Orb Mage",
+      "enabled": true,
+      "status": "missing_source_dir",
+      "sourceProjectPath": null,
+      "warnings": [],
+      "errors": [
+        "Missing source directory: public\\assets\\warriors\\source\\All 3 Sprites\\Orb Mage"
+      ],
+      "art": {
+        "portraitPath": null,
+        "sheetPath": null,
+        "metaPath": null,
+        "defaultClip": null,
+        "tags": [],
+        "clips": [],
+        "frames": [],
+        "frameWidth": 0,
+        "frameHeight": 0,
+        "totalFrames": 0
+      }
+    },
+    {
+      "id": "shock_sweeper",
+      "name": "Shock Sweeper",
+      "category": "Units & Combatants",
+      "pack": "All 3 Sprites",
+      "sourceDir": "All 3 Sprites/Shock Sweeper",
+      "enabled": true,
+      "status": "missing_source_dir",
+      "sourceProjectPath": null,
+      "warnings": [],
+      "errors": [
+        "Missing source directory: public\\assets\\warriors\\source\\All 3 Sprites\\Shock Sweeper"
+      ],
+      "art": {
+        "portraitPath": null,
+        "sheetPath": null,
+        "metaPath": null,
+        "defaultClip": null,
+        "tags": [],
+        "clips": [],
+        "frames": [],
+        "frameWidth": 0,
+        "frameHeight": 0,
+        "totalFrames": 0
+      }
+    },
+    {
+      "id": "assassin",
+      "name": "Assassin",
+      "category": "Units & Combatants",
+      "pack": "All 3 Sprites",
+      "sourceDir": "All 3 Sprites/Assassin",
+      "enabled": true,
+      "status": "missing_source_dir",
+      "sourceProjectPath": null,
+      "warnings": [],
+      "errors": [
+        "Missing source directory: public\\assets\\warriors\\source\\All 3 Sprites\\Assassin"
+      ],
+      "art": {
+        "portraitPath": null,
+        "sheetPath": null,
+        "metaPath": null,
+        "defaultClip": null,
+        "tags": [],
+        "clips": [],
+        "frames": [],
+        "frameWidth": 0,
+        "frameHeight": 0,
+        "totalFrames": 0
+      }
+    },
+    {
+      "id": "archer_bandit",
+      "name": "Archer Bandit",
+      "category": "Units & Combatants",
+      "pack": "DARK - Bandit Bros",
+      "sourceDir": "DARK - Bandit Bros/Archer Bandit",
+      "enabled": true,
+      "status": "missing_source_dir",
+      "sourceProjectPath": null,
+      "warnings": [],
+      "errors": [
+        "Missing source directory: public\\assets\\warriors\\source\\DARK - Bandit Bros\\Archer Bandit"
+      ],
+      "art": {
+        "portraitPath": null,
+        "sheetPath": null,
+        "metaPath": null,
+        "defaultClip": null,
+        "tags": [],
+        "clips": [],
+        "frames": [],
+        "frameWidth": 0,
+        "frameHeight": 0,
+        "totalFrames": 0
+      }
+    },
+    {
+      "id": "dagger_bandit",
+      "name": "Dagger Bandit",
+      "category": "Units & Combatants",
+      "pack": "DARK - Bandit Bros",
+      "sourceDir": "DARK - Bandit Bros/Dagger Bandit",
+      "enabled": true,
+      "status": "missing_source_dir",
+      "sourceProjectPath": null,
+      "warnings": [],
+      "errors": [
+        "Missing source directory: public\\assets\\warriors\\source\\DARK - Bandit Bros\\Dagger Bandit"
+      ],
+      "art": {
+        "portraitPath": null,
+        "sheetPath": null,
+        "metaPath": null,
+        "defaultClip": null,
+        "tags": [],
+        "clips": [],
+        "frames": [],
+        "frameWidth": 0,
+        "frameHeight": 0,
+        "totalFrames": 0
+      }
+    },
+    {
+      "id": "glitch_samurai",
+      "name": "Glitch Samurai",
+      "category": "Units & Combatants",
+      "pack": "DARK - Glitch Samurai",
+      "sourceDir": "DARK - Glitch Samurai",
+      "enabled": true,
+      "status": "missing_source_dir",
+      "sourceProjectPath": null,
+      "warnings": [],
+      "errors": [
+        "Missing source directory: public\\assets\\warriors\\source\\DARK - Glitch Samurai"
+      ],
+      "art": {
+        "portraitPath": null,
+        "sheetPath": null,
+        "metaPath": null,
+        "defaultClip": null,
+        "tags": [],
+        "clips": [],
+        "frames": [],
+        "frameWidth": 0,
+        "frameHeight": 0,
+        "totalFrames": 0
+      }
+    },
+    {
+      "id": "sci_fi_samurai",
+      "name": "Sci-Fi Samurai (Spear)",
+      "category": "Units & Combatants",
+      "pack": "DARK - Sci-Fi Samurai",
+      "sourceDir": "DARK - Sci-Fi Samurai Version 1.1",
+      "enabled": true,
+      "status": "missing_source_dir",
+      "sourceProjectPath": null,
+      "warnings": [],
+      "errors": [
+        "Missing source directory: public\\assets\\warriors\\source\\DARK - Sci-Fi Samurai Version 1.1"
+      ],
+      "art": {
+        "portraitPath": null,
+        "sheetPath": null,
+        "metaPath": null,
+        "defaultClip": null,
+        "tags": [],
+        "clips": [],
+        "frames": [],
+        "frameWidth": 0,
+        "frameHeight": 0,
+        "totalFrames": 0
+      }
+    },
+    {
+      "id": "sci_fi_samurai_2",
+      "name": "Sci-Fi Samurai (Sword)",
+      "category": "Units & Combatants",
+      "pack": "DARK - Sci-Fi Samurai",
+      "sourceDir": "DARK - Sci-Fi Samurai Version 1.1",
+      "enabled": true,
+      "status": "missing_source_dir",
+      "sourceProjectPath": null,
+      "warnings": [],
+      "errors": [
+        "Missing source directory: public\\assets\\warriors\\source\\DARK - Sci-Fi Samurai Version 1.1"
+      ],
+      "art": {
+        "portraitPath": null,
+        "sheetPath": null,
+        "metaPath": null,
+        "defaultClip": null,
+        "tags": [],
+        "clips": [],
+        "frames": [],
+        "frameWidth": 0,
+        "frameHeight": 0,
+        "totalFrames": 0
+      }
+    },
+    {
+      "id": "gunslinger",
+      "name": "Gunslinger",
+      "category": "Units & Combatants",
+      "pack": "DARK - Gunslinger",
+      "sourceDir": "19 - DARK - Gunslinger",
+      "enabled": true,
+      "status": "missing_source_dir",
+      "sourceProjectPath": null,
+      "warnings": [],
+      "errors": [
+        "Missing source directory: public\\assets\\warriors\\source\\19 - DARK - Gunslinger"
+      ],
+      "art": {
+        "portraitPath": null,
+        "sheetPath": null,
+        "metaPath": null,
+        "defaultClip": null,
+        "tags": [],
+        "clips": [],
+        "frames": [],
+        "frameWidth": 0,
+        "frameHeight": 0,
+        "totalFrames": 0
+      }
+    },
+    {
+      "id": "tiny_gunslinger",
+      "name": "Tiny Gunslinger",
+      "category": "Units & Combatants",
+      "pack": "Tiny Gunslinger",
+      "sourceDir": "Tiny Gunslinger",
+      "enabled": true,
+      "status": "missing_source_dir",
+      "sourceProjectPath": null,
+      "warnings": [],
+      "errors": [
+        "Missing source directory: public\\assets\\warriors\\source\\Tiny Gunslinger"
+      ],
+      "art": {
+        "portraitPath": null,
+        "sheetPath": null,
+        "metaPath": null,
+        "defaultClip": null,
+        "tags": [],
+        "clips": [],
+        "frames": [],
+        "frameWidth": 0,
+        "frameHeight": 0,
+        "totalFrames": 0
+      }
+    },
+    {
+      "id": "tiny_swordmaster",
+      "name": "Tiny Swordmaster",
+      "category": "Units & Combatants",
+      "pack": "Tiny Swordmaster",
+      "sourceDir": "Tiny Swordmaster",
+      "enabled": true,
+      "status": "missing_source_dir",
+      "sourceProjectPath": null,
+      "warnings": [],
+      "errors": [
+        "Missing source directory: public\\assets\\warriors\\source\\Tiny Swordmaster"
+      ],
+      "art": {
+        "portraitPath": null,
+        "sheetPath": null,
+        "metaPath": null,
+        "defaultClip": null,
+        "tags": [],
+        "clips": [],
+        "frames": [],
+        "frameWidth": 0,
+        "frameHeight": 0,
+        "totalFrames": 0
+      }
+    },
+    {
+      "id": "swordmaster_v1_2",
+      "name": "The SwordMaster v1.2",
+      "category": "Units & Combatants",
+      "pack": "The SwordMaster v1.2",
+      "sourceDir": "The SwordMaster v1.2",
+      "enabled": true,
+      "status": "missing_source_dir",
+      "sourceProjectPath": null,
+      "warnings": [],
+      "errors": [
+        "Missing source directory: public\\assets\\warriors\\source\\The SwordMaster v1.2"
+      ],
+      "art": {
+        "portraitPath": null,
+        "sheetPath": null,
+        "metaPath": null,
+        "defaultClip": null,
+        "tags": [],
+        "clips": [],
+        "frames": [],
+        "frameWidth": 0,
+        "frameHeight": 0,
+        "totalFrames": 0
+      }
+    },
+    {
+      "id": "sage_v_2",
+      "name": "The Sage V.2 (Good)",
+      "category": "Units & Combatants",
+      "pack": "The Sage V.2",
+      "sourceDir": "The Sage V.2",
+      "enabled": true,
+      "status": "missing_source_dir",
+      "sourceProjectPath": null,
+      "warnings": [],
+      "errors": [
+        "Missing source directory: public\\assets\\warriors\\source\\The Sage V.2"
+      ],
+      "art": {
+        "portraitPath": null,
+        "sheetPath": null,
+        "metaPath": null,
+        "defaultClip": null,
+        "tags": [],
+        "clips": [],
+        "frames": [],
+        "frameWidth": 0,
+        "frameHeight": 0,
+        "totalFrames": 0
+      }
+    },
+    {
+      "id": "sage_v_2_2",
+      "name": "The Sage V.2 (Evil)",
+      "category": "Units & Combatants",
+      "pack": "The Sage V.2",
+      "sourceDir": "The Sage V.2",
+      "enabled": true,
+      "status": "missing_source_dir",
+      "sourceProjectPath": null,
+      "warnings": [],
+      "errors": [
+        "Missing source directory: public\\assets\\warriors\\source\\The Sage V.2"
+      ],
+      "art": {
+        "portraitPath": null,
+        "sheetPath": null,
+        "metaPath": null,
+        "defaultClip": null,
+        "tags": [],
+        "clips": [],
+        "frames": [],
+        "frameWidth": 0,
+        "frameHeight": 0,
+        "totalFrames": 0
+      }
+    },
+    {
+      "id": "bo_panda",
+      "name": "Bo Panda (Good)",
+      "category": "Units & Combatants",
+      "pack": "DARK - Bo Panda",
+      "sourceDir": "DARK - Tiny Hero - Bo Panda",
+      "enabled": true,
+      "status": "missing_source_dir",
+      "sourceProjectPath": null,
+      "warnings": [],
+      "errors": [
+        "Missing source directory: public\\assets\\warriors\\source\\DARK - Tiny Hero - Bo Panda"
+      ],
+      "art": {
+        "portraitPath": null,
+        "sheetPath": null,
+        "metaPath": null,
+        "defaultClip": null,
+        "tags": [],
+        "clips": [],
+        "frames": [],
+        "frameWidth": 0,
+        "frameHeight": 0,
+        "totalFrames": 0
+      }
+    },
+    {
+      "id": "bo_panda_2",
+      "name": "Bo Panda (Evil)",
+      "category": "Units & Combatants",
+      "pack": "DARK - Bo Panda",
+      "sourceDir": "DARK - Tiny Hero - Bo Panda",
+      "enabled": true,
+      "status": "missing_source_dir",
+      "sourceProjectPath": null,
+      "warnings": [],
+      "errors": [
+        "Missing source directory: public\\assets\\warriors\\source\\DARK - Tiny Hero - Bo Panda"
+      ],
+      "art": {
+        "portraitPath": null,
+        "sheetPath": null,
+        "metaPath": null,
+        "defaultClip": null,
+        "tags": [],
+        "clips": [],
+        "frames": [],
+        "frameWidth": 0,
+        "frameHeight": 0,
+        "totalFrames": 0
+      }
+    },
+    {
+      "id": "panda_protector",
+      "name": "Panda Protector (Bazooka)",
+      "category": "Units & Combatants",
+      "pack": "DARK Panda Protector",
+      "sourceDir": "The DARK Series Panda Protector",
+      "enabled": true,
+      "status": "missing_source_dir",
+      "sourceProjectPath": null,
+      "warnings": [],
+      "errors": [
+        "Missing source directory: public\\assets\\warriors\\source\\The DARK Series Panda Protector"
+      ],
+      "art": {
+        "portraitPath": null,
+        "sheetPath": null,
+        "metaPath": null,
+        "defaultClip": null,
+        "tags": [],
+        "clips": [],
+        "frames": [],
+        "frameWidth": 0,
+        "frameHeight": 0,
+        "totalFrames": 0
+      }
+    },
+    {
+      "id": "caged_shocker",
+      "name": "Caged Shocker",
+      "category": "Units & Combatants",
+      "pack": "DARK - Victorian Enemies",
+      "sourceDir": "DARK - Victorian Enemies",
+      "enabled": true,
+      "status": "missing_source_dir",
+      "sourceProjectPath": null,
+      "warnings": [],
+      "errors": [
+        "Missing source directory: public\\assets\\warriors\\source\\DARK - Victorian Enemies"
+      ],
+      "art": {
+        "portraitPath": null,
+        "sheetPath": null,
+        "metaPath": null,
+        "defaultClip": null,
+        "tags": [],
+        "clips": [],
+        "frames": [],
+        "frameWidth": 0,
+        "frameHeight": 0,
+        "totalFrames": 0
+      }
+    },
+    {
+      "id": "caged_spider",
+      "name": "Caged Spider",
+      "category": "Units & Combatants",
+      "pack": "DARK - Victorian Enemies",
+      "sourceDir": "DARK - Victorian Enemies",
+      "enabled": true,
+      "status": "missing_source_dir",
+      "sourceProjectPath": null,
+      "warnings": [],
+      "errors": [
+        "Missing source directory: public\\assets\\warriors\\source\\DARK - Victorian Enemies"
+      ],
+      "art": {
+        "portraitPath": null,
+        "sheetPath": null,
+        "metaPath": null,
+        "defaultClip": null,
+        "tags": [],
+        "clips": [],
+        "frames": [],
+        "frameWidth": 0,
+        "frameHeight": 0,
+        "totalFrames": 0
+      }
+    },
+    {
+      "id": "dark_warden",
+      "name": "The Dark Warden",
+      "category": "Units & Combatants",
+      "pack": "DARK - Victorian Enemies",
+      "sourceDir": "DARK - Victorian Enemies",
+      "enabled": true,
+      "status": "missing_source_dir",
+      "sourceProjectPath": null,
+      "warnings": [],
+      "errors": [
+        "Missing source directory: public\\assets\\warriors\\source\\DARK - Victorian Enemies"
+      ],
+      "art": {
+        "portraitPath": null,
+        "sheetPath": null,
+        "metaPath": null,
+        "defaultClip": null,
+        "tags": [],
+        "clips": [],
+        "frames": [],
+        "frameWidth": 0,
+        "frameHeight": 0,
+        "totalFrames": 0
+      }
+    },
+    {
+      "id": "temple_guardian",
+      "name": "Temple Guardian",
+      "category": "Units & Combatants",
+      "pack": "DARK - Temple Guardians",
+      "sourceDir": "DARK - Temple Guardians/Temple Guardian",
+      "enabled": true,
+      "status": "missing_source_dir",
+      "sourceProjectPath": null,
+      "warnings": [],
+      "errors": [
+        "Missing source directory: public\\assets\\warriors\\source\\DARK - Temple Guardians\\Temple Guardian"
+      ],
+      "art": {
+        "portraitPath": null,
+        "sheetPath": null,
+        "metaPath": null,
+        "defaultClip": null,
+        "tags": [],
+        "clips": [],
+        "frames": [],
+        "frameWidth": 0,
+        "frameHeight": 0,
+        "totalFrames": 0
+      }
+    },
+    {
+      "id": "spark_bug",
+      "name": "Spark Bug",
+      "category": "Units & Combatants",
+      "pack": "DARK - Temple Guardians",
+      "sourceDir": "DARK - Temple Guardians/Spark Bug",
+      "enabled": true,
+      "status": "missing_source_dir",
+      "sourceProjectPath": null,
+      "warnings": [],
+      "errors": [
+        "Missing source directory: public\\assets\\warriors\\source\\DARK - Temple Guardians\\Spark Bug"
+      ],
+      "art": {
+        "portraitPath": null,
+        "sheetPath": null,
+        "metaPath": null,
+        "defaultClip": null,
+        "tags": [],
+        "clips": [],
+        "frames": [],
+        "frameWidth": 0,
+        "frameHeight": 0,
+        "totalFrames": 0
+      }
+    },
+    {
+      "id": "human_crow_keeper",
+      "name": "Human Crow Keeper",
+      "category": "Units & Combatants",
+      "pack": "DARK Character Pack 7",
+      "sourceDir": "The DARK Series - Character Pack 7/Human Crow Keeper",
+      "enabled": true,
+      "status": "missing_source_dir",
+      "sourceProjectPath": null,
+      "warnings": [],
+      "errors": [
+        "Missing source directory: public\\assets\\warriors\\source\\The DARK Series - Character Pack 7\\Human Crow Keeper"
+      ],
+      "art": {
+        "portraitPath": null,
+        "sheetPath": null,
+        "metaPath": null,
+        "defaultClip": null,
+        "tags": [],
+        "clips": [],
+        "frames": [],
+        "frameWidth": 0,
+        "frameHeight": 0,
+        "totalFrames": 0
+      }
+    },
+    {
+      "id": "elite_robot_blaster_mode",
+      "name": "Elite Robot - Blaster Mode",
+      "category": "Units & Combatants",
+      "pack": "DARK - Elite Robot",
+      "sourceDir": "DARK - Elite Robot - 3 Modes/Blaster Mode",
+      "enabled": true,
+      "status": "missing_source_dir",
+      "sourceProjectPath": null,
+      "warnings": [],
+      "errors": [
+        "Missing source directory: public\\assets\\warriors\\source\\DARK - Elite Robot - 3 Modes\\Blaster Mode"
+      ],
+      "art": {
+        "portraitPath": null,
+        "sheetPath": null,
+        "metaPath": null,
+        "defaultClip": null,
+        "tags": [],
+        "clips": [],
+        "frames": [],
+        "frameWidth": 0,
+        "frameHeight": 0,
+        "totalFrames": 0
+      }
+    },
+    {
+      "id": "elite_robot_cannon_mode",
+      "name": "Elite Robot - Cannon Mode",
+      "category": "Units & Combatants",
+      "pack": "DARK - Elite Robot",
+      "sourceDir": "DARK - Elite Robot - 3 Modes/Cannon Mode",
+      "enabled": true,
+      "status": "missing_source_dir",
+      "sourceProjectPath": null,
+      "warnings": [],
+      "errors": [
+        "Missing source directory: public\\assets\\warriors\\source\\DARK - Elite Robot - 3 Modes\\Cannon Mode"
+      ],
+      "art": {
+        "portraitPath": null,
+        "sheetPath": null,
+        "metaPath": null,
+        "defaultClip": null,
+        "tags": [],
+        "clips": [],
+        "frames": [],
+        "frameWidth": 0,
+        "frameHeight": 0,
+        "totalFrames": 0
+      }
+    },
+    {
+      "id": "elite_robot_sword_mode",
+      "name": "Elite Robot - Sword Mode",
+      "category": "Units & Combatants",
+      "pack": "DARK - Elite Robot",
+      "sourceDir": "DARK - Elite Robot - 3 Modes/Sword Mode",
+      "enabled": true,
+      "status": "missing_source_dir",
+      "sourceProjectPath": null,
+      "warnings": [],
+      "errors": [
+        "Missing source directory: public\\assets\\warriors\\source\\DARK - Elite Robot - 3 Modes\\Sword Mode"
+      ],
+      "art": {
+        "portraitPath": null,
+        "sheetPath": null,
+        "metaPath": null,
+        "defaultClip": null,
+        "tags": [],
+        "clips": [],
+        "frames": [],
+        "frameWidth": 0,
+        "frameHeight": 0,
+        "totalFrames": 0
+      }
+    },
+    {
+      "id": "shadow_storms",
+      "name": "Shadow Of Storms",
+      "category": "Units & Combatants",
+      "pack": "Shadow Of Storms",
+      "sourceDir": "Shadow Of Storms",
+      "enabled": true,
+      "status": "missing_source_dir",
+      "sourceProjectPath": null,
+      "warnings": [],
+      "errors": [
+        "Missing source directory: public\\assets\\warriors\\source\\Shadow Of Storms"
+      ],
+      "art": {
+        "portraitPath": null,
+        "sheetPath": null,
+        "metaPath": null,
+        "defaultClip": null,
+        "tags": [],
+        "clips": [],
+        "frames": [],
+        "frameWidth": 0,
+        "frameHeight": 0,
+        "totalFrames": 0
+      }
+    },
+    {
+      "id": "tarnished_widow",
+      "name": "The Tarnished Widow",
+      "category": "Units & Combatants",
+      "pack": "The Tarnished Widow",
+      "sourceDir": "The Tarnished Widow",
+      "enabled": true,
+      "status": "missing_source_dir",
+      "sourceProjectPath": null,
+      "warnings": [],
+      "errors": [
+        "Missing source directory: public\\assets\\warriors\\source\\The Tarnished Widow"
+      ],
+      "art": {
+        "portraitPath": null,
+        "sheetPath": null,
+        "metaPath": null,
+        "defaultClip": null,
+        "tags": [],
+        "clips": [],
+        "frames": [],
+        "frameWidth": 0,
+        "frameHeight": 0,
+        "totalFrames": 0
+      }
+    },
+    {
+      "id": "electrocutioner",
+      "name": "Electrocutioner (STRANDED)",
+      "category": "Bosses & Mini-Bosses",
+      "pack": "STRANDED",
+      "sourceDir": "STRANDED - Electrocutioner",
+      "enabled": true,
+      "status": "missing_source_dir",
+      "sourceProjectPath": null,
+      "warnings": [],
+      "errors": [
+        "Missing source directory: public\\assets\\warriors\\source\\STRANDED - Electrocutioner"
+      ],
+      "art": {
+        "portraitPath": null,
+        "sheetPath": null,
+        "metaPath": null,
+        "defaultClip": null,
+        "tags": [],
+        "clips": [],
+        "frames": [],
+        "frameWidth": 0,
+        "frameHeight": 0,
+        "totalFrames": 0
+      }
+    },
+    {
+      "id": "armored_mech",
+      "name": "Armored Mech (STRANDED)",
+      "category": "Bosses & Mini-Bosses",
+      "pack": "STRANDED",
+      "sourceDir": "STRANDED - Armored Mech",
+      "enabled": true,
+      "status": "missing_source_dir",
+      "sourceProjectPath": null,
+      "warnings": [],
+      "errors": [
+        "Missing source directory: public\\assets\\warriors\\source\\STRANDED - Armored Mech"
+      ],
+      "art": {
+        "portraitPath": null,
+        "sheetPath": null,
+        "metaPath": null,
+        "defaultClip": null,
+        "tags": [],
+        "clips": [],
+        "frames": [],
+        "frameWidth": 0,
+        "frameHeight": 0,
+        "totalFrames": 0
+      }
+    },
+    {
+      "id": "relic_guardian_1",
+      "name": "Relic Guardian 1 (STRANDED)",
+      "category": "Bosses & Mini-Bosses",
+      "pack": "STRANDED",
+      "sourceDir": "STRANDED - Relic Guardian 1",
+      "enabled": true,
+      "status": "missing_source_dir",
+      "sourceProjectPath": null,
+      "warnings": [],
+      "errors": [
+        "Missing source directory: public\\assets\\warriors\\source\\STRANDED - Relic Guardian 1"
+      ],
+      "art": {
+        "portraitPath": null,
+        "sheetPath": null,
+        "metaPath": null,
+        "defaultClip": null,
+        "tags": [],
+        "clips": [],
+        "frames": [],
+        "frameWidth": 0,
+        "frameHeight": 0,
+        "totalFrames": 0
+      }
+    },
+    {
+      "id": "relic_guardian_2",
+      "name": "Relic Guardian 2 (STRANDED)",
+      "category": "Bosses & Mini-Bosses",
+      "pack": "STRANDED",
+      "sourceDir": "Stranded - Relic Guardian 2",
+      "enabled": true,
+      "status": "missing_source_dir",
+      "sourceProjectPath": null,
+      "warnings": [],
+      "errors": [
+        "Missing source directory: public\\assets\\warriors\\source\\Stranded - Relic Guardian 2"
+      ],
+      "art": {
+        "portraitPath": null,
+        "sheetPath": null,
+        "metaPath": null,
+        "defaultClip": null,
+        "tags": [],
+        "clips": [],
+        "frames": [],
+        "frameWidth": 0,
+        "frameHeight": 0,
+        "totalFrames": 0
+      }
+    },
+    {
+      "id": "relic_guardian_3",
+      "name": "Relic Guardian 3 (STRANDED)",
+      "category": "Bosses & Mini-Bosses",
+      "pack": "STRANDED",
+      "sourceDir": "STRANDED - Relic Guardian 3",
+      "enabled": true,
+      "status": "missing_source_dir",
+      "sourceProjectPath": null,
+      "warnings": [],
+      "errors": [
+        "Missing source directory: public\\assets\\warriors\\source\\STRANDED - Relic Guardian 3"
+      ],
+      "art": {
+        "portraitPath": null,
+        "sheetPath": null,
+        "metaPath": null,
+        "defaultClip": null,
+        "tags": [],
+        "clips": [],
+        "frames": [],
+        "frameWidth": 0,
+        "frameHeight": 0,
+        "totalFrames": 0
+      }
+    },
+    {
+      "id": "heart_hoarder",
+      "name": "Heart Hoarder (DARK)",
+      "category": "Bosses & Mini-Bosses",
+      "pack": "DARK",
+      "sourceDir": "24 - The Heart Hoarder",
+      "enabled": true,
+      "status": "missing_source_dir",
+      "sourceProjectPath": null,
+      "warnings": [],
+      "errors": [
+        "Missing source directory: public\\assets\\warriors\\source\\24 - The Heart Hoarder"
+      ],
+      "art": {
+        "portraitPath": null,
+        "sheetPath": null,
+        "metaPath": null,
+        "defaultClip": null,
+        "tags": [],
+        "clips": [],
+        "frames": [],
+        "frameWidth": 0,
+        "frameHeight": 0,
+        "totalFrames": 0
+      }
+    },
+    {
+      "id": "colossal_boss",
+      "name": "Colossal Boss (DARK)",
+      "category": "Bosses & Mini-Bosses",
+      "pack": "DARK",
+      "sourceDir": "DARK Series - Colossal Boss",
+      "enabled": true,
+      "status": "missing_source_dir",
+      "sourceProjectPath": null,
+      "warnings": [],
+      "errors": [
+        "Missing source directory: public\\assets\\warriors\\source\\DARK Series - Colossal Boss"
+      ],
+      "art": {
+        "portraitPath": null,
+        "sheetPath": null,
+        "metaPath": null,
+        "defaultClip": null,
+        "tags": [],
+        "clips": [],
+        "frames": [],
+        "frameWidth": 0,
+        "frameHeight": 0,
+        "totalFrames": 0
+      }
+    },
+    {
+      "id": "blood_king",
+      "name": "The Blood King (DARK)",
+      "category": "Bosses & Mini-Bosses",
+      "pack": "DARK",
+      "sourceDir": "The DARK Series - The Blood King",
+      "enabled": true,
+      "status": "missing_source_dir",
+      "sourceProjectPath": null,
+      "warnings": [],
+      "errors": [
+        "Missing source directory: public\\assets\\warriors\\source\\The DARK Series - The Blood King"
+      ],
+      "art": {
+        "portraitPath": null,
+        "sheetPath": null,
+        "metaPath": null,
+        "defaultClip": null,
+        "tags": [],
+        "clips": [],
+        "frames": [],
+        "frameWidth": 0,
+        "frameHeight": 0,
+        "totalFrames": 0
+      }
+    },
+    {
+      "id": "bone_reaper_boss",
+      "name": "Bone Reaper Boss (DARK)",
+      "category": "Bosses & Mini-Bosses",
+      "pack": "DARK",
+      "sourceDir": "The DARK Series - The Bone Reaper Boss",
+      "enabled": true,
+      "status": "missing_source_dir",
+      "sourceProjectPath": null,
+      "warnings": [],
+      "errors": [
+        "Missing source directory: public\\assets\\warriors\\source\\The DARK Series - The Bone Reaper Boss"
+      ],
+      "art": {
+        "portraitPath": null,
+        "sheetPath": null,
+        "metaPath": null,
+        "defaultClip": null,
+        "tags": [],
+        "clips": [],
+        "frames": [],
+        "frameWidth": 0,
+        "frameHeight": 0,
+        "totalFrames": 0
+      }
+    },
+    {
+      "id": "lord_flames",
+      "name": "Lord of the Flames (DARK)",
+      "category": "Bosses & Mini-Bosses",
+      "pack": "DARK",
+      "sourceDir": "DARK - Lord of the Flames",
+      "enabled": true,
+      "status": "missing_source_dir",
+      "sourceProjectPath": null,
+      "warnings": [],
+      "errors": [
+        "Missing source directory: public\\assets\\warriors\\source\\DARK - Lord of the Flames"
+      ],
+      "art": {
+        "portraitPath": null,
+        "sheetPath": null,
+        "metaPath": null,
+        "defaultClip": null,
+        "tags": [],
+        "clips": [],
+        "frames": [],
+        "frameWidth": 0,
+        "frameHeight": 0,
+        "totalFrames": 0
+      }
+    },
+    {
+      "id": "turtle_mech",
+      "name": "Turtle Mech (DARK)",
+      "category": "Bosses & Mini-Bosses",
+      "pack": "DARK",
+      "sourceDir": "78 DARK - Mech Mini Boss",
+      "enabled": true,
+      "status": "missing_source_dir",
+      "sourceProjectPath": null,
+      "warnings": [],
+      "errors": [
+        "Missing source directory: public\\assets\\warriors\\source\\78 DARK - Mech Mini Boss"
+      ],
+      "art": {
+        "portraitPath": null,
+        "sheetPath": null,
+        "metaPath": null,
+        "defaultClip": null,
+        "tags": [],
+        "clips": [],
+        "frames": [],
+        "frameWidth": 0,
+        "frameHeight": 0,
+        "totalFrames": 0
+      }
+    },
+    {
+      "id": "skeleton_summoner",
+      "name": "Skeleton Summoner (DARK)",
+      "category": "Bosses & Mini-Bosses",
+      "pack": "DARK",
+      "sourceDir": "DARK Series - Skeleton Summoner",
+      "enabled": true,
+      "status": "missing_source_dir",
+      "sourceProjectPath": null,
+      "warnings": [],
+      "errors": [
+        "Missing source directory: public\\assets\\warriors\\source\\DARK Series - Skeleton Summoner"
+      ],
+      "art": {
+        "portraitPath": null,
+        "sheetPath": null,
+        "metaPath": null,
+        "defaultClip": null,
+        "tags": [],
+        "clips": [],
+        "frames": [],
+        "frameWidth": 0,
+        "frameHeight": 0,
+        "totalFrames": 0
+      }
+    },
+    {
+      "id": "ancient_guardian",
+      "name": "Ancient Guardian (DARK)",
+      "category": "Bosses & Mini-Bosses",
+      "pack": "DARK",
+      "sourceDir": "DARK 52 Ancient Guardian",
+      "enabled": true,
+      "status": "missing_source_dir",
+      "sourceProjectPath": null,
+      "warnings": [],
+      "errors": [
+        "Missing source directory: public\\assets\\warriors\\source\\DARK 52 Ancient Guardian"
+      ],
+      "art": {
+        "portraitPath": null,
+        "sheetPath": null,
+        "metaPath": null,
+        "defaultClip": null,
+        "tags": [],
+        "clips": [],
+        "frames": [],
+        "frameWidth": 0,
+        "frameHeight": 0,
+        "totalFrames": 0
+      }
+    },
+    {
+      "id": "dog_companion",
+      "name": "Dog Companion (DARK)",
+      "category": "Companions & Pets",
+      "pack": "DARK",
+      "sourceDir": "DARK - Dog Companion",
+      "enabled": true,
+      "status": "missing_source_dir",
+      "sourceProjectPath": null,
+      "warnings": [],
+      "errors": [
+        "Missing source directory: public\\assets\\warriors\\source\\DARK - Dog Companion"
+      ],
+      "art": {
+        "portraitPath": null,
+        "sheetPath": null,
+        "metaPath": null,
+        "defaultClip": null,
+        "tags": [],
+        "clips": [],
+        "frames": [],
+        "frameWidth": 0,
+        "frameHeight": 0,
+        "totalFrames": 0
+      }
+    },
+    {
+      "id": "golden_retriever",
+      "name": "Golden Retriever (DARK)",
+      "category": "Companions & Pets",
+      "pack": "DARK",
+      "sourceDir": "DARK - Golden Retriever ADD ON",
+      "enabled": true,
+      "status": "missing_source_dir",
+      "sourceProjectPath": null,
+      "warnings": [],
+      "errors": [
+        "Missing source directory: public\\assets\\warriors\\source\\DARK - Golden Retriever ADD ON"
+      ],
+      "art": {
+        "portraitPath": null,
+        "sheetPath": null,
+        "metaPath": null,
+        "defaultClip": null,
+        "tags": [],
+        "clips": [],
+        "frames": [],
+        "frameWidth": 0,
+        "frameHeight": 0,
+        "totalFrames": 0
+      }
+    },
+    {
+      "id": "strange_companion_black",
+      "name": "Strange Companion - Black (DARK)",
+      "category": "Companions & Pets",
+      "pack": "DARK",
+      "sourceDir": "DARK Series - A Strange Companion/BLACK",
+      "enabled": true,
+      "status": "missing_source_dir",
+      "sourceProjectPath": null,
+      "warnings": [],
+      "errors": [
+        "Missing source directory: public\\assets\\warriors\\source\\DARK Series - A Strange Companion\\BLACK"
+      ],
+      "art": {
+        "portraitPath": null,
+        "sheetPath": null,
+        "metaPath": null,
+        "defaultClip": null,
+        "tags": [],
+        "clips": [],
+        "frames": [],
+        "frameWidth": 0,
+        "frameHeight": 0,
+        "totalFrames": 0
+      }
+    },
+    {
+      "id": "strange_companion_red",
+      "name": "Strange Companion - Red (DARK)",
+      "category": "Companions & Pets",
+      "pack": "DARK",
+      "sourceDir": "DARK Series - A Strange Companion/RED",
+      "enabled": true,
+      "status": "missing_source_dir",
+      "sourceProjectPath": null,
+      "warnings": [],
+      "errors": [
+        "Missing source directory: public\\assets\\warriors\\source\\DARK Series - A Strange Companion\\RED"
+      ],
+      "art": {
+        "portraitPath": null,
+        "sheetPath": null,
+        "metaPath": null,
+        "defaultClip": null,
+        "tags": [],
+        "clips": [],
+        "frames": [],
+        "frameWidth": 0,
+        "frameHeight": 0,
+        "totalFrames": 0
+      }
+    },
+    {
+      "id": "strange_companion_teal",
+      "name": "Strange Companion - Teal (DARK)",
+      "category": "Companions & Pets",
+      "pack": "DARK",
+      "sourceDir": "DARK Series - A Strange Companion/TEAL",
+      "enabled": true,
+      "status": "missing_source_dir",
+      "sourceProjectPath": null,
+      "warnings": [],
+      "errors": [
+        "Missing source directory: public\\assets\\warriors\\source\\DARK Series - A Strange Companion\\TEAL"
+      ],
+      "art": {
+        "portraitPath": null,
+        "sheetPath": null,
+        "metaPath": null,
+        "defaultClip": null,
+        "tags": [],
+        "clips": [],
+        "frames": [],
+        "frameWidth": 0,
+        "frameHeight": 0,
+        "totalFrames": 0
+      }
+    },
+    {
+      "id": "baby_chick",
+      "name": "Baby Chick (STRANDED)",
+      "category": "Ambient NPCs & Animals",
+      "pack": "STRANDED",
+      "sourceDir": "Stranded - Animal Pack 1/Baby Chick",
+      "enabled": true,
+      "status": "missing_source_dir",
+      "sourceProjectPath": null,
+      "warnings": [],
+      "errors": [
+        "Missing source directory: public\\assets\\warriors\\source\\Stranded - Animal Pack 1\\Baby Chick"
+      ],
+      "art": {
+        "portraitPath": null,
+        "sheetPath": null,
+        "metaPath": null,
+        "defaultClip": null,
+        "tags": [],
+        "clips": [],
+        "frames": [],
+        "frameWidth": 0,
+        "frameHeight": 0,
+        "totalFrames": 0
+      }
+    },
+    {
+      "id": "chicken",
+      "name": "Chicken (STRANDED)",
+      "category": "Ambient NPCs & Animals",
+      "pack": "STRANDED",
+      "sourceDir": "Stranded - Animal Pack 1/Chicken",
+      "enabled": true,
+      "status": "missing_source_dir",
+      "sourceProjectPath": null,
+      "warnings": [],
+      "errors": [
+        "Missing source directory: public\\assets\\warriors\\source\\Stranded - Animal Pack 1\\Chicken"
+      ],
+      "art": {
+        "portraitPath": null,
+        "sheetPath": null,
+        "metaPath": null,
+        "defaultClip": null,
+        "tags": [],
+        "clips": [],
+        "frames": [],
+        "frameWidth": 0,
+        "frameHeight": 0,
+        "totalFrames": 0
+      }
+    },
+    {
+      "id": "sci_fi_boar",
+      "name": "Sci-fi Boar (STRANDED)",
+      "category": "Ambient NPCs & Animals",
+      "pack": "STRANDED",
+      "sourceDir": "Stranded - Animal Pack 1/Sci-fi Boar",
+      "enabled": true,
+      "status": "missing_source_dir",
+      "sourceProjectPath": null,
+      "warnings": [],
+      "errors": [
+        "Missing source directory: public\\assets\\warriors\\source\\Stranded - Animal Pack 1\\Sci-fi Boar"
+      ],
+      "art": {
+        "portraitPath": null,
+        "sheetPath": null,
+        "metaPath": null,
+        "defaultClip": null,
+        "tags": [],
+        "clips": [],
+        "frames": [],
+        "frameWidth": 0,
+        "frameHeight": 0,
+        "totalFrames": 0
+      }
+    },
+    {
+      "id": "sci_fi_rabbit",
+      "name": "Sci-fi Rabbit (STRANDED)",
+      "category": "Ambient NPCs & Animals",
+      "pack": "STRANDED",
+      "sourceDir": "Stranded - Animal Pack 1/Sci-fi Rabbit",
+      "enabled": true,
+      "status": "missing_source_dir",
+      "sourceProjectPath": null,
+      "warnings": [],
+      "errors": [
+        "Missing source directory: public\\assets\\warriors\\source\\Stranded - Animal Pack 1\\Sci-fi Rabbit"
+      ],
+      "art": {
+        "portraitPath": null,
+        "sheetPath": null,
+        "metaPath": null,
+        "defaultClip": null,
+        "tags": [],
+        "clips": [],
+        "frames": [],
+        "frameWidth": 0,
+        "frameHeight": 0,
+        "totalFrames": 0
+      }
+    },
+    {
+      "id": "sheep",
+      "name": "Sheep (STRANDED)",
+      "category": "Ambient NPCs & Animals",
+      "pack": "STRANDED",
+      "sourceDir": "Stranded - Animal Pack 1/Sheep",
+      "enabled": true,
+      "status": "missing_source_dir",
+      "sourceProjectPath": null,
+      "warnings": [],
+      "errors": [
+        "Missing source directory: public\\assets\\warriors\\source\\Stranded - Animal Pack 1\\Sheep"
+      ],
+      "art": {
+        "portraitPath": null,
+        "sheetPath": null,
+        "metaPath": null,
+        "defaultClip": null,
+        "tags": [],
+        "clips": [],
+        "frames": [],
+        "frameWidth": 0,
+        "frameHeight": 0,
+        "totalFrames": 0
+      }
+    },
+    {
+      "id": "crow_blue_red",
+      "name": "Crow - Blue/Red (DARK)",
+      "category": "Ambient NPCs & Animals",
+      "pack": "DARK",
+      "sourceDir": "The DARK Series - Animal Pack/Crow",
+      "enabled": true,
+      "status": "missing_source_dir",
+      "sourceProjectPath": null,
+      "warnings": [],
+      "errors": [
+        "Missing source directory: public\\assets\\warriors\\source\\The DARK Series - Animal Pack\\Crow"
+      ],
+      "art": {
+        "portraitPath": null,
+        "sheetPath": null,
+        "metaPath": null,
+        "defaultClip": null,
+        "tags": [],
+        "clips": [],
+        "frames": [],
+        "frameWidth": 0,
+        "frameHeight": 0,
+        "totalFrames": 0
+      }
+    },
+    {
+      "id": "deer",
+      "name": "Deer (DARK)",
+      "category": "Ambient NPCs & Animals",
+      "pack": "DARK",
+      "sourceDir": "The DARK Series - Animal Pack/Deer",
+      "enabled": true,
+      "status": "missing_source_dir",
+      "sourceProjectPath": null,
+      "warnings": [],
+      "errors": [
+        "Missing source directory: public\\assets\\warriors\\source\\The DARK Series - Animal Pack\\Deer"
+      ],
+      "art": {
+        "portraitPath": null,
+        "sheetPath": null,
+        "metaPath": null,
+        "defaultClip": null,
+        "tags": [],
+        "clips": [],
+        "frames": [],
+        "frameWidth": 0,
+        "frameHeight": 0,
+        "totalFrames": 0
+      }
+    },
+    {
+      "id": "elk",
+      "name": "Elk (DARK)",
+      "category": "Ambient NPCs & Animals",
+      "pack": "DARK",
+      "sourceDir": "The DARK Series - Animal Pack/Elk",
+      "enabled": true,
+      "status": "missing_source_dir",
+      "sourceProjectPath": null,
+      "warnings": [],
+      "errors": [
+        "Missing source directory: public\\assets\\warriors\\source\\The DARK Series - Animal Pack\\Elk"
+      ],
+      "art": {
+        "portraitPath": null,
+        "sheetPath": null,
+        "metaPath": null,
+        "defaultClip": null,
+        "tags": [],
+        "clips": [],
+        "frames": [],
+        "frameWidth": 0,
+        "frameHeight": 0,
+        "totalFrames": 0
+      }
+    },
+    {
+      "id": "fox",
+      "name": "Fox (DARK)",
+      "category": "Ambient NPCs & Animals",
+      "pack": "DARK",
+      "sourceDir": "The DARK Series - Animal Pack/Fox",
+      "enabled": true,
+      "status": "missing_source_dir",
+      "sourceProjectPath": null,
+      "warnings": [],
+      "errors": [
+        "Missing source directory: public\\assets\\warriors\\source\\The DARK Series - Animal Pack\\Fox"
+      ],
+      "art": {
+        "portraitPath": null,
+        "sheetPath": null,
+        "metaPath": null,
+        "defaultClip": null,
+        "tags": [],
+        "clips": [],
+        "frames": [],
+        "frameWidth": 0,
+        "frameHeight": 0,
+        "totalFrames": 0
+      }
+    },
+    {
+      "id": "rat",
+      "name": "Rat (DARK)",
+      "category": "Ambient NPCs & Animals",
+      "pack": "DARK",
+      "sourceDir": "The DARK Series - Animal Pack/Rat",
+      "enabled": true,
+      "status": "missing_source_dir",
+      "sourceProjectPath": null,
+      "warnings": [],
+      "errors": [
+        "Missing source directory: public\\assets\\warriors\\source\\The DARK Series - Animal Pack\\Rat"
+      ],
+      "art": {
+        "portraitPath": null,
+        "sheetPath": null,
+        "metaPath": null,
+        "defaultClip": null,
+        "tags": [],
+        "clips": [],
+        "frames": [],
+        "frameWidth": 0,
+        "frameHeight": 0,
+        "totalFrames": 0
+      }
+    },
+    {
+      "id": "spirit_walkers_20_males",
+      "name": "Spirit Walkers - 20 males (DARK)",
+      "category": "Ambient NPCs & Animals",
+      "pack": "DARK",
+      "sourceDir": "DARK - Spirit Walkers 1",
+      "enabled": true,
+      "status": "missing_source_dir",
+      "sourceProjectPath": null,
+      "warnings": [],
+      "errors": [
+        "Missing source directory: public\\assets\\warriors\\source\\DARK - Spirit Walkers 1"
+      ],
+      "art": {
+        "portraitPath": null,
+        "sheetPath": null,
+        "metaPath": null,
+        "defaultClip": null,
+        "tags": [],
+        "clips": [],
+        "frames": [],
+        "frameWidth": 0,
+        "frameHeight": 0,
+        "totalFrames": 0
+      }
+    },
+    {
+      "id": "civilian_1_20_males",
+      "name": "Civilian Pack 1 - 20 males (DARK)",
+      "category": "Ambient NPCs & Animals",
+      "pack": "DARK",
+      "sourceDir": "DARK - Civilian Pack 1",
+      "enabled": true,
+      "status": "missing_source_dir",
+      "sourceProjectPath": null,
+      "warnings": [],
+      "errors": [
+        "Missing source directory: public\\assets\\warriors\\source\\DARK - Civilian Pack 1"
+      ],
+      "art": {
+        "portraitPath": null,
+        "sheetPath": null,
+        "metaPath": null,
+        "defaultClip": null,
+        "tags": [],
+        "clips": [],
+        "frames": [],
+        "frameWidth": 0,
+        "frameHeight": 0,
+        "totalFrames": 0
+      }
+    }
+  ]
+}

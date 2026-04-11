@@ -2,6 +2,8 @@ import { Scene } from 'phaser';
 import { PixelFont, FONT_KEY } from '../ui/PixelFont.js';
 import { Theme } from '../ui/Theme.js';
 import { initAuth } from '../supabase.js';
+import { getAllParallaxAssets } from '../rendering/FactionPalettes.js';
+import { getWarriors } from '../config/warriors.js';
 
 export class BootScene extends Scene {
   constructor() {
@@ -9,6 +11,28 @@ export class BootScene extends Scene {
   }
 
   preload() {
+    this.load.on('loaderror', (file) => {
+      if (typeof file.key === 'string' && file.key.startsWith('unit-portrait-')) {
+        console.warn(`[Boot] Failed to load unit portrait ${file.key} from ${file.src}`);
+      }
+    });
+
+    // Preload all PENUSBMIC parallax backgrounds (29 sets, ~180 PNGs)
+    const parallaxAssets = getAllParallaxAssets();
+    for (const { key, path } of parallaxAssets) {
+      this.load.image(key, path);
+    }
+    console.log(`[Boot] Queued ${parallaxAssets.length} parallax textures for preload`);
+
+    const warriors = getWarriors();
+    let queuedPortraits = 0;
+    for (const warrior of warriors) {
+      if (!warrior.art?.portraitPath) continue;
+      this.load.image(warrior.spriteKey, warrior.art.portraitPath);
+      queuedPortraits++;
+    }
+    console.log(`[Boot] Queued ${queuedPortraits} unit portraits for preload`);
+
     // Generate placeholder textures for warriors (before font is ready)
     const colors = [0x64b4d2, 0x7cceff, 0x66cc66, 0xffcc78, 0xcc66ff];
     colors.forEach((color, i) => {
@@ -29,7 +53,8 @@ export class BootScene extends Scene {
       gfx.destroy();
     });
 
-    // Placeholder merchant
+    // Generated merchant stand-in. Real merchant sheets in public/assets/merchants
+    // are multi-frame strips, so keep menu/shop on a safe single-frame texture for now.
     const mgfx = this.add.graphics();
     mgfx.fillStyle(Theme.fantasyPurpleDark, 1);
     mgfx.fillRect(0, 0, 48, 64);
@@ -38,6 +63,7 @@ export class BootScene extends Scene {
     mgfx.fillStyle(0xffffff, 1);
     mgfx.fillRect(14, 32, 6, 6);
     mgfx.fillRect(28, 32, 6, 6);
+    mgfx.generateTexture('merchant', 48, 64);
     mgfx.generateTexture('merchant_placeholder', 48, 64);
     mgfx.destroy();
   }
@@ -49,8 +75,12 @@ export class BootScene extends Scene {
 
     // Show a quick loading flash then proceed
     const { width, height } = this.cameras.main;
-    const text = this.add.bitmapText(
-      width / 2, height / 2, FONT_KEY, 'THE HIRED SWORDS', 7 * 6
+    this.add.bitmapText(
+      width / 2,
+      height / 2,
+      FONT_KEY,
+      'THE HIRED SWORDS',
+      7 * 6,
     ).setOrigin(0.5).setTint(Theme.accent);
 
     this.time.delayedCall(600, () => {

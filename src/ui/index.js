@@ -6,3 +6,5 @@ export { PixelHealthBar } from './PixelHealthBar.js';
 export { PixelLabel } from './PixelLabel.js';
 export { FloatingBanner } from './FloatingBanner.js';
 export { WarriorCard } from './WarriorCard.js';
+export { PixelTypewriter } from './PixelTypewriter.js';
+export { PixelTextInput } from './PixelTextInput.js';

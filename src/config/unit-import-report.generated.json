@@ -1,0 +1,418 @@
+{
+  "generatedAt": "2026-04-11T23:32:48.045Z",
+  "sourceRoot": "public/assets/warriors/source",
+  "runtimeRoot": "public/assets/warriors/runtime",
+  "asepriteCliPath": "C:/Program Files/Aseprite/Aseprite.exe",
+  "totals": {
+    "totalSources": 98,
+    "enabledSources": 98,
+    "ready": 0,
+    "skipped": 0,
+    "missingSourceDirs": 98,
+    "missingProjectFiles": 0,
+    "exportErrors": 0,
+    "zeroTagFiles": 0,
+    "duplicateIds": 0
+  },
+  "problems": {
+    "duplicateIds": [],
+    "missingSourceDirs": [
+      {
+        "id": "starter_hero",
+        "sourceDir": "01 Stranded - Starter Pack v1.1/Hero"
+      },
+      {
+        "id": "starter_companion",
+        "sourceDir": "01 Stranded - Starter Pack v1.1/Hero"
+      },
+      {
+        "id": "archer",
+        "sourceDir": "01 Stranded - Starter Pack v1.1/Enemies/Archer"
+      },
+      {
+        "id": "guard",
+        "sourceDir": "01 Stranded - Starter Pack v1.1/Enemies/Guard"
+      },
+      {
+        "id": "warrior",
+        "sourceDir": "01 Stranded - Starter Pack v1.1/Enemies/Warrior"
+      },
+      {
+        "id": "hero",
+        "sourceDir": "Stranded 04 - Hero sprite"
+      },
+      {
+        "id": "dust_warrior",
+        "sourceDir": "Dust Warrior"
+      },
+      {
+        "id": "dust_jumper",
+        "sourceDir": "06 Stranded -Dust Jumper"
+      },
+      {
+        "id": "dust_burrow",
+        "sourceDir": "STRANDED - Dust Burrow Enemy"
+      },
+      {
+        "id": "circle_bot",
+        "sourceDir": "Robots/Circle Bot"
+      },
+      {
+        "id": "delivery_bot",
+        "sourceDir": "Robots/Delivery Bot"
+      },
+      {
+        "id": "guard_robot",
+        "sourceDir": "Robots/Guard Robot"
+      },
+      {
+        "id": "planter_bot",
+        "sourceDir": "Robots/Planter Bot"
+      },
+      {
+        "id": "rusty_robot",
+        "sourceDir": "Robots/Rusty Robot"
+      },
+      {
+        "id": "big_bug",
+        "sourceDir": "STRANDED - Insect Enemy Pack/Big Bug"
+      },
+      {
+        "id": "medium_bug_1",
+        "sourceDir": "STRANDED - Insect Enemy Pack/Medium Bug"
+      },
+      {
+        "id": "medium_bug_2",
+        "sourceDir": "STRANDED - Insect Enemy Pack/Medium bug 2"
+      },
+      {
+        "id": "small_bug",
+        "sourceDir": "STRANDED - Insect Enemy Pack/Small Bug"
+      },
+      {
+        "id": "relic_minion_1",
+        "sourceDir": "STRANDED - Relic Minions/Minion 1"
+      },
+      {
+        "id": "relic_minion_2",
+        "sourceDir": "STRANDED - Relic Minions/Minion 2"
+      },
+      {
+        "id": "relic_minion_3",
+        "sourceDir": "STRANDED - Relic Minions/Minion 3"
+      },
+      {
+        "id": "tribe_hunter",
+        "sourceDir": "Stranded Pack 3/Enemies"
+      },
+      {
+        "id": "tribe_tamed_beast",
+        "sourceDir": "Stranded Pack 3/Enemies"
+      },
+      {
+        "id": "tribe_warrior",
+        "sourceDir": "Stranded Pack 3/Enemies"
+      },
+      {
+        "id": "archer_2",
+        "sourceDir": "08 DARK - Character Pack 2/Character/Archer"
+      },
+      {
+        "id": "bomb_droid",
+        "sourceDir": "08 DARK - Character Pack 2/Character/Bomb Droid"
+      },
+      {
+        "id": "dagger_mushroom",
+        "sourceDir": "08 DARK - Character Pack 2/Character/Dagger Mushroom"
+      },
+      {
+        "id": "ghoul",
+        "sourceDir": "DARK - Character Pack 3/Ghoul"
+      },
+      {
+        "id": "spitter",
+        "sourceDir": "DARK - Character Pack 3/Spitter"
+      },
+      {
+        "id": "summoner",
+        "sourceDir": "DARK - Character Pack 3/Summoner"
+      },
+      {
+        "id": "ball_tank",
+        "sourceDir": "Dark Series Char pack 4 v1.1"
+      },
+      {
+        "id": "dark_mec",
+        "sourceDir": "Dark Series Char pack 4 v1.1"
+      },
+      {
+        "id": "shielder",
+        "sourceDir": "Dark Series Char pack 4 v1.1"
+      },
+      {
+        "id": "hive",
+        "sourceDir": "Dark Series Char pack 4 v1.1"
+      },
+      {
+        "id": "wasp",
+        "sourceDir": "Dark Series Char pack 4 v1.1"
+      },
+      {
+        "id": "dual_slicer",
+        "sourceDir": "The DARK Series - Character Pack 5"
+      },
+      {
+        "id": "heavy_slicer",
+        "sourceDir": "The DARK Series - Character Pack 5"
+      },
+      {
+        "id": "slicer_bot",
+        "sourceDir": "The DARK Series - Character Pack 5"
+      },
+      {
+        "id": "evil_crow",
+        "sourceDir": "The DARK Series - Character Pack 7/Evil Crow"
+      },
+      {
+        "id": "kamikaze_crow",
+        "sourceDir": "The DARK Series - Character Pack 7/Kami-Kaze Crow"
+      },
+      {
+        "id": "orb_mage",
+        "sourceDir": "All 3 Sprites/Orb Mage"
+      },
+      {
+        "id": "shock_sweeper",
+        "sourceDir": "All 3 Sprites/Shock Sweeper"
+      },
+      {
+        "id": "assassin",
+        "sourceDir": "All 3 Sprites/Assassin"
+      },
+      {
+        "id": "archer_bandit",
+        "sourceDir": "DARK - Bandit Bros/Archer Bandit"
+      },
+      {
+        "id": "dagger_bandit",
+        "sourceDir": "DARK - Bandit Bros/Dagger Bandit"
+      },
+      {
+        "id": "glitch_samurai",
+        "sourceDir": "DARK - Glitch Samurai"
+      },
+      {
+        "id": "sci_fi_samurai",
+        "sourceDir": "DARK - Sci-Fi Samurai Version 1.1"
+      },
+      {
+        "id": "sci_fi_samurai_2",
+        "sourceDir": "DARK - Sci-Fi Samurai Version 1.1"
+      },
+      {
+        "id": "gunslinger",
+        "sourceDir": "19 - DARK - Gunslinger"
+      },
+      {
+        "id": "tiny_gunslinger",
+        "sourceDir": "Tiny Gunslinger"
+      },
+      {
+        "id": "tiny_swordmaster",
+        "sourceDir": "Tiny Swordmaster"
+      },
+      {
+        "id": "swordmaster_v1_2",
+        "sourceDir": "The SwordMaster v1.2"
+      },
+      {
+        "id": "sage_v_2",
+        "sourceDir": "The Sage V.2"
+      },
+      {
+        "id": "sage_v_2_2",
+        "sourceDir": "The Sage V.2"
+      },
+      {
+        "id": "bo_panda",
+        "sourceDir": "DARK - Tiny Hero - Bo Panda"
+      },
+      {
+        "id": "bo_panda_2",
+        "sourceDir": "DARK - Tiny Hero - Bo Panda"
+      },
+      {
+        "id": "panda_protector",
+        "sourceDir": "The DARK Series Panda Protector"
+      },
+      {
+        "id": "caged_shocker",
+        "sourceDir": "DARK - Victorian Enemies"
+      },
+      {
+        "id": "caged_spider",
+        "sourceDir": "DARK - Victorian Enemies"
+      },
+      {
+        "id": "dark_warden",
+        "sourceDir": "DARK - Victorian Enemies"
+      },
+      {
+        "id": "temple_guardian",
+        "sourceDir": "DARK - Temple Guardians/Temple Guardian"
+      },
+      {
+        "id": "spark_bug",
+        "sourceDir": "DARK - Temple Guardians/Spark Bug"
+      },
+      {
+        "id": "human_crow_keeper",
+        "sourceDir": "The DARK Series - Character Pack 7/Human Crow Keeper"
+      },
+      {
+        "id": "elite_robot_blaster_mode",
+        "sourceDir": "DARK - Elite Robot - 3 Modes/Blaster Mode"
+      },
+      {
+        "id": "elite_robot_cannon_mode",
+        "sourceDir": "DARK - Elite Robot - 3 Modes/Cannon Mode"
+      },
+      {
+        "id": "elite_robot_sword_mode",
+        "sourceDir": "DARK - Elite Robot - 3 Modes/Sword Mode"
+      },
+      {
+        "id": "shadow_storms",
+        "sourceDir": "Shadow Of Storms"
+      },
+      {
+        "id": "tarnished_widow",
+        "sourceDir": "The Tarnished Widow"
+      },
+      {
+        "id": "electrocutioner",
+        "sourceDir": "STRANDED - Electrocutioner"
+      },
+      {
+        "id": "armored_mech",
+        "sourceDir": "STRANDED - Armored Mech"
+      },
+      {
+        "id": "relic_guardian_1",
+        "sourceDir": "STRANDED - Relic Guardian 1"
+      },
+      {
+        "id": "relic_guardian_2",
+        "sourceDir": "Stranded - Relic Guardian 2"
+      },
+      {
+        "id": "relic_guardian_3",
+        "sourceDir": "STRANDED - Relic Guardian 3"
+      },
+      {
+        "id": "heart_hoarder",
+        "sourceDir": "24 - The Heart Hoarder"
+      },
+      {
+        "id": "colossal_boss",
+        "sourceDir": "DARK Series - Colossal Boss"
+      },
+      {
+        "id": "blood_king",
+        "sourceDir": "The DARK Series - The Blood King"
+      },
+      {
+        "id": "bone_reaper_boss",
+        "sourceDir": "The DARK Series - The Bone Reaper Boss"
+      },
+      {
+        "id": "lord_flames",
+        "sourceDir": "DARK - Lord of the Flames"
+      },
+      {
+        "id": "turtle_mech",
+        "sourceDir": "78 DARK - Mech Mini Boss"
+      },
+      {
+        "id": "skeleton_summoner",
+        "sourceDir": "DARK Series - Skeleton Summoner"
+      },
+      {
+        "id": "ancient_guardian",
+        "sourceDir": "DARK 52 Ancient Guardian"
+      },
+      {
+        "id": "dog_companion",
+        "sourceDir": "DARK - Dog Companion"
+      },
+      {
+        "id": "golden_retriever",
+        "sourceDir": "DARK - Golden Retriever ADD ON"
+      },
+      {
+        "id": "strange_companion_black",
+        "sourceDir": "DARK Series - A Strange Companion/BLACK"
+      },
+      {
+        "id": "strange_companion_red",
+        "sourceDir": "DARK Series - A Strange Companion/RED"
+      },
+      {
+        "id": "strange_companion_teal",
+        "sourceDir": "DARK Series - A Strange Companion/TEAL"
+      },
+      {
+        "id": "baby_chick",
+        "sourceDir": "Stranded - Animal Pack 1/Baby Chick"
+      },
+      {
+        "id": "chicken",
+        "sourceDir": "Stranded - Animal Pack 1/Chicken"
+      },
+      {
+        "id": "sci_fi_boar",
+        "sourceDir": "Stranded - Animal Pack 1/Sci-fi Boar"
+      },
+      {
+        "id": "sci_fi_rabbit",
+        "sourceDir": "Stranded - Animal Pack 1/Sci-fi Rabbit"
+      },
+      {
+        "id": "sheep",
+        "sourceDir": "Stranded - Animal Pack 1/Sheep"
+      },
+      {
+        "id": "crow_blue_red",
+        "sourceDir": "The DARK Series - Animal Pack/Crow"
+      },
+      {
+        "id": "deer",
+        "sourceDir": "The DARK Series - Animal Pack/Deer"
+      },
+      {
+        "id": "elk",
+        "sourceDir": "The DARK Series - Animal Pack/Elk"
+      },
+      {
+        "id": "fox",
+        "sourceDir": "The DARK Series - Animal Pack/Fox"
+      },
+      {
+        "id": "rat",
+        "sourceDir": "The DARK Series - Animal Pack/Rat"
+      },
+      {
+        "id": "spirit_walkers_20_males",
+        "sourceDir": "DARK - Spirit Walkers 1"
+      },
+      {
+        "id": "civilian_1_20_males",
+        "sourceDir": "DARK - Civilian Pack 1"
+      }
+    ],
+    "missingProjectFiles": [],
+    "exportErrors": [],
+    "zeroTagFiles": [],
+    "warnings": []
+  }
+}
