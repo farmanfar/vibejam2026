@@ -3,6 +3,7 @@ import { Theme, FONT_KEY, PixelLabel, PixelButton, FloatingBanner } from '../ui/
 import { GhostManager } from '../systems/GhostManager.js'
 import { finalizeCaptureScene } from '../systems/CaptureSupport.js'
 import { LayoutEditor } from '../systems/LayoutEditor.js'
+import { SceneCrt, startSceneWithCrtPolicy } from '../rendering/SceneCrt.js'
 
 export class HallOfFameScene extends Scene {
   constructor() {
@@ -17,15 +18,15 @@ export class HallOfFameScene extends Scene {
     this.fixtureLeaderboard = Array.isArray(data.fixtureLeaderboard)
       ? data.fixtureLeaderboard.map(entry => ({ ...entry }))
       : null
+    this.commander = data.commander ?? null
     this.fromMenu = !this.runId
   }
 
   create() {
     const { width, height } = this.cameras.main
 
-    for (let y = 0; y < height; y += 4) {
-      this.add.rectangle(width / 2, y, width, 1, 0x000000, 0.08)
-    }
+    // CRT post-process (strongUi preset — narrative/end screens)
+    SceneCrt.attach(this, 'strongUi')
 
     if (this.fromMenu) {
       const hofTitle = new PixelLabel(this, width / 2, height * 0.14, 'HALL OF FAME', {
@@ -61,20 +62,20 @@ export class HallOfFameScene extends Scene {
     this.leaderText.setText('Loading...')
 
     if (this.fromMenu) {
+      // Leaderboard viewer — no power-off on exit (just a browser)
       const backBtn = new PixelButton(this, width / 2, height * 0.82, 'BACK', () => {
         this.scene.start('Menu')
       }, { style: 'filled', scale: 3, bg: Theme.accent, width: 140, height: 40 })
       LayoutEditor.register(this, 'backBtn', backBtn, width / 2, height * 0.82)
     } else {
+      // Champion end-of-run — power-off plays on exit
       const playAgainBtn = new PixelButton(this, width / 2 - 110, height * 0.82, 'PLAY AGAIN', () => {
-        this.scene.start('Shop', {
-          stage: 1, gold: 10, wins: 0, losses: 0, team: [], runId: crypto.randomUUID(),
-        })
+        startSceneWithCrtPolicy(this, 'CommanderSelect', { runId: crypto.randomUUID() })
       }, { style: 'filled', scale: 3, bg: Theme.accent, width: 180, height: 44 })
       LayoutEditor.register(this, 'playAgainBtn', playAgainBtn, width / 2 - 110, height * 0.82)
 
       const menuBtn = new PixelButton(this, width / 2 + 110, height * 0.82, 'MAIN MENU', () => {
-        this.scene.start('Menu')
+        startSceneWithCrtPolicy(this, 'Menu')
       }, { style: 'text', scale: 2 })
       LayoutEditor.register(this, 'menuBtn', menuBtn, width / 2 + 110, height * 0.82)
     }

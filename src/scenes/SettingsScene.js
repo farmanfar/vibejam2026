@@ -2,6 +2,7 @@ import { Scene } from 'phaser';
 import { Theme, FONT_KEY, PixelLabel, PixelButton } from '../ui/index.js';
 import { finalizeCaptureScene } from '../systems/CaptureSupport.js';
 import { LayoutEditor } from '../systems/LayoutEditor.js';
+import { SceneCrt } from '../rendering/SceneCrt.js';
 
 export class SettingsScene extends Scene {
   constructor() {
@@ -11,10 +12,8 @@ export class SettingsScene extends Scene {
   create() {
     const { width, height } = this.cameras.main;
 
-    // Scanlines
-    for (let y = 0; y < height; y += 4) {
-      this.add.rectangle(width / 2, y, width, 1, 0x000000, 0.06);
-    }
+    // CRT post-process (strongUi preset — menus/UI screens)
+    SceneCrt.attach(this, 'strongUi');
 
     const title = new PixelLabel(this, width / 2, height * 0.25, 'SETTINGS', {
       scale: 5, color: 'accent', align: 'center',

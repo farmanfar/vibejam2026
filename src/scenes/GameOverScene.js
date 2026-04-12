@@ -2,6 +2,7 @@ import { Scene } from 'phaser'
 import { Theme, PixelLabel, PixelButton, FloatingBanner } from '../ui/index.js'
 import { finalizeCaptureScene } from '../systems/CaptureSupport.js'
 import { LayoutEditor } from '../systems/LayoutEditor.js'
+import { SceneCrt, startSceneWithCrtPolicy } from '../rendering/SceneCrt.js'
 
 export class GameOverScene extends Scene {
   constructor() {
@@ -11,14 +12,14 @@ export class GameOverScene extends Scene {
   init(data) {
     this.wins = data.wins || 0
     this.losses = data.losses || 3
+    this.commander = data.commander ?? null
   }
 
   create() {
     const { width, height } = this.cameras.main
 
-    for (let y = 0; y < height; y += 4) {
-      this.add.rectangle(width / 2, y, width, 1, 0x000000, 0.08)
-    }
+    // CRT post-process (strongUi preset — narrative/end screens)
+    SceneCrt.attach(this, 'strongUi')
 
     const title = new PixelLabel(this, width / 2, height * 0.25, 'GAME OVER', {
       scale: 8, color: 'error', align: 'center',
@@ -35,14 +36,12 @@ export class GameOverScene extends Scene {
     gfx.lineBetween(width * 0.3, height * 0.48, width * 0.7, height * 0.48)
 
     const playAgainBtn = new PixelButton(this, width / 2, height * 0.58, 'PLAY AGAIN', () => {
-      this.scene.start('Shop', {
-        stage: 1, gold: 10, wins: 0, losses: 0, team: [], runId: crypto.randomUUID(),
-      })
+      startSceneWithCrtPolicy(this, 'CommanderSelect', { runId: crypto.randomUUID() })
     }, { style: 'filled', scale: 3, bg: Theme.accent, width: 200, height: 44 })
     LayoutEditor.register(this, 'playAgainBtn', playAgainBtn, width / 2, height * 0.58)
 
     const menuBtn = new PixelButton(this, width / 2, height * 0.70, 'MAIN MENU', () => {
-      this.scene.start('Menu')
+      startSceneWithCrtPolicy(this, 'Menu')
     }, { style: 'text', scale: 2 })
     LayoutEditor.register(this, 'menuBtn', menuBtn, width / 2, height * 0.70)
 

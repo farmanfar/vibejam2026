@@ -1,0 +1,135 @@
+/**
+ * FilterCRT — WebGL render node for Phaser 4 camera filters.
+ * Ports the MonoGame CRT.fx barrel distortion, chroma split, scanlines,
+ * flicker, vignette, and power-off collapse into a single GLSL pass.
+ *
+ * Registered in main.js as render.renderNodes.FilterCRT so Phaser
+ * constructs it lazily the first time a CrtController is added to a camera.
+ */
+
+import { Renderer } from 'phaser';
+
+const BaseFilterShader = Renderer.WebGL.RenderNodes.BaseFilterShader;
+
+// ─── GLSL Fragment Shader ───────────────────────────────────────────────────
+// Vertex inputs from SimpleTexture-vert:
+//   varying vec2 outTexCoord  — normalised UV (0..1, y=0 is framebuffer bottom)
+//   varying vec2 outFragCoord — clip-space mapped to 0..1
+
+const FRAG_SRC = [
+  '#pragma phaserTemplate(shaderName)',
+  'precision mediump float;',
+
+  'uniform sampler2D uMainSampler;',
+  'uniform float     uTime;',
+  'uniform float     uScanlineIntensity;',
+  'uniform float     uChromaOffset;',
+  'uniform vec2      uTextureSize;',
+  'uniform float     uFlickerAmount;',
+  'uniform float     uCurvatureAmount;',
+  'uniform float     uVignetteAmount;',
+  'uniform float     uPowerOff;',
+
+  'varying vec2 outTexCoord;',
+
+  '#pragma phaserTemplate(fragmentHeader)',
+
+  'vec2 barrelDistort(vec2 uv, float amount)',
+  '{',
+  '    vec2 cc   = uv - 0.5;',
+  '    float d   = dot(cc, cc);',
+  '    return uv + cc * d * amount;',
+  '}',
+
+  'void main()',
+  '{',
+  '    // Hard cut to black at end of power-off',
+  '    if (uPowerOff > 0.95)',
+  '    {',
+  '        gl_FragColor = vec4(0.0, 0.0, 0.0, 1.0);',
+  '        return;',
+  '    }',
+
+  '    // Barrel / screen curvature',
+  '    vec2 curved = barrelDistort(outTexCoord, uCurvatureAmount);',
+
+  '    // Vertical squish toward center during power-off',
+  '    if (uPowerOff > 0.0)',
+  '    {',
+  '        curved.y = 0.5 + (curved.y - 0.5) * max(0.001, 1.0 - uPowerOff);',
+  '    }',
+
+  '    // Black border outside curved screen',
+  '    if (curved.x < 0.0 || curved.x > 1.0 || curved.y < 0.0 || curved.y > 1.0)',
+  '    {',
+  '        gl_FragColor = vec4(0.0, 0.0, 0.0, 1.0);',
+  '        return;',
+  '    }',
+
+  '    // Chromatic aberration — offset R and B channels horizontally',
+  '    vec2  pixelSize = 1.0 / uTextureSize;',
+  '    float rOff      = uChromaOffset * pixelSize.x;',
+  '    float r = texture2D(uMainSampler, vec2(curved.x - rOff, curved.y)).r;',
+  '    float g = texture2D(uMainSampler, curved).g;',
+  '    float b = texture2D(uMainSampler, vec2(curved.x + rOff, curved.y)).b;',
+  '    float a = texture2D(uMainSampler, curved).a;',
+  '    vec4 result = vec4(r, g, b, a);',
+
+  '    // Scanlines — darken every other pixel row',
+  '    float scanline = sin(curved.y * uTextureSize.y * 3.14159) * 0.5 + 0.5;',
+  '    float effScan  = uScanlineIntensity * (1.0 + uPowerOff * 4.0);',
+  '    scanline = 1.0 - effScan * (1.0 - scanline * scanline);',
+  '    result.rgb *= scanline;',
+
+  '    // Subtle brightness flicker',
+  '    float flicker = 1.0 - uFlickerAmount * 0.5',
+  '                    * (sin(uTime * 8.0) * 0.3 + sin(uTime * 13.0) * 0.2);',
+  '    result.rgb *= flicker;',
+
+  '    // Vignette — darken edges',
+  '    vec2  cent    = curved - 0.5;',
+  '    float vignette = 1.0 - dot(cent, cent) * uVignetteAmount;',
+  '    result.rgb *= clamp(vignette, 1.0 - uVignetteAmount * 0.5, 1.0);',
+
+  '    // Power-off: bright phosphor line at screen centre',
+  '    if (uPowerOff > 0.85)',
+  '    {',
+  '        float lineW = 0.008 * (1.0 - uPowerOff) / 0.15;',
+  '        float dist  = abs(outTexCoord.y - 0.5);',
+  '        if (lineW > 0.0 && dist < lineW)',
+  '        {',
+  '            result.rgb += vec3(1.5, 1.5, 1.8) * (1.0 - dist / lineW);',
+  '        }',
+  '    }',
+
+  '    gl_FragColor = result;',
+  '}',
+].join('\n');
+
+// ─── Render Node ─────────────────────────────────────────────────────────────
+
+function FilterCRT(manager) {
+  BaseFilterShader.call(this, 'FilterCRT', manager, null, FRAG_SRC);
+}
+
+FilterCRT.prototype = Object.create(BaseFilterShader.prototype);
+FilterCRT.prototype.constructor = FilterCRT;
+
+/**
+ * Uploads CRT uniforms from the controller every frame.
+ * @param {import('./CrtController.js').CrtController} controller
+ * @param {object} drawingContext
+ */
+FilterCRT.prototype.setupUniforms = function (controller, drawingContext) {
+  const pm = this.programManager;
+  pm.setUniform('uTime',              controller.time);
+  pm.setUniform('uScanlineIntensity', controller.scanlineIntensity);
+  pm.setUniform('uChromaOffset',      controller.chromaOffset);
+  pm.setUniform('uTextureSize',       [drawingContext.width, drawingContext.height]);
+  pm.setUniform('uFlickerAmount',     controller.flickerAmount);
+  pm.setUniform('uCurvatureAmount',   controller.curvatureAmount);
+  pm.setUniform('uVignetteAmount',    controller.vignetteAmount);
+  pm.setUniform('uPowerOff',          controller.powerOff);
+};
+
+export { FilterCRT };

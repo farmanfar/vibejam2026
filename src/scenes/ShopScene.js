@@ -9,6 +9,7 @@ import { getEnabledWarriors } from '../config/warriors.js'
 import { finalizeCaptureScene } from '../systems/CaptureSupport.js'
 import { LayoutEditor } from '../systems/LayoutEditor.js'
 import { getUnitTextureKey } from '../rendering/UnitArt.js'
+import { SceneCrt } from '../rendering/SceneCrt.js'
 
 export class ShopScene extends Scene {
   constructor() {
@@ -21,6 +22,7 @@ export class ShopScene extends Scene {
     this.wins = data.wins || 0
     this.losses = data.losses || 0
     this.runId = data.runId
+    this.commander = data.commander ?? null
     this.team = Array.isArray(data.team) ? data.team.map(w => ({ ...w })) : []
     this.availableWarriors = getEnabledWarriors()
     this.shop = new ShopManager(this.availableWarriors, this.stage)
@@ -38,6 +40,10 @@ export class ShopScene extends Scene {
     const { width, height } = this.cameras.main
 
     console.log(`[Shop] Creating shop scene — stage ${this.stage}, gold ${this.gold}, team size ${this.team.length}`)
+    console.log(`[Shop] Commander: ${this.commander?.name ?? 'none'}`)
+
+    // CRT post-process (softGameplay — interactive scene)
+    SceneCrt.attach(this, 'softGameplay')
 
     const headerPanel = new PixelPanel(this, 0, 0, width, 32, {
       bg: Theme.panelBg, border: Theme.panelBorder,
@@ -187,7 +193,7 @@ export class ShopScene extends Scene {
     this.shopOffer = this.shop.roll()
     this.scene.restart({
       stage: this.stage, gold: this.gold, wins: this.wins, losses: this.losses,
-      team: this.team, runId: this.runId,
+      team: this.team, runId: this.runId, commander: this.commander,
     })
   }
 
@@ -205,14 +211,14 @@ export class ShopScene extends Scene {
       const opponent = await GhostManager.fetchOpponent(this.wins, this.losses, this.stage)
       this.scene.start('Battle', {
         stage: this.stage, gold: this.gold, wins: this.wins, losses: this.losses,
-        team: this.team, runId: this.runId, opponent,
+        team: this.team, runId: this.runId, commander: this.commander, opponent,
       })
     } catch (e) {
       console.error('[Shop] Ghost matchmaking failed, using AI opponent:', e)
       const opponent = new BattleEngine().generateEnemyTeam(this.stage)
       this.scene.start('Battle', {
         stage: this.stage, gold: this.gold, wins: this.wins, losses: this.losses,
-        team: this.team, runId: this.runId, opponent,
+        team: this.team, runId: this.runId, commander: this.commander, opponent,
       })
     }
   }

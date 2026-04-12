@@ -14,6 +14,7 @@ import {
 import { finalizeCaptureScene } from '../systems/CaptureSupport.js';
 import { getUnitTextureKey } from '../rendering/UnitArt.js';
 import { LayoutEditor } from '../systems/LayoutEditor.js';
+import { SceneCrt } from '../rendering/SceneCrt.js';
 
 const PAGE_SIZE = 12;
 
@@ -91,6 +92,9 @@ export class UnitLabScene extends Scene {
   }
 
   create() {
+    // CRT post-process (softGameplay — interactive scene)
+    SceneCrt.attach(this, 'softGameplay');
+
     this.definitions = getUnitDefinitions();
     this.filterText = '';
     this.page = 0;

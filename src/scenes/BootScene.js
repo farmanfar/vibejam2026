@@ -4,7 +4,9 @@ import { Theme } from '../ui/Theme.js';
 import { initAuth } from '../supabase.js';
 import { getAllParallaxAssets } from '../rendering/FactionPalettes.js';
 import { getWarriors } from '../config/warriors.js';
+import { getCommanders } from '../config/commanders.js';
 import { resetCaptureReady, resolveCaptureRoute } from '../systems/CaptureSupport.js';
+import { attachGeneratedNormalMap } from '../rendering/NormalMapGenerator.js';
 
 export class BootScene extends Scene {
   constructor() {
@@ -33,6 +35,14 @@ export class BootScene extends Scene {
       queuedPortraits++;
     }
     console.log(`[Boot] Queued ${queuedPortraits} unit portraits for preload`);
+
+    // Preload commander card and trophy-room sprite images (Fantasy Cards pack)
+    const commanders = getCommanders();
+    for (const cmd of commanders) {
+      this.load.image(`commander-card-${cmd.spriteIndex}`, `assets/commanders/cards/card${cmd.spriteIndex}.png`);
+      this.load.image(`commander-sprite-${cmd.spriteIndex}`, `assets/commanders/sprites/Sprite${cmd.spriteIndex}.png`);
+    }
+    console.log(`[Boot] Queued ${commanders.length} commander card textures and ${commanders.length} commander sprites for preload`);
 
     // Generate placeholder textures for warriors (before font is ready)
     const colors = [0x64b4d2, 0x7cceff, 0x66cc66, 0xffcc78, 0xcc66ff];
@@ -76,6 +86,12 @@ export class BootScene extends Scene {
     PixelFont.init(this);
     initAuth();
 
+    // Generate normal maps for battle unit sprites (WebGL only).
+    // Runs synchronously; 32×32 placeholders are ~1 ms total.
+    if (this.sys.renderer.gl) {
+      _generateBattleNormalMaps(this);
+    }
+
     // Show a quick loading flash then proceed
     const { width, height } = this.cameras.main;
     this.add.bitmapText(
@@ -86,10 +102,22 @@ export class BootScene extends Scene {
       7 * 6,
     ).setOrigin(0.5).setTint(Theme.accent);
 
-    const captureRoute = resolveCaptureRoute();
+    let captureRoute = null;
+    try {
+      captureRoute = resolveCaptureRoute();
+    } catch (error) {
+      console.error('[Boot] Capture route failed, falling back to Menu:', error);
+      captureRoute = { sceneKey: 'Menu', data: {} };
+    }
+
     if (captureRoute) {
-      console.log(`[Boot] Starting capture preset scene: ${captureRoute.sceneKey}`);
-      this.scene.start(captureRoute.sceneKey, captureRoute.data);
+      try {
+        console.log(`[Boot] Starting capture preset scene: ${captureRoute.sceneKey}`);
+        this.scene.start(captureRoute.sceneKey, captureRoute.data);
+      } catch (error) {
+        console.error(`[Boot] Capture scene start failed for ${captureRoute.sceneKey}, falling back to Menu:`, error);
+        this.scene.start('Menu');
+      }
       return;
     }
 
@@ -97,4 +125,39 @@ export class BootScene extends Scene {
       this.scene.start('Menu');
     });
   }
+}
+
+// ─── Normal-map generation at boot ───────────────────────────────────────────
+
+/**
+ * Generate and attach Phaser normal-map data sources for every battle unit
+ * texture loaded during preload.  This covers:
+ *   • unit-portrait-<spriteKey>  — real art from PENUSBMIC packs
+ *   • warrior_placeholder_0..4   — generated coloured squares
+ *
+ * attachGeneratedNormalMap() is a no-op for textures that failed to load,
+ * so missing portraits are silently skipped.
+ */
+function _generateBattleNormalMaps(scene) {
+  const warriors = getWarriors();
+  let generated = 0;
+  let skipped   = 0;
+
+  for (const warrior of warriors) {
+    const key = warrior.spriteKey;
+    if (!key) continue;
+    if (attachGeneratedNormalMap(scene, key)) {
+      generated++;
+    } else {
+      skipped++;
+    }
+  }
+
+  // Placeholder textures (always present)
+  for (let i = 0; i < 5; i++) {
+    const key = `warrior_placeholder_${i}`;
+    if (attachGeneratedNormalMap(scene, key)) generated++;
+  }
+
+  console.log(`[Boot] Normal maps: ${generated} generated, ${skipped} skipped (missing art)`);
 }

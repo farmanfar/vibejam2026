@@ -16,7 +16,7 @@
 - 960x540 pixel art, m5x7 bitmap font, DarkTech theme
 - 5 factions (Robot, Undead, Beast, Fantasy, Tribal) + 4-5 classes (Warrior, Mage, Ranger, Tank, Support) — dual-tag system
 - Currency is **credits** (not gold). ⚠️ Code still uses `gold` everywhere — rename pending.
-- Art pipeline: PENUSBMIC assets imported via unit-catalog system. Placeholder textures generated at boot for units without art.
+- Art pipeline: PENUSBMIC assets imported via unit-catalog system. Placeholder textures generated at boot for units without art. See `public/assets/CLAUDE.md` for asset directory details.
 - **Full design spec:** `design/game-design-spec.md` (locked 2026-04-11)
 
 ## Design Direction

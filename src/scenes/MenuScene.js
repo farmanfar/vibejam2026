@@ -4,6 +4,7 @@ import { PlayerConfig } from '../systems/PlayerConfig.js';
 import { finalizeCaptureScene } from '../systems/CaptureSupport.js';
 import { LayoutEditor } from '../systems/LayoutEditor.js';
 import { getUnitValidation } from '../config/warriors.js';
+import { SceneCrt } from '../rendering/SceneCrt.js';
 
 // --- Typewriter message pools ---
 
@@ -60,6 +61,9 @@ export class MenuScene extends Scene {
     const totalUnits = validation.summary.total;
 
     console.log(`[Menu] Creating menu scene (${width}x${height}), saved name: "${savedName || '(none)'}"`);
+
+    // CRT post-process (strongUi preset — stronger curvature/scanlines for menus)
+    SceneCrt.attach(this, 'strongUi');
 
     // --- Full-width header ---
 
@@ -130,7 +134,7 @@ export class MenuScene extends Scene {
     const startBtn = new PixelButton(this, menuX, menuStartY, 'START GAME', () => {
       const runId = crypto.randomUUID();
       console.log(`[Menu] Starting new run: ${runId}`);
-      this.scene.start('Shop', { stage: 1, gold: 10, wins: 0, losses: 0, team: [], runId });
+      this.scene.start('CommanderSelect', { runId });
     }, { style: 'text', scale: 3 });
     LayoutEditor.register(this, 'startBtn', startBtn, menuX, menuStartY);
 
@@ -218,11 +222,6 @@ export class MenuScene extends Scene {
       yoyo: true,
       repeat: -1,
     });
-
-    // --- Scanlines (on top of everything) ---
-    for (let y = 0; y < height; y += 4) {
-      this.add.rectangle(width / 2, y, width, 1, 0x000000, 0.06);
-    }
 
     // --- Cleanup on scene shutdown (once, not on) ---
     this.events.once('shutdown', () => {

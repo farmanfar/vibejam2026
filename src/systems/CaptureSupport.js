@@ -1,4 +1,5 @@
 import { getWarriorById } from '../config/warriors.js'
+import { getCommanders } from '../config/commanders.js'
 import { LayoutEditor } from './LayoutEditor.js'
 import { PlayerConfig } from './PlayerConfig.js'
 
@@ -86,103 +87,120 @@ export function resolveCaptureRoute() {
     return { sceneKey: 'Menu', data: {} }
   }
 
-  switch (preset) {
-    case 'menu': {
-      const name = params.get('name')
-      if (name !== null) {
-        PlayerConfig.setName(name)
+  try {
+    switch (preset) {
+      case 'menu': {
+        const name = params.get('name')
+        if (name !== null) {
+          PlayerConfig.setName(name)
+        }
+
+        return { sceneKey: 'Menu', data: {} }
       }
 
-      return { sceneKey: 'Menu', data: {} }
+      case 'shop':
+        return {
+          sceneKey: 'Shop',
+          data: {
+            stage: 3,
+            gold: 7,
+            wins: 2,
+            losses: 1,
+            runId: 'capture-shop',
+            team: [
+              getWarriorClone('starter_hero'),
+              getWarriorClone('starter_companion'),
+              getWarriorClone('guard'),
+            ],
+            shopOffer: [
+              getWarriorClone('archer'),
+              getWarriorClone('hero'),
+              getWarriorClone('starter_companion'),
+              getWarriorClone('guard'),
+            ],
+          },
+        }
+
+      case 'battle':
+        return {
+          sceneKey: 'Battle',
+          data: {
+            stage: 4,
+            gold: 6,
+            wins: 3,
+            losses: 1,
+            runId: 'capture-battle',
+            captureFreeze: true,
+            leftSet: 'gears-blue',
+            rightSet: 'mountain-city-1',
+            team: [
+              getWarriorClone('starter_hero'),
+              getWarriorClone('starter_companion'),
+              getWarriorClone('guard'),
+            ],
+            opponent: [
+              getWarriorClone('archer'),
+              getWarriorClone('hero'),
+              getWarriorClone('warrior'),
+            ],
+          },
+        }
+
+      case 'gameover':
+        return {
+          sceneKey: 'GameOver',
+          data: { wins: 5, losses: 3 },
+        }
+
+      case 'hof-menu':
+        return {
+          sceneKey: 'HallOfFame',
+          data: {
+            runId: null,
+            fixtureLeaderboard: cloneValue(FIXTURE_LEADERBOARD),
+          },
+        }
+
+      case 'hof-champion':
+        return {
+          sceneKey: 'HallOfFame',
+          data: {
+            wins: 9,
+            losses: 0,
+            runId: 'capture-hof',
+            team: [
+              getWarriorClone('starter_hero'),
+              getWarriorClone('starter_companion'),
+              getWarriorClone('guard'),
+            ],
+            fixtureLeaderboard: cloneValue(FIXTURE_LEADERBOARD),
+          },
+        }
+
+      case 'settings':
+        return { sceneKey: 'Settings', data: {} }
+
+      case 'unitlab':
+        return { sceneKey: 'UnitLab', data: {} }
+
+      case 'commander': {
+        const commanderView = params.get('commanderView') ?? null
+        return {
+          sceneKey: 'CommanderSelect',
+          data: {
+            runId: 'capture-commander',
+            commanders: getCommanders().slice(0, 3),
+            captureView: commanderView,
+          },
+        }
+      }
+
+      default:
+        console.warn(`[Capture] Unknown capturePreset "${preset}", falling back to Menu`)
+        return { sceneKey: 'Menu', data: {} }
     }
-
-    case 'shop':
-      return {
-        sceneKey: 'Shop',
-        data: {
-          stage: 3,
-          gold: 7,
-          wins: 2,
-          losses: 1,
-          runId: 'capture-shop',
-          team: [
-            getWarriorClone('starter_hero'),
-            getWarriorClone('starter_companion'),
-            getWarriorClone('guard'),
-          ],
-          shopOffer: [
-            getWarriorClone('archer'),
-            getWarriorClone('hero'),
-            getWarriorClone('starter_companion'),
-            getWarriorClone('guard'),
-          ],
-        },
-      }
-
-    case 'battle':
-      return {
-        sceneKey: 'Battle',
-        data: {
-          stage: 4,
-          gold: 6,
-          wins: 3,
-          losses: 1,
-          runId: 'capture-battle',
-          captureFreeze: true,
-          leftSet: 'gears-blue',
-          rightSet: 'mountain-city-1',
-          team: [
-            getWarriorClone('starter_hero'),
-            getWarriorClone('starter_companion'),
-            getWarriorClone('guard'),
-          ],
-          opponent: [
-            getWarriorClone('archer'),
-            getWarriorClone('hero'),
-            getWarriorClone('warrior'),
-          ],
-        },
-      }
-
-    case 'gameover':
-      return {
-        sceneKey: 'GameOver',
-        data: { wins: 5, losses: 3 },
-      }
-
-    case 'hof-menu':
-      return {
-        sceneKey: 'HallOfFame',
-        data: {
-          runId: null,
-          fixtureLeaderboard: cloneValue(FIXTURE_LEADERBOARD),
-        },
-      }
-
-    case 'hof-champion':
-      return {
-        sceneKey: 'HallOfFame',
-        data: {
-          wins: 9,
-          losses: 0,
-          runId: 'capture-hof',
-          team: [
-            getWarriorClone('starter_hero'),
-            getWarriorClone('starter_companion'),
-            getWarriorClone('guard'),
-          ],
-          fixtureLeaderboard: cloneValue(FIXTURE_LEADERBOARD),
-        },
-      }
-
-    case 'settings':
-      return { sceneKey: 'Settings', data: {} }
-
-    case 'unitlab':
-      return { sceneKey: 'UnitLab', data: {} }
-
-    default:
-      console.warn(`[Capture] Unknown capturePreset "${preset}", falling back to Menu`)
-      return { sceneKey: 'Menu', data: {} }
+  } catch (error) {
+    console.error(`[Capture] Failed to build preset "${preset}":`, error)
+    throw new Error(`Failed to build preset "${preset}": ${error.message}`)
   }
 }

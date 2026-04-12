@@ -1,6 +1,8 @@
 import { AUTO, Scale, Game } from 'phaser';
+import { FilterCRT } from './rendering/FilterCRT.js';
 import { BootScene } from './scenes/BootScene.js';
 import { MenuScene } from './scenes/MenuScene.js';
+import { CommanderSelectScene } from './scenes/CommanderSelectScene.js';
 import { ShopScene } from './scenes/ShopScene.js';
 import { BattleScene } from './scenes/BattleScene.js';
 import { GameOverScene } from './scenes/GameOverScene.js';
@@ -22,7 +24,13 @@ const config = {
     mode: Scale.FIT,
     autoCenter: Scale.CENTER_BOTH,
   },
-  scene: [BootScene, MenuScene, ShopScene, BattleScene, GameOverScene, HallOfFameScene, SettingsScene, UnitLabScene],
+  render: {
+    // Register custom CRT filter render node (WebGL only; silently ignored in Canvas mode)
+    renderNodes: { FilterCRT },
+    // Reserve up to 12 simultaneous point lights for BattleScene unit lighting
+    maxLights: 12,
+  },
+  scene: [BootScene, MenuScene, CommanderSelectScene, ShopScene, BattleScene, GameOverScene, HallOfFameScene, SettingsScene, UnitLabScene],
 };
 
 resetCaptureReady();

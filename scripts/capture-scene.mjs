@@ -3,10 +3,16 @@ import path from 'node:path'
 import process from 'node:process'
 import { chromium } from 'playwright'
 
+const CAPTURE_ROOT = path.resolve(process.cwd(), 'artifacts', 'captures')
+const USAGE = 'Usage: npm run capture:scene -- --preset <name> [--name <text>] [--out <path>] [--url <baseUrl>] [--show-layout-overlays]'
+const EXAMPLE = 'Example: npm run capture:scene -- --preset menu --name Farman --out nested/menu'
+const SUPPORTED_FLAGS = ['--preset', '--name', '--view', '--out', '--url', '--show-layout-overlays', '--help', '-h']
+
 function parseArgs(argv) {
   const options = {
     preset: '',
     name: null,
+    view: null,
     out: null,
     url: 'http://127.0.0.1:5173',
     showLayoutOverlays: false,
@@ -19,6 +25,8 @@ function parseArgs(argv) {
       options.preset = argv[++i] ?? ''
     } else if (arg === '--name') {
       options.name = argv[++i] ?? ''
+    } else if (arg === '--view') {
+      options.view = argv[++i] ?? ''
     } else if (arg === '--out') {
       options.out = argv[++i] ?? ''
     } else if (arg === '--url') {
@@ -28,7 +36,7 @@ function parseArgs(argv) {
     } else if (arg === '--help' || arg === '-h') {
       options.help = true
     } else {
-      throw new Error(`Unknown argument: ${arg}`)
+      throw new Error(`[Capture] Unknown argument "${arg}". Supported flags: ${SUPPORTED_FLAGS.join(', ')}\n${USAGE}`)
     }
   }
 
@@ -36,17 +44,50 @@ function parseArgs(argv) {
 }
 
 function printHelp() {
-  console.log('Usage: npm run capture:scene -- --preset <name> [--name <text>] [--out <path>] [--url <baseUrl>] [--show-layout-overlays]')
+  console.log(USAGE)
+  console.log('Required:')
+  console.log('  --preset <name>               Capture preset to open')
+  console.log('Optional:')
+  console.log('  --name <text>                 Player name for menu preset')
+  console.log('  --view <viewId>               Widget viewpoint to jump to (center|left|right|previewClose|featuredClose — legacy: leftWall|rightWall|tvClose also accepted)')
+  console.log('  --out <path>                  Output base name under artifacts/captures')
+  console.log('  --url <baseUrl>               App URL to open')
+  console.log('  --show-layout-overlays        Render LayoutEditor labels in capture')
+  console.log('  --help, -h                    Show this help')
+  console.log(EXAMPLE)
 }
 
-function normalizeOutBase(out, preset) {
-  const fallback = path.join('artifacts', 'captures', preset)
-  const raw = out && out.trim() ? out.trim() : fallback
-
+function stripOutputSuffix(raw) {
   if (raw.endsWith('.layout.json')) return raw.slice(0, -'.layout.json'.length)
   if (raw.endsWith('.report.json')) return raw.slice(0, -'.report.json'.length)
   if (raw.endsWith('.png')) return raw.slice(0, -'.png'.length)
   return raw
+}
+
+function resolveOutBase(out, preset) {
+  const fallback = preset
+  const raw = out && out.trim() ? out.trim() : fallback
+  const stripped = stripOutputSuffix(raw)
+  const normalized = path.normalize(stripped)
+  const rootPrefix = path.relative(process.cwd(), CAPTURE_ROOT)
+
+  let relativeOut = normalized
+  if (relativeOut === rootPrefix || relativeOut.startsWith(`${rootPrefix}${path.sep}`)) {
+    relativeOut = path.relative(rootPrefix, relativeOut)
+  }
+
+  if (!relativeOut || relativeOut === '.' || relativeOut === path.sep) {
+    relativeOut = fallback
+  }
+
+  const resolved = path.resolve(CAPTURE_ROOT, relativeOut)
+  const relativeToRoot = path.relative(CAPTURE_ROOT, resolved)
+  const escaped = relativeToRoot.startsWith('..') || path.isAbsolute(relativeToRoot)
+  if (escaped) {
+    throw new Error(`[Capture] Rejected output path "${out}". Output must stay within ${CAPTURE_ROOT}`)
+  }
+
+  return resolved
 }
 
 function buildCaptureUrl(baseUrl, options) {
@@ -56,6 +97,10 @@ function buildCaptureUrl(baseUrl, options) {
 
   if (options.name !== null) {
     url.searchParams.set('name', options.name)
+  }
+
+  if (options.view !== null) {
+    url.searchParams.set('commanderView', options.view)
   }
 
   if (options.showLayoutOverlays) {
@@ -142,6 +187,22 @@ async function writeJson(filePath, value) {
   await writeFile(filePath, `${JSON.stringify(value, null, 2)}\n`, 'utf8')
 }
 
+async function tryGetSceneHint(page) {
+  if (!page) return null
+
+  try {
+    return await page.evaluate(() => window.__HS_CAPTURE_SCENE__ ?? null)
+  } catch (_) {
+    return null
+  }
+}
+
+async function buildStepError(step, error, options, captureUrl, page) {
+  const sceneHint = await tryGetSceneHint(page)
+  const sceneText = sceneHint ? ` active scene="${sceneHint}".` : ''
+  return new Error(`[Capture] ${step} failed for preset "${options.preset}" at ${captureUrl}.${sceneText} ${error.message}`)
+}
+
 async function main() {
   const options = parseArgs(process.argv.slice(2))
   if (options.help) {
@@ -150,45 +211,68 @@ async function main() {
   }
 
   if (!options.preset) {
-    throw new Error('Missing required --preset value')
+    throw new Error(`[Capture] Missing required --preset value.\n${USAGE}`)
   }
 
-  const outBase = normalizeOutBase(options.out, options.preset)
+  const outBase = resolveOutBase(options.out, options.preset)
   const pngPath = `${outBase}.png`
   const layoutPath = `${outBase}.layout.json`
   const reportPath = `${outBase}.report.json`
   const captureUrl = buildCaptureUrl(options.url, options)
 
-  const browser = await chromium.launch({ headless: true })
+  let browser = null
+  let page = null
 
   try {
-    const page = await browser.newPage({
+    browser = await chromium.launch({ headless: true })
+    page = await browser.newPage({
       viewport: { width: 960, height: 540 },
     })
 
-    await page.goto(captureUrl, { waitUntil: 'domcontentloaded' })
-    await page.waitForFunction(() => window.__HS_CAPTURE_READY__ === true, null, { timeout: 15000 })
-    await page.waitForTimeout(50)
+    try {
+      await page.goto(captureUrl, { waitUntil: 'domcontentloaded' })
+    } catch (error) {
+      throw await buildStepError('Page load', error, options, captureUrl, page)
+    }
 
-    const snapshot = await page.evaluate(() => {
-      if (!window.LayoutEditor || typeof window.LayoutEditor.dumpSnapshot !== 'function') {
-        throw new Error('LayoutEditor.dumpSnapshot() is not available')
-      }
+    try {
+      await page.waitForFunction(() => window.__HS_CAPTURE_READY__ === true, null, { timeout: 15000 })
+      await page.waitForTimeout(50)
+    } catch (error) {
+      const step = error.name === 'TimeoutError' ? 'Ready timeout' : 'Ready wait'
+      throw await buildStepError(step, error, options, captureUrl, page)
+    }
 
-      return window.LayoutEditor.dumpSnapshot()
-    })
+    let snapshot
+    try {
+      snapshot = await page.evaluate(() => {
+        if (!window.LayoutEditor || typeof window.LayoutEditor.dumpSnapshot !== 'function') {
+          throw new Error('LayoutEditor.dumpSnapshot() is not available')
+        }
+
+        return window.LayoutEditor.dumpSnapshot()
+      })
+    } catch (error) {
+      const step = error.message.includes('dumpSnapshot')
+        ? 'Snapshot export'
+        : 'Page evaluation'
+      throw await buildStepError(step, error, options, captureUrl, page)
+    }
 
     const report = analyzeSnapshot(snapshot)
 
-    await mkdir(path.dirname(pngPath), { recursive: true })
-    await page.screenshot({
-      path: pngPath,
-      animations: 'disabled',
-      scale: 'css',
-    })
-
-    await writeJson(layoutPath, snapshot)
-    await writeJson(reportPath, report)
+    try {
+      await mkdir(path.dirname(pngPath), { recursive: true })
+      await page.screenshot({
+        path: pngPath,
+        animations: 'disabled',
+        scale: 'css',
+      })
+      await writeJson(layoutPath, snapshot)
+      await writeJson(reportPath, report)
+    } catch (error) {
+      throw await buildStepError('Artifact write', error, options, captureUrl, page)
+    }
 
     console.log(`[Capture] Scene: ${snapshot.scene}`)
     console.log(`[Capture] Screenshot: ${pngPath}`)
@@ -196,11 +280,13 @@ async function main() {
     console.log(`[Capture] Report: ${reportPath}`)
     console.log(`[Capture] Issues: ${report.issueCount}`)
   } finally {
-    await browser.close()
+    if (browser) {
+      await browser.close()
+    }
   }
 }
 
 main().catch(error => {
-  console.error(`[Capture] Failed: ${error.message}`)
+  console.error(error.message)
   process.exitCode = 1
 })

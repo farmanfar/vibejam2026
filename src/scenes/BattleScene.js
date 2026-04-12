@@ -8,6 +8,7 @@ import { ParallaxBackground } from '../rendering/ParallaxBackground.js'
 import { pickRandomSets } from '../rendering/FactionPalettes.js'
 import { LayoutEditor } from '../systems/LayoutEditor.js'
 import { getUnitTextureKey } from '../rendering/UnitArt.js'
+import { SceneCrt, startSceneWithCrtPolicy } from '../rendering/SceneCrt.js'
 
 export class BattleScene extends Scene {
   constructor() {
@@ -22,13 +23,24 @@ export class BattleScene extends Scene {
     this.runId = data.runId
     this.team = data.team || []
     this.opponent = data.opponent || []
+    this.commander = data.commander ?? null
     this.leftSet = data.leftSet ?? null
     this.rightSet = data.rightSet ?? null
     this.captureFreeze = data.captureFreeze === true
   }
 
   create() {
+    console.log(`[Battle] Commander: ${this.commander?.name ?? 'none'}`)
     const { width, height } = this.cameras.main
+
+    // CRT post-process (softGameplay — lighter curvature preserves pointer accuracy)
+    SceneCrt.attach(this, 'softGameplay')
+
+    // Native lighting (WebGL only) — dim warm-blue ambient, unit sprites lit individually
+    if (this.sys.renderer.gl) {
+      this.lights.enable().setAmbientColor(0x1a1a2e)
+      console.log('[Battle] Lighting enabled — ambient 0x1a1a2e, maxLights 12')
+    }
 
     const { left, right } = (this.leftSet && this.rightSet)
       ? { left: this.leftSet, right: this.rightSet }
@@ -56,19 +68,26 @@ export class BattleScene extends Scene {
     this.enemyTeam = this.opponent
     const battleDepth = 20
 
+    const useLights = !!this.sys.renderer.gl
+
     this.playerSprites = this.team.map((w, i) => {
       const x = 100 + i * 80
       const y = 320
       const sprite = this.add.image(x, y, getUnitTextureKey(this, w, 'battle player'))
         .setScale(2.5)
         .setDepth(battleDepth)
+      // Enable normal-map lighting on unit sprites only (not labels/health bars)
+      if (useLights) sprite.setLighting(true)
+      const light = useLights
+        ? this.lights.addPointLight(x, y - 16, 0xffddaa, 90, 0.7)
+        : null
       const hpBar = new PixelHealthBar(this, x, y - 50, w.hp, { width: 50, height: 5 })
       hpBar.setDepth(battleDepth)
       const name = this.add.bitmapText(x, y + 48, FONT_KEY, w.name, 7)
         .setOrigin(0.5)
         .setTint(Theme.accent)
         .setDepth(battleDepth)
-      return { sprite, hpBar, name, warrior: { ...w, currentHp: w.hp } }
+      return { sprite, hpBar, name, light, warrior: { ...w, currentHp: w.hp } }
     })
 
     this.enemySprites = this.enemyTeam.map((w, i) => {
@@ -78,6 +97,10 @@ export class BattleScene extends Scene {
         .setScale(2.5)
         .setFlipX(true)
         .setDepth(battleDepth)
+      if (useLights) sprite.setLighting(true)
+      const light = useLights
+        ? this.lights.addPointLight(x, y - 16, 0xffddaa, 90, 0.7)
+        : null
       const hpBar = new PixelHealthBar(this, x, y - 50, w.hp, {
         width: 50, height: 5, isEnemy: true,
       })
@@ -86,7 +109,7 @@ export class BattleScene extends Scene {
         .setOrigin(0.5)
         .setTint(Theme.error)
         .setDepth(battleDepth)
-      return { sprite, hpBar, name, warrior: { ...w, currentHp: w.hp } }
+      return { sprite, hpBar, name, light, warrior: { ...w, currentHp: w.hp } }
     })
 
     const yourTeamLabel = new PixelLabel(this, 100, 240, 'YOUR TEAM', {
@@ -163,6 +186,7 @@ export class BattleScene extends Scene {
               if (s.warrior.currentHp <= 0) {
                 s.sprite.setAlpha(0.2)
                 s.name.setAlpha(0.3)
+                if (s.light) { s.light.setActive(false); s.light.setVisible(false) }
               }
             }
           })
@@ -176,6 +200,7 @@ export class BattleScene extends Scene {
               if (s.warrior.currentHp <= 0) {
                 s.sprite.setAlpha(0.2)
                 s.name.setAlpha(0.3)
+                if (s.light) { s.light.setActive(false); s.light.setVisible(false) }
               }
             }
           })
@@ -201,14 +226,17 @@ export class BattleScene extends Scene {
       if (won) {
         const newWins = this.wins + 1
         if (newWins === 9) {
-          this.scene.start('HallOfFame', {
+          // Champion flow — power-off transition to HallOfFame
+          startSceneWithCrtPolicy(this, 'HallOfFame', {
             wins: newWins, losses: this.losses, team: this.team, runId: this.runId,
+            commander: this.commander,
           })
           return
         }
         const survivors = this.team.filter((_, i) =>
           this.playerSprites[i].warrior.currentHp > 0
         )
+        // Battle → Shop is immediate (no power-off)
         this.scene.start('Shop', {
           stage: this.stage + 1,
           gold: this.gold + goldEarned,
@@ -216,16 +244,19 @@ export class BattleScene extends Scene {
           losses: this.losses,
           team: survivors,
           runId: this.runId,
+          commander: this.commander,
         })
       } else {
         const newLosses = this.losses + 1
         if (newLosses >= 3) {
-          this.scene.start('GameOver', { wins: this.wins, losses: newLosses })
+          // 3 losses — power-off transition to GameOver
+          startSceneWithCrtPolicy(this, 'GameOver', { wins: this.wins, losses: newLosses, commander: this.commander })
           return
         }
         const survivors = this.team.filter((_, i) =>
           this.playerSprites[i].warrior.currentHp > 0
         )
+        // Battle → Shop is immediate (no power-off)
         this.scene.start('Shop', {
           stage: this.stage + 1,
           gold: this.gold + goldEarned,
@@ -233,6 +264,7 @@ export class BattleScene extends Scene {
           losses: newLosses,
           team: survivors,
           runId: this.runId,
+          commander: this.commander,
         })
       }
     })
