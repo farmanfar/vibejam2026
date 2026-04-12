@@ -14,6 +14,11 @@ artifacts/captures
 *.local
 .env
 
+# Art assets (paid packs — not for public distribution)
+public/assets/**/*.png
+public/assets/**/*.aseprite
+public/assets/**/*.ttf
+
 # Editor directories and files
 .vscode/*
 !.vscode/extensions.json
