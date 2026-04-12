@@ -47,27 +47,32 @@ export class PixelButton extends GameObjects.Container {
   }
 
   _buildText(scene, label, fontSize, measured) {
-    // Focus band (fades in on hover)
     const bandPadX = 10;
     const bandPadY = 6;
-    this.focusBand = scene.add.rectangle(
-      -bandPadX, -bandPadY,
-      measured.width + bandPadX * 2,
-      measured.height + bandPadY * 2,
-      Theme.focusBand
-    ).setOrigin(0).setAlpha(0);
-    this.add(this.focusBand);
+    const rightExt = 20; // breathing room past text right edge (on top of left pad)
 
-    // Text
+    // Create text first so Phaser can give us the real rendered pixel width.
+    // PixelFont.measure() is an approximation; bitmapText.width is authoritative.
     this.text = scene.add.bitmapText(0, 0, FONT_KEY, label, fontSize)
       .setTint(Theme.primaryText);
     this.add(this.text);
 
+    const textW = this.text.width;
+
+    // Focus band (fades in on hover) — sized from actual text width
+    this.focusBand = scene.add.rectangle(
+      -bandPadX, -bandPadY,
+      textW + bandPadX + rightExt,
+      measured.height + bandPadY * 2,
+      Theme.focusBand
+    ).setOrigin(0).setAlpha(0);
+    this.addAt(this.focusBand, 0); // insert behind text
+
     // Hit area (covers the band area)
-    const hitW = measured.width + bandPadX * 2;
+    const hitW = textW + bandPadX + rightExt;
     const hitH = measured.height + bandPadY * 2;
     this.hitZone = scene.add.rectangle(
-      measured.width / 2, measured.height / 2,
+      textW / 2, measured.height / 2,
       hitW, hitH, 0x000000, 0
     ).setInteractive({ useHandCursor: true });
     this.add(this.hitZone);

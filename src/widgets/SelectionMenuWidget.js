@@ -82,7 +82,7 @@ export class SelectionMenuWidget {
   _build() {
     const centerView    = this._presenter.getViewpoint('center')
     const slotsInOrder  = ['background', 'leftPanel', 'rightPanel', 'preview', 'featured']
-    const depths        = { background: 0, leftPanel: 2, rightPanel: 2, preview: 3, featured: 4 }
+    const depths        = { background: 0, leftPanel: 2, rightPanel: 2, preview: 4, featured: 5 }
 
     for (const slotId of slotsInOrder) {
       const state     = centerView.layers[slotId]
@@ -347,6 +347,17 @@ export class SelectionMenuWidget {
       }
     }
 
+    // Depth priority: the active/clicked layer always renders on top.
+    // Default (center, left, right, featuredClose) → featured (dudes) on top.
+    // Only previewClose flips it so the Battle Archive zooms in front.
+    if (viewId === 'previewClose') {
+      this._layerGroups.preview?.setDepth(5)
+      this._layerGroups.featured?.setDepth(4)
+    } else {
+      this._layerGroups.preview?.setDepth(4)
+      this._layerGroups.featured?.setDepth(5)
+    }
+
     if (!instant) {
       this.scene.time.delayedCall(nextView.duration + 16, () => {
         this.widgetBusy = false
@@ -482,7 +493,8 @@ export class SelectionMenuWidget {
     if (nextItems.featured) {
       this._layerGroups.featured?.destroy()
       const state = this._presenter.getViewpoint('center').layers.featured
-      this._layerGroups.featured = this.scene.add.container(state.x, state.y).setDepth(4)
+      const featuredDepth = this.currentView === 'previewClose' ? 4 : 5
+      this._layerGroups.featured = this.scene.add.container(state.x, state.y).setDepth(featuredDepth)
       this._featuredDisplays     = []
       const featuredCbs = {
         isBusy:             () => this.widgetBusy,

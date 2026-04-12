@@ -39,6 +39,7 @@ src/
 ├── config/              # Data definitions (units, synergies, unit-catalog, layout-overrides.json)
 ├── scenes/              # Phaser Scenes (Boot, Menu, Shop, Battle, GameOver, HallOfFame, Settings, UnitLab)
 ├── systems/             # Game logic (BattleEngine, ShopManager, GhostManager, LayoutEditor, PlayerConfig)
+├── widgets/             # Reusable multi-layer UI widgets (SelectionMenuWidget). See widgets/CLAUDE.md.
 └── ui/                  # PixelUI components (Theme, Font, Button, Label, Panel, HealthBar, Card, Typewriter, TextInput)
 ```
 
