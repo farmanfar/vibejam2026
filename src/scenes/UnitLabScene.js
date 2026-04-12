@@ -11,6 +11,7 @@ import {
   getWarriors,
   saveUnitDefinitionsDraft,
 } from '../config/warriors.js';
+import { finalizeCaptureScene } from '../systems/CaptureSupport.js';
 import { getUnitTextureKey } from '../rendering/UnitArt.js';
 import { LayoutEditor } from '../systems/LayoutEditor.js';
 
@@ -249,6 +250,7 @@ export class UnitLabScene extends Scene {
     this._renderList();
     this._renderSummary();
     this._renderDetailPane();
+    finalizeCaptureScene('UnitLab');
 
     this.events.once('shutdown', () => {
       LayoutEditor.unregisterScene('UnitLab');

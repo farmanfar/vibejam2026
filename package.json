@@ -7,14 +7,16 @@
     "dev": "vite",
     "build": "vite build",
     "preview": "vite preview",
+    "capture:scene": "node scripts/capture-scene.mjs",
     "units:seed": "node scripts/seed-unit-config.mjs",
     "units:import": "node scripts/import-units.mjs"
   },
   "devDependencies": {
+    "playwright": "^1.59.1",
     "vite": "^8.0.4"
   },
   "dependencies": {
-    "phaser": "^4.0.0",
-    "@supabase/supabase-js": "^2.49.8"
+    "@supabase/supabase-js": "^2.49.8",
+    "phaser": "^4.0.0"
   }
 }

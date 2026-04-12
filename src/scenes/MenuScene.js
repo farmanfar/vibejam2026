@@ -1,6 +1,7 @@
 import { Scene } from 'phaser';
 import { Theme, FONT_KEY, PixelButton, PixelLabel, PixelTypewriter, PixelTextInput } from '../ui/index.js';
 import { PlayerConfig } from '../systems/PlayerConfig.js';
+import { finalizeCaptureScene } from '../systems/CaptureSupport.js';
 import { LayoutEditor } from '../systems/LayoutEditor.js';
 import { getUnitValidation } from '../config/warriors.js';
 
@@ -232,5 +233,6 @@ export class MenuScene extends Scene {
     });
 
     console.log('[Menu] Scene created successfully');
+    finalizeCaptureScene('Menu');
   }
 }

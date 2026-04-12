@@ -1,5 +1,6 @@
 import { Scene } from 'phaser';
 import { Theme, FONT_KEY, PixelLabel, PixelButton } from '../ui/index.js';
+import { finalizeCaptureScene } from '../systems/CaptureSupport.js';
 import { LayoutEditor } from '../systems/LayoutEditor.js';
 
 export class SettingsScene extends Scene {
@@ -37,5 +38,6 @@ export class SettingsScene extends Scene {
     });
 
     console.log('[Settings] Scene created');
+    finalizeCaptureScene('Settings');
   }
 }

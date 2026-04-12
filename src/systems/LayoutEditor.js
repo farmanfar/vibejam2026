@@ -30,7 +30,7 @@ const SCALE_FACTOR = 1.1            // 10% per step
 export class LayoutEditor {
   static _game = null
   static _enabled = false
-  static _registry = new Map()   // 'Scene.elementId' -> { element, defaultX, defaultY, defaultScale, scene }
+  static _registry = new Map()   // 'Scene.elementId' -> { element, defaultX, defaultY, defaultScale, scene, meta }
   static _overlays = []          // { key, text } — BitmapText position labels
   static _dragState = null       // { key, element, offsetX, offsetY, startX, startY }
   static _selectedKey = null     // persists after drag for hotkey targeting
@@ -70,7 +70,7 @@ export class LayoutEditor {
    * Register a UI element for layout editing.
    * Applies any saved overrides (position + scale) immediately.
    */
-  static register(scene, elementId, element, defaultX, defaultY) {
+  static register(scene, elementId, element, defaultX, defaultY, meta = {}) {
     const key = `${scene.scene.key}.${elementId}`
     const defaultScale = element.scaleX ?? 1
 
@@ -83,7 +83,7 @@ export class LayoutEditor {
       console.log(`[Layout] ${key} scale override: ${defaultScale} → ${overrides.scale}`)
     }
 
-    this._registry.set(key, { element, defaultX, defaultY, defaultScale, scene })
+    this._registry.set(key, { element, defaultX, defaultY, defaultScale, scene, meta })
 
     const s = Math.round(element.scaleX * 100) / 100
     console.log(`[Layout] ${key} at (${Math.round(overrides.x)}, ${Math.round(overrides.y)}) scale=${s}`)
@@ -601,6 +601,41 @@ export class LayoutEditor {
     return { x: element.x - 40, y: element.y - 20, width: 80, height: 40 }
   }
 
+  static _inferElementKind(element, meta = {}) {
+    if (meta.kind) return meta.kind
+
+    if (element.panelW != null && element.panelH != null) return 'panel'
+    if (element.cardW != null && element.cardH != null) return 'card'
+    if (element.btnW != null && element.btnH != null) return 'button'
+    if (element.hitZone && element.hitZone.width) return 'button'
+    if (typeof element.text === 'string') return 'text'
+    if (element.displayWidth > 0 && element.displayHeight > 0) return 'image'
+
+    return 'unknown'
+  }
+
+  static _extractElementText(element) {
+    return typeof element.text === 'string' ? element.text : null
+  }
+
+  static showSceneOverlays(sceneKey) {
+    const prefix = `${sceneKey}.`
+
+    this._overlays = this._overlays.filter(o => {
+      if (o.key.startsWith(prefix)) {
+        if (o.text && o.text.scene) o.text.destroy()
+        return false
+      }
+      return true
+    })
+
+    for (const [key, entry] of this._registry) {
+      if (key.startsWith(prefix)) {
+        this._showOverlay(key, entry.element, entry.scene)
+      }
+    }
+  }
+
   // ── Overlays ──────────────────────────────────────────────────────────
 
   static _showOverlay(key, element, scene) {
@@ -776,6 +811,49 @@ export class LayoutEditor {
     }
 
     return json
+  }
+
+  static dumpSnapshot() {
+    const scene = this._getActiveScene()
+    const sceneKey = scene?.scene?.key ?? null
+    const prefix = sceneKey ? `${sceneKey}.` : ''
+    const width = Number(this._game?.config?.width ?? GAME_W)
+    const height = Number(this._game?.config?.height ?? GAME_H)
+    const elements = []
+
+    for (const [key, entry] of this._registry) {
+      if (prefix && !key.startsWith(prefix)) continue
+
+      const bounds = this._getElementBounds(entry.element)
+      const visible = entry.element.visible !== false && entry.element.alpha !== 0
+      const snapshotEntry = {
+        key,
+        id: key.includes('.') ? key.slice(key.indexOf('.') + 1) : key,
+        kind: this._inferElementKind(entry.element, entry.meta),
+        x: bounds.x,
+        y: bounds.y,
+        width: bounds.width,
+        height: bounds.height,
+        originX: entry.element.originX ?? null,
+        originY: entry.element.originY ?? null,
+        scaleX: entry.element.scaleX ?? 1,
+        scaleY: entry.element.scaleY ?? 1,
+        visible,
+      }
+
+      const text = this._extractElementText(entry.element)
+      if (text !== null) {
+        snapshotEntry.text = text
+      }
+
+      elements.push(snapshotEntry)
+    }
+
+    return {
+      scene: sceneKey,
+      gameSize: { width, height },
+      elements,
+    }
   }
 
   /**

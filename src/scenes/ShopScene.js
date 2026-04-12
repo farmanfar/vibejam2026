@@ -6,6 +6,7 @@ import { ShopManager } from '../systems/ShopManager.js'
 import { GhostManager } from '../systems/GhostManager.js'
 import { BattleEngine } from '../systems/BattleEngine.js'
 import { getEnabledWarriors } from '../config/warriors.js'
+import { finalizeCaptureScene } from '../systems/CaptureSupport.js'
 import { LayoutEditor } from '../systems/LayoutEditor.js'
 import { getUnitTextureKey } from '../rendering/UnitArt.js'
 
@@ -20,10 +21,12 @@ export class ShopScene extends Scene {
     this.wins = data.wins || 0
     this.losses = data.losses || 0
     this.runId = data.runId
-    this.team = data.team || []
+    this.team = Array.isArray(data.team) ? data.team.map(w => ({ ...w })) : []
     this.availableWarriors = getEnabledWarriors()
     this.shop = new ShopManager(this.availableWarriors, this.stage)
-    this.shopOffer = this.shop.roll()
+    this.shopOffer = Array.isArray(data.shopOffer)
+      ? data.shopOffer.map(w => (w ? { ...w } : null))
+      : this.shop.roll()
 
     this.teamCountLabel = null
     this.goldLabel = null
@@ -93,6 +96,7 @@ export class ShopScene extends Scene {
     })
 
     console.log('[Shop] Scene created successfully')
+    finalizeCaptureScene('Shop')
   }
 
   _drawShopCards() {

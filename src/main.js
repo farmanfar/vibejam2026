@@ -8,6 +8,7 @@ import { HallOfFameScene } from './scenes/HallOfFameScene.js';
 import { SettingsScene } from './scenes/SettingsScene.js';
 import { UnitLabScene } from './scenes/UnitLabScene.js';
 import { LayoutEditor } from './systems/LayoutEditor.js';
+import { resetCaptureReady } from './systems/CaptureSupport.js';
 
 const config = {
   type: AUTO,
@@ -24,5 +25,6 @@ const config = {
   scene: [BootScene, MenuScene, ShopScene, BattleScene, GameOverScene, HallOfFameScene, SettingsScene, UnitLabScene],
 };
 
+resetCaptureReady();
 const game = new Game(config);
 LayoutEditor.init(game);

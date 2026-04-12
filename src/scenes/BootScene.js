@@ -4,6 +4,7 @@ import { Theme } from '../ui/Theme.js';
 import { initAuth } from '../supabase.js';
 import { getAllParallaxAssets } from '../rendering/FactionPalettes.js';
 import { getWarriors } from '../config/warriors.js';
+import { resetCaptureReady, resolveCaptureRoute } from '../systems/CaptureSupport.js';
 
 export class BootScene extends Scene {
   constructor() {
@@ -69,6 +70,8 @@ export class BootScene extends Scene {
   }
 
   create() {
+    resetCaptureReady();
+
     // Initialize the bitmap font from embedded glyph data
     PixelFont.init(this);
     initAuth();
@@ -82,6 +85,13 @@ export class BootScene extends Scene {
       'THE HIRED SWORDS',
       7 * 6,
     ).setOrigin(0.5).setTint(Theme.accent);
+
+    const captureRoute = resolveCaptureRoute();
+    if (captureRoute) {
+      console.log(`[Boot] Starting capture preset scene: ${captureRoute.sceneKey}`);
+      this.scene.start(captureRoute.sceneKey, captureRoute.data);
+      return;
+    }
 
     this.time.delayedCall(600, () => {
       this.scene.start('Menu');

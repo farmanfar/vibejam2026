@@ -1,6 +1,7 @@
 import { Scene } from 'phaser'
 import { Theme, FONT_KEY, PixelLabel, PixelButton, FloatingBanner } from '../ui/index.js'
 import { GhostManager } from '../systems/GhostManager.js'
+import { finalizeCaptureScene } from '../systems/CaptureSupport.js'
 import { LayoutEditor } from '../systems/LayoutEditor.js'
 
 export class HallOfFameScene extends Scene {
@@ -11,27 +12,27 @@ export class HallOfFameScene extends Scene {
   init(data = {}) {
     this.wins = data.wins ?? 0
     this.losses = data.losses ?? 0
-    this.team = data.team ?? []
+    this.team = Array.isArray(data.team) ? data.team.map(unit => ({ ...unit })) : []
     this.runId = data.runId ?? null
+    this.fixtureLeaderboard = Array.isArray(data.fixtureLeaderboard)
+      ? data.fixtureLeaderboard.map(entry => ({ ...entry }))
+      : null
     this.fromMenu = !this.runId
   }
 
   create() {
     const { width, height } = this.cameras.main
 
-    // Scanlines
     for (let y = 0; y < height; y += 4) {
       this.add.rectangle(width / 2, y, width, 1, 0x000000, 0.08)
     }
 
     if (this.fromMenu) {
-      // Accessed from main menu — just show leaderboard
       const hofTitle = new PixelLabel(this, width / 2, height * 0.14, 'HALL OF FAME', {
         scale: 6, color: 'accent', align: 'center',
       })
       LayoutEditor.register(this, 'title', hofTitle, width / 2, height * 0.14)
     } else {
-      // Accessed after winning — show champion title + record
       const champTitle = new PixelLabel(this, width / 2, height * 0.18, 'CHAMPION!', {
         scale: 8, color: 'accent', align: 'center',
       })
@@ -42,43 +43,23 @@ export class HallOfFameScene extends Scene {
       })
       LayoutEditor.register(this, 'record', record, width / 2, height * 0.34)
 
-      GhostManager.submitChampion(this.runId, this.team, this.wins, this.losses)
+      if (!this.fixtureLeaderboard) {
+        GhostManager.submitChampion(this.runId, this.team, this.wins, this.losses)
+      }
     }
 
-    // Divider
     const dividerY = this.fromMenu ? height * 0.26 : height * 0.42
     const gfx = this.add.graphics()
     gfx.lineStyle(1, Theme.panelBorder, 0.5)
     gfx.lineBetween(width * 0.2, dividerY, width * 0.8, dividerY)
 
-    // Leaderboard text
     const leaderY = this.fromMenu ? height * 0.32 : height * 0.50
-    this.leaderText = this.add.bitmapText(width / 2, leaderY, FONT_KEY, '', 7 * 2)
-      .setOrigin(0.5, 0).setTint(Theme.mutedText)
+    this.leaderText = this.add.bitmapText(width / 2, leaderY, FONT_KEY, '', 14)
+      .setOrigin(0.5, 0)
+      .setTint(Theme.mutedText)
     LayoutEditor.register(this, 'leaderboard', this.leaderText, width / 2, leaderY)
-
-    // Loading indicator
     this.leaderText.setText('Loading...')
 
-    GhostManager.fetchLeaderboard().then(result => {
-      if (result === null) {
-        // Error or offline
-        this.leaderText.setText('COULD NOT LOAD LEADERBOARD')
-        console.warn('[HallOfFame] Leaderboard fetch failed')
-      } else if (result.length === 0) {
-        // Genuine empty
-        this.leaderText.setText('NO CHAMPIONS YET')
-        console.log('[HallOfFame] Leaderboard is empty')
-      } else {
-        const lines = result.slice(0, 8).map((e, i) =>
-          `${i + 1}. ${e.wins}W - ${e.losses}L`
-        )
-        this.leaderText.setText(lines.join('\n'))
-        console.log(`[HallOfFame] Showing ${lines.length} leaderboard entries`)
-      }
-    })
-
-    // Buttons
     if (this.fromMenu) {
       const backBtn = new PixelButton(this, width / 2, height * 0.82, 'BACK', () => {
         this.scene.start('Menu')
@@ -98,12 +79,43 @@ export class HallOfFameScene extends Scene {
       LayoutEditor.register(this, 'menuBtn', menuBtn, width / 2 + 110, height * 0.82)
     }
 
-    // Shutdown cleanup
     this.events.once('shutdown', () => {
       console.log('[HallOfFame] Shutdown')
       LayoutEditor.unregisterScene('HallOfFame')
     })
 
+    if (this.fixtureLeaderboard) {
+      this._applyLeaderboard(this.fixtureLeaderboard)
+      console.log(`[HallOfFame] Scene created (fromMenu: ${this.fromMenu})`)
+      finalizeCaptureScene('HallOfFame')
+      return
+    }
+
+    GhostManager.fetchLeaderboard().then(result => {
+      this._applyLeaderboard(result)
+      finalizeCaptureScene('HallOfFame')
+    })
+
     console.log(`[HallOfFame] Scene created (fromMenu: ${this.fromMenu})`)
+  }
+
+  _applyLeaderboard(result) {
+    if (result === null) {
+      this.leaderText.setText('COULD NOT LOAD LEADERBOARD')
+      console.warn('[HallOfFame] Leaderboard fetch failed')
+      return
+    }
+
+    if (result.length === 0) {
+      this.leaderText.setText('NO CHAMPIONS YET')
+      console.log('[HallOfFame] Leaderboard is empty')
+      return
+    }
+
+    const lines = result.slice(0, 8).map((entry, index) =>
+      `${index + 1}. ${entry.wins}W - ${entry.losses}L`
+    )
+    this.leaderText.setText(lines.join('\n'))
+    console.log(`[HallOfFame] Showing ${lines.length} leaderboard entries`)
   }
 }

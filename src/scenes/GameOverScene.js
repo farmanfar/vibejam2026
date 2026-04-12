@@ -1,5 +1,6 @@
 import { Scene } from 'phaser'
 import { Theme, PixelLabel, PixelButton, FloatingBanner } from '../ui/index.js'
+import { finalizeCaptureScene } from '../systems/CaptureSupport.js'
 import { LayoutEditor } from '../systems/LayoutEditor.js'
 
 export class GameOverScene extends Scene {
@@ -45,12 +46,12 @@ export class GameOverScene extends Scene {
     }, { style: 'text', scale: 2 })
     LayoutEditor.register(this, 'menuBtn', menuBtn, width / 2, height * 0.70)
 
-    // Shutdown cleanup
     this.events.once('shutdown', () => {
       console.log('[GameOver] Shutdown')
       LayoutEditor.unregisterScene('GameOver')
     })
 
-    console.log(`[GameOver] Scene created — ${this.wins}W ${this.losses}L`)
+    console.log(`[GameOver] Scene created - ${this.wins}W ${this.losses}L`)
+    finalizeCaptureScene('GameOver')
   }
 }
