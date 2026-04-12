@@ -12,18 +12,21 @@
 
 ## Game
 
-- Auto-battler roguelike: recruit warriors, build synergies, fight AI/ghost opponents, survive 9 stages
+- Auto-battler roguelike: recruit warriors, build synergies, fight AI/ghost opponents
 - 960x540 pixel art, m5x7 bitmap font, DarkTech theme
-- 5 factions: Robot, Undead, Beast, Fantasy, Tribal
-- Currency is **credits** (not gold). All references should use "credits."
-- All art is procedural placeholders for now — final art from PENUSBMIC (STRANDED + THE DARK packs)
+- 5 factions (Robot, Undead, Beast, Fantasy, Tribal) + 4-5 classes (Warrior, Mage, Ranger, Tank, Support) — dual-tag system
+- Currency is **credits** (not gold). ⚠️ Code still uses `gold` everywhere — rename pending.
+- Art pipeline: PENUSBMIC assets imported via unit-catalog system. Placeholder textures generated at boot for units without art.
+- **Full design spec:** `design/game-design-spec.md` (locked 2026-04-11)
 
 ## Design Direction
 
-- **Tabletop card game feel.** Players arrange warriors in a single-file row.
-- **Star levels (TFT-style).** Combine 2 copies → 2-star. Combine 2x 2-star → 3-star. Top tier → legendary boss card with unique abilities.
-- **Commanders.** Random commander assigned at run start. Provides synergies to card types. Can be swapped for credits (full replacement, old one removed). Art: PENUSBMIC fantasy cards.
-- **Shop visual tiers.** Shop background changes every 3 wins (aligned with parallax). Cosmetic only — no gameplay effect.
+- **SAP-style economy.** 10 credits/round flat. 1 credit reroll. Full refund same shop phase, ceil(cost/2) after battle. No loss penalty.
+- **Dual-tag synergies (Underlords-style).** Faction synergies give stat bonuses. Class synergies give mechanical effects (armor, splash, double-attack, taunt, heal).
+- **Star levels (TFT combine).** 2 copies → 2-star, 4 copies → 3-star. +1/+1 per star (SAP flat scaling). Legendaries cut for now.
+- **Commanders.** Random at run start. Baseline: reduce synergy thresholds (never below 2). Each unique. Swap offered every 3 wins by merchant for 10 credits.
+- **Merchants.** Random each round, type weighted by team comp. Mechanical — influences shop unit pool/odds.
+- **Dynamic run length.** Play until 9 wins or 3 losses. 5 bench slots from stage 1. No permadeath — team persists. Full HP heal each round.
 
 ## Structure
 
@@ -33,10 +36,10 @@ Each subdirectory has its own CLAUDE.md with subsystem-specific rules.
 src/
 ├── main.js              # Phaser Game config (960x540, pixelArt, scene order)
 ├── supabase.js          # Supabase client, anonymous auth
-├── config/              # Data definitions (warriors, synergies, layout-overrides.json)
-├── scenes/              # Phaser Scenes (Boot, Menu, Shop, Battle, GameOver, HallOfFame, Settings)
-├── systems/             # Game logic (BattleEngine, ShopManager, GhostManager, LayoutEditor)
-└── ui/                  # PixelUI components (Theme, Font, Button, Label, Panel, etc.)
+├── config/              # Data definitions (units, synergies, unit-catalog, layout-overrides.json)
+├── scenes/              # Phaser Scenes (Boot, Menu, Shop, Battle, GameOver, HallOfFame, Settings, UnitLab)
+├── systems/             # Game logic (BattleEngine, ShopManager, GhostManager, LayoutEditor, PlayerConfig)
+└── ui/                  # PixelUI components (Theme, Font, Button, Label, Panel, HealthBar, Card, Typewriter, TextInput)
 ```
 
 ## Workflow
@@ -59,11 +62,11 @@ This is a Codex-reviewed project. Follow this loop:
 Log aggressively. The user debugs by pasting console output — silent failures are invisible.
 
 - **Every layout-managed element:** `[Layout] Scene.ElementId at (x, y)`
-- **Every state transition:** scene changes, W/L updates, gold changes
+- **Every state transition:** scene changes, W/L updates, credit changes
 - **Every network call:** before, result, error with context
 - **Every fallback path:** log WHY the fallback was taken
 - **Every error:** never `catch (_) {}` — always `catch (e) { console.error('[System] context:', e) }`
-- **System prefixes:** `[Layout]`, `[Editor]`, `[Auth]`, `[Ghost]`, `[Shop]`, `[Battle]`, `[Menu]`
+- **System prefixes:** `[Layout]`, `[Editor]`, `[Auth]`, `[Ghost]`, `[Shop]`, `[Battle]`, `[Menu]`, `[Boot]`, `[UnitLab]`
 
 ## UI / Visual Work
 

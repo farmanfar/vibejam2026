@@ -5,32 +5,41 @@ Phaser Scene classes. Each scene is a full-screen game state.
 ## Scene Flow
 
 ```
-Boot → Menu → Shop ⟷ Battle → GameOver
-                              → HallOfFame (9 wins)
+Boot → Menu → Shop ⟷ Battle → Shop (win/loss, team persists — no permadeath)
+                 ↓              ↓ (3 losses) → GameOver
+                 ↓              ↓ (9 wins) → HallOfFame
+                 ├→ Settings (stub)
+                 ├→ HallOfFame (leaderboard viewer, no runId)
+                 └→ UnitLab (unit editor)
 ```
 
-Scenes pass state via `init(data)` with: `{ stage, gold, wins, losses, team, runId, opponent }`.
+Scenes pass state via `init(data)` with: `{ stage, credits, wins, losses, team, runId, opponent, commander, merchant }`.
+Dynamic run length: play rounds until 9 wins or 3 losses (not fixed 9 stages).
 
 ## Files
 
-- **BootScene.js** — Generates placeholder textures (warrior sprites, merchant). Initializes PixelFont and Supabase auth. No real asset loading yet.
-- **MenuScene.js** — Title screen. "PLAY" button starts a run with `{ stage: 1, gold: 10, runId }`. Shows art credits (PENUSBMIC).
-- **ShopScene.js** — Core recruitment UI. Rolls 4 warrior cards via ShopManager, team bench (5 slots), buy/sell/reroll. Async ghost matchmaking on "FIGHT!" button.
-- **BattleScene.js** — Renders both teams with health bars, animates battle log at 500ms/step, camera shake on hits. Routes to Shop (win/loss) or GameOver/HallOfFame on completion.
-- **GameOverScene.js** — Shown at 3 losses. Displays W-L record, play again / main menu.
-- **HallOfFameScene.js** — Shown at 9 wins. Submits champion to Supabase, displays top 8 leaderboard.
+- **BootScene.js** — Preloads parallax textures (29 PENUSBMIC sets, ~180 PNGs via `getAllParallaxAssets()`). Generates placeholder textures for warriors (colored squares with eyes, per tier). Generates merchant placeholder. Initializes PixelFont and Supabase auth. 600ms delay then transitions to Menu.
+- **MenuScene.js** — Title screen with name input (PixelTextInput), typewriter messages, merchant with idle bob/breathing animation + reflection. Buttons: START GAME, HALL OF FAME, SETTINGS, UNIT LAB. Shows art ready count (`${readyArtCount}/${totalUnits}`). Passes `{ stage: 1, gold: 10, wins: 0, losses: 0, team: [], runId }` to Shop. Scanline overlay.
+- **ShopScene.js** — Core recruitment UI. Header: stage label, gold label, lives label (3 - losses). Merchant with quote. 4 shop cards via ShopManager. Team bench (5 slots) with sell-on-click (refunds 1 gold). Buttons: REROLL (1g), FIGHT! (triggers ghost snapshot + opponent fetch, then transitions to Battle).
+- **BattleScene.js** — Split parallax backgrounds (left/right random PENUSBMIC sets). Ground grid below parallax. Player team (left, x:100-420) vs enemy team (right, x:540-860) at y=320. Health bars above units. VS text center, battle log center-bottom. Animates at 500ms/step with camera shake. Awards gold on completion (3 + stage for win, 2 for loss). Survivors carry over (units with currentHp > 0). Routes to appropriate next scene.
+- **GameOverScene.js** — Shown at 3 losses. Displays W-L record. Buttons: PLAY AGAIN, MAIN MENU. Scanline overlay.
+- **HallOfFameScene.js** — Two modes: champion (has runId, submits to Supabase, shows "CHAMPION!") or leaderboard viewer (from menu, shows "HALL OF FAME"). Fetches and displays top 8 as `${wins}W - ${losses}L`. Buttons vary by mode.
+- **SettingsScene.js** — Stub. Shows "Nothing here yet..." placeholder and BACK button. Wired from Menu.
+- **UnitLabScene.js** — Full unit editor. Left panel: search filter, pagination (12 per page), unit list. Right panel: HP/ATK/COST/TIER/FACTION/DEV COMMENT/FLAVOR TEXT editing. Preview sprite. Import status and field validation. Buttons: EXPORT (downloads JSON), RESET (resets to repo defs), BACK. Autosaves drafts to localStorage.
 
 ## Patterns
 
-- All UI built from `src/ui/` components (PixelLabel, PixelButton, PixelPanel, WarriorCard, FloatingBanner).
-- No scene uses `this.load` for external assets — everything is generated textures from BootScene.
+- All UI built from `src/ui/` components (PixelLabel, PixelButton, PixelPanel, WarriorCard, FloatingBanner, PixelTypewriter, PixelTextInput).
+- No scene uses `this.load` for external assets at runtime — parallax PNGs preloaded in Boot, everything else is generated textures.
 - Scanline overlay (CRT effect) on Menu, GameOver, HallOfFame screens.
 - Survivors carry over between battles (damaged units keep reduced HP).
 - **LayoutEditor registration:** all authored UI elements must be registered with `LayoutEditor.register(this, 'elementId', element, defaultX, defaultY)`. Hook `this.events.once('shutdown', () => LayoutEditor.unregisterScene(this.scene.key))` for cleanup. Do NOT register decorative elements (scanlines, grid lines, dividers).
 
 ## Upcoming Changes
 
-- **ShopScene** will be the most heavily modified scene. Needs: star-level combining UI, commander display + swap button, credit cost for commander swap, parallax background that changes every 3 wins.
+- **ShopScene:** Star-level combining UI (auto-merge on duplicate buy). Commander display + swap offer every 3 wins (10 credits). Merchant display (random per round, weighted by team). Sell refund: full during shop phase, ceil(cost/2) after battle. 10 credits/round flat income. 5 bench slots from stage 1 (remove team-size scaling). No permadeath — full team persists.
+- **BattleScene:** Remove permadeath (dead units come back at full HP next round). Support class synergy effects (armor, splash, double-attack, taunt, heal). Trigger abilities (on-attack, on-hurt, on-faint, start-of-battle).
 - **Currency rename:** all `gold` references → `credits` throughout scenes.
-- **New scene or UI layer** for commander selection at run start (random assignment).
-- Battle results need to account for star-level stat bonuses and commander synergies.
+- **Commander assignment** at run start (random) — new scene or UI layer.
+- **Dynamic run length:** Rounds continue until 9 wins or 3 losses (not fixed stage count).
+- **SettingsScene** needs actual settings (audio, display, keybinds, etc.).
