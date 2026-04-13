@@ -1,0 +1,5 @@
+{
+  "description": "Folk mirror — identical teams, tests seed fairness",
+  "player": ["valiant", "hog_knight", "tribal_chopper"],
+  "enemy": ["valiant", "hog_knight", "tribal_chopper"]
+}

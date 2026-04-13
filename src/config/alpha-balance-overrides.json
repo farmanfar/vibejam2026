@@ -1,0 +1,8 @@
+{
+  "dagger_bandit": { "hp": 2, "atk": 2 },
+  "tribal_chopper": { "hp": 3, "atk": 3 },
+  "dagger_mush": { "hp": 4, "atk": 2 },
+  "colossal_boss": { "hp": 8, "atk": 1 },
+  "blood_king": { "hp": 6, "atk": 2 },
+  "archer_bandit": { "hp": 1, "atk": 1 }
+}

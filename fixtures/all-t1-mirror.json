@@ -1,0 +1,5 @@
+{
+  "description": "T1 mirror for balance baseline — runs cleanly across all seeds",
+  "player": ["ghoul", "minion_001", "dagger_bandit"],
+  "enemy": ["ghoul", "minion_001", "dagger_bandit"]
+}

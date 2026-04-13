@@ -33,13 +33,20 @@ From AnimTester readout (tag — frame count; note: all entries flagged):
 
 ## Abilities
 
-**Kill Piercing.** Whenever Valiant kills an enemy unit with an attack, that
-attack's damage continues past the target and hits the next living enemy in
-line for 1 additional damage (same as Electrocutioner's inherent piercing,
-but triggered only on kills, not always active).
+**Kill Piercing.** Whenever Valiant kills an enemy with an attack, that
+attack pierces past the target and deals **Valiant's current ATK value**
+(not a flat 1) as pierce damage to the next living enemy in the opposing
+lineup. "Current ATK" means Valiant's live stat at the moment of the kill,
+including Knight Honorbound Stance synergy buffs — so a 3-Knight team
+(+2/+2 static) would have a Valiant at 3 ATK piercing for 3.
 
-Synergizes with Folk sacrifice/buff compositions — kills trigger both pierce
-damage AND death-trigger buffs for subsequent units.
+If the pierce damage itself kills the next enemy, it does NOT chain
+further — one kill, one pierce, done. This is an on-kill trigger from a
+regular attack action only.
+
+Synergizes with Knight-heavy comps (bigger ATK → bigger pierce) and Folk
+sacrifice/buff compositions (kills trigger both pierce AND death-trigger
+buffs for subsequent units).
 
 ## Rendering Notes
 

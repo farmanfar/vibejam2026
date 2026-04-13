@@ -32,14 +32,21 @@ From AnimTester readout (tag — frame count):
 
 ## Abilities
 
-**Reactive Armor.** Dark Mech has a **10% chance to negate all damage** when
-attacked. This is a passive proc — on each hit received, roll 1d10; on a result
-of 1 (10% chance), the damage is completely blocked. The blocked hit plays the
-`hit` animation (2F) normally, but no HP is deducted.
+Dark Mech has no unique unit ability handler. Her identity is the **Tank
+class mechanic**, of which she is the archetypal representative.
 
-Tier 2 tank unit. Moderate HP (4), low damage (1), but the evasion proc makes
-him harder to burst down and rewards keeping him alive. Synergizes with comps
-that value durability and proc-based mechanics (other random-trigger abilities).
+**Reactive Armor (Tank class synergy).** Every Tank on the team has a base
+10% chance on each incoming hit to negate all damage from that hit. The
+chance scales with Tank count: **+10% per additional Tank, capped at 50%**
+(so 1 Tank = 10%, 2 Tanks = 20%, ... 5+ Tanks = 50%). When the proc fires,
+the `hit` animation (2F) plays normally but no HP is deducted.
+
+This is a class-wide mechanic, not a Dark Mech unique. Any unit with
+`class: Tank` gets the same proc. Dark Mech is the archetypal Tank because
+her name and sprite already read as the scaling reactive-armor robot.
+
+Tier 2 tank unit. Moderate HP (4), low damage (1), but the evasion proc
+makes her harder to burst down and rewards stacking multiple Tanks.
 
 ## Rendering Notes
 

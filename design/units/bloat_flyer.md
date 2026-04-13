@@ -1,7 +1,7 @@
 ---
 id: bloat_flyer
 name: Bloat Flyer
-faction: Big Bug
+faction: Monster
 class: Assassin
 tier: 2
 hp: 4
@@ -29,13 +29,25 @@ From AnimTester readout (tag — frame count; note: top entry partially obscured
 
 ## Abilities
 
-**Toxic Cascade.** Bloat Flyer coats enemies with poison on hit. Each
-poisoned enemy has a stacking chance to bounce the poison to the next living
-enemy upon death: 10% per poison stack, capped at 50% (5 stacks maximum).
+Bloat Flyer has no unique unit ability handler. Her offensive identity comes
+entirely from her **Assassin class mechanic**: every Assassin attack applies
+1 poison stack to its target in addition to normal damage.
+
+**Toxic Cascade (global poison rule, not a unique unit ability).** Whenever
+ANY poisoned unit on the field dies, it rolls a bounce chance: 10% per
+poison stack carried at time of death, capped at 50% (5 stacks maximum). On
+proc, all of the dying unit's stacks transfer to the next living enemy in
+the target team's lineup. This rule is global and applies to every poisoned
+unit, not just units Bloat Flyer poisoned. She benefits from it the same way
+any Assassin-poison team does.
 
 Synergizes with high-kill-rate compositions (Berserkers, Folk death-triggers)
 — the more enemy deaths, the more poison bounces, the more targets become
 infected. Creates a spreading contagion loop.
+
+> **Faction reframe:** Bloat Flyer is a Monster (previously Big Bug in
+> earlier drafts). Her faction synergy is Monster reanimate (see
+> [ghoul.md](ghoul.md)).
 
 ## Rendering Notes
 

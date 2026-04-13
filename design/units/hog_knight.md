@@ -30,15 +30,23 @@ From AnimTester readout (tag — frame count):
 
 ## Abilities
 
-**Ricochet Shot.** Mounted ranged attacker. Whenever an enemy unit dies on
-the field, Hog Knight automatically shoots the next living enemy in line,
-dealing 1 damage to them (regardless of whether Hog Knight is in the front
-row or positioned behind). The shot arcs/bounces over ally heads to reach
-distant targets.
+**Ricochet Shot (unique unit ability, `on_enemy_death`).** Whenever ANY
+enemy unit dies, from ANY source — Hog Knight's attack, another ally's
+attack, a death trigger chain, poison tick, Volatile Payload blast — Hog
+Knight reactively fires one 1-damage shot at the next living enemy in
+the opposing lineup. The trigger does not require Hog Knight to have
+dealt the kill herself. It fires once per enemy death, regardless of
+Hog Knight's slot position.
 
-Creates a chaining mechanic: enemy KOs trigger immediate counter-damage to
-the next foe. Synergizes with high-kill-rate comps (Folk warriors that die
-and buff subsequent units, creating a cascade of damage chains).
+The reactive shot itself does NOT trigger Bloodlust / Kill Piercing /
+other on-kill effects from Hog Knight herself (only her basic attack
+action does). If the reactive shot kills the next enemy, that death
+fires its own triggers and can in turn fire Hog Knight's Ricochet Shot
+again — the chain is bounded by the number of living enemies.
+
+Creates a chain-damage mechanic: enemy KOs trigger immediate
+counter-damage to the next foe. Synergizes with AoE compositions
+(Ancient class), death-trigger units, and Folk sacrifice buffs.
 
 ## Rendering Notes
 

@@ -9,11 +9,17 @@
     "preview": "vite preview",
     "capture:scene": "node scripts/capture-scene.mjs",
     "units:seed": "node scripts/seed-unit-config.mjs",
-    "units:import": "node scripts/import-units.mjs"
+    "units:import": "node scripts/import-units.mjs",
+    "test": "vitest run --config vitest.config.js",
+    "test:watch": "vitest --config vitest.config.js",
+    "sim": "node scripts/sim-battle.mjs",
+    "sim:balance": "node scripts/sim-battle.mjs --fixture fixtures/all-t1-mirror.json --bulk 1000 --report",
+    "alpha:generate": "node scripts/generate-alpha-units.mjs"
   },
   "devDependencies": {
     "playwright": "^1.59.1",
-    "vite": "^8.0.4"
+    "vite": "^8.0.4",
+    "vitest": "^4.1.4"
   },
   "dependencies": {
     "@supabase/supabase-js": "^2.49.8",

@@ -41,17 +41,23 @@ From AnimTester readout (tag — frame count):
 
 ## Abilities
 
-**Honorbound Stance (Class Synergy).** Glitch Samurai gains **+1 HP and +1 ATK
-for each other Knight on your team**. This bonus is cumulative and applies at
-the start of battle (static, recalculated when new Knights enter or old ones
-leave).
+Glitch Samurai has no unique unit ability handler. She is a vanilla Knight:
+her offensive and defensive identity comes entirely from her **Knight class
+synergy**.
 
-Example: 1 Knight on team = base 3 HP / 2 ATK. 2 Knights = +1/+1 bonus = 4 HP /
-3 ATK. 3 Knights = +2/+2 bonus = 5 HP / 4 ATK, etc.
+**Honorbound Stance (Knight class synergy, NOT a Glitch Samurai unique).**
+Every Knight on the team gains **+1 HP and +1 ATK per OTHER Knight on the
+team**. This is static, applied once at battle start based on the starting
+Knight count, and does NOT recalculate mid-battle when a Knight dies. Rule
+applies uniformly to every Knight — Glitch Samurai, Valiant, Hog Knight,
+Lone Star, Relic Guardian 3, etc.
 
-Tier 2 melee Knight. Moderate base stats (3 HP, 2 ATK). The synergy rewards
-Knight-heavy compositions — building an all-Knight squad creates a powerful
-scaling effect.
+Example: 3 Knights on team = each Knight gets +2 HP / +2 ATK (2 other
+Knights × +1/+1). Glitch Samurai at base 3/2 becomes 5/4 for the battle.
+
+Tier 2 melee Knight. Moderate base stats. The synergy rewards Knight-heavy
+compositions — building an all-Knight squad creates a powerful scaling
+effect across the whole class.
 
 ## Rendering Notes
 

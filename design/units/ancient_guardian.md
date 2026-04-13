@@ -33,14 +33,24 @@ From AnimTester readout (tag — frame count):
 
 ## Abilities
 
-**Omnidirectional Pulse.** Instead of a normal single-target attack, Ancient
-Guardian fires a laser that damages **all living enemies on the field for 1
-damage each**, regardless of position or range. Uses the `laser` animation
-for the attack trigger.
+Ancient Guardian has no unique unit ability handler. Her profile is the
+**Ancient class mechanic in full** (identical to Sleeping Giant's, just at
+T3 with a different stat line).
 
-Tier 3 support/control unit. Synergizes with high-enemy-count comps (forces
-them to spread out or die to cascading 1-damage hits). Low attack (1) per
-target, but AoE scales with enemy density.
+**Omnidirectional Pulse (Ancient class AoE basic attack).** In place of a
+normal single-target attack, Ancient Guardian's basic action deals 1 damage
+(plus her current Resonance stacks) to every living enemy. Uses the `laser`
+animation (24F). Same Ancient AoE mechanic as Sleeping Giant — the two are
+mechanically identical basic attacks, just different tier / stat variants.
+
+**Ancient Resonance (Ancient class synergy).** See
+[colossal_boss.md](colossal_boss.md) for the full rule. Summary: whenever
+any Ancient deals damage, every OTHER Ancient gains +1 stack (cap 5).
+Stacks add directly to effective ATK. No self-stack. One stack per
+action, not per damage instance.
+
+Tier 3 support/control unit. Low base ATK, but AoE hits everything and
+scales through Resonance when paired with other Ancients.
 
 ## Rendering Notes
 

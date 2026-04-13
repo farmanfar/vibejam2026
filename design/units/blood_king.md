@@ -47,15 +47,27 @@ From AnimTester readout (tag — frame count):
 
 ## Abilities
 
-**Heart Slam on Death.** Blood King attacks normally for 2 damage using standard
-melee attacks. **On death,** instead of falling, he disappears and triggers the
-`heart slam` animation — a ground-shaking slam that deals **1 damage to all
-living enemies** on the field as a final, revenge-style blow.
+Blood King is the exception among Ancients: his **basic attack is still a
+standard single-target melee strike** for his current ATK value (2 at base).
+His Ancient class AoE fires specifically on death, not on attack.
 
-Tier 4 power unit with high base HP (5) and mid-tier damage (2). The death
+**Heart Slam on Death (unique unit ability, `on_faint`).** When Blood King
+dies, his death trigger fires the Ancient class AoE: deals
+`1 + blood_king.resonanceStacks` damage to every living enemy. He stays
+dead after the trigger (no Archer-style interrupt — this is revenge, not
+survival). Uses the `heart slam` animation (18 sprites, non-standard
+notation). Any new deaths caused by Heart Slam are appended to the SAME
+death batch queue and resolve in slot order before compaction.
+
+Blood King continues to participate in **Ancient Resonance** during his
+life: when any OTHER Ancient deals damage, he gains a Resonance stack
+(cap 5), and his Heart Slam benefits from those stacks on death. His own
+basic melee attack also grants stacks to other Ancients.
+
+Tier 4 power unit with high base HP and mid-tier damage. The death
 mechanic provides guaranteed AoE damage if he falls, punishing concentrated
-enemy comps and synergizing with units that scale on damage-dealt or enemy-KO
-triggers.
+enemy comps and synergizing with other Ancients (who buff his Heart Slam
+via Resonance) and death-trigger scalers.
 
 ## Rendering Notes
 

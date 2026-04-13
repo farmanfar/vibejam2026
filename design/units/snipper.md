@@ -1,7 +1,7 @@
 ---
 id: snipper
 name: Snipper
-faction: Big Bug
+faction: Monster
 class: Assassin
 tier: 1
 hp: 1

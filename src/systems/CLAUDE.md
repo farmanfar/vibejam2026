@@ -4,6 +4,7 @@ Game logic modules. No rendering — these are pure data/logic that scenes consu
 
 ## Files
 
+- **combat/** — Headless alpha combat engine (CombatCore, Registry, RNG, abilities, classes, factions). Used only by sim CLI and tests — never imported by scenes. See `combat/CLAUDE.md`.
 - **BattleEngine.js** — Turn-based auto-resolve. Front-most alive unit attacks each turn. Applies faction synergies before combat. Generates step-by-step log for animated playback. Max 50 turns. Also generates scaled enemy teams (`generateEnemyTeam(stage)`).
 - **ShopManager.js** — Weighted random unit selection. Tier availability gates by stage (stages 1-2: tiers 0-1, stages 7+: all tiers). 4 cards per roll. Weight formula: base weights `[50, 30, 20, 10, 5]` plus stage bonus.
 - **GhostManager.js** — Supabase-backed async PvP. Snapshots player teams, fetches opponent ghosts matched by W-L record (picks random from up to 20 matches), falls back to synthetic AI. Also handles Hall of Fame submissions and leaderboard (top 50).

@@ -34,19 +34,41 @@ From AnimTester readout (tag — frame count):
 
 ## Abilities
 
-**Volley Arrow.** Instead of a normal single-target attack, Archer fires an
-arrow that damages **all living enemies on the field for 1 damage each**,
-regardless of position or range. Does not consume ammunition or stamina.
-Synergizes with high-enemy-count comps (scales damage output with enemy
-density).
+**Volley Arrow (Ancient class AoE basic attack).** In place of a normal
+single-target attack, Archer's basic action deals 1 damage (plus her current
+Resonance stacks) to every living enemy. This is the Ancient class AoE, the
+same mechanic as Sleeping Giant and Ancient Guardian — see
+[colossal_boss.md](colossal_boss.md) for the full Ancient class rule
+including Resonance stacking. Archer participates fully in Ancient Resonance
+with other Ancients on the team.
 
-**Death-Defying Repositioning.** **Once per combat:** If Archer would be killed
-while serving as the active fighter (top of the lineup), instead of dying, she
-uses the `special attack` animation to vanish and reappear at the back of the
-lineup. Upon reappearing, she fires a point-blank AoE attack that deals **1
-damage to all enemies and friendlies in front of her position** in the lineup
-(a "pass-through" damage volley). After this repositioning, Archer continues
-battling normally.
+**Death-Defying Repositioning (unique unit ability, `on_faint`, single-use
+per battle).** The first time Archer would take lethal damage in a battle,
+her death trigger intercepts the kill: instead of being removed, she clears
+her `dying` flag, is moved to the back slot of her team, and fires a
+point-blank AoE that deals **1 damage to every enemy AND every friendly in
+slots in front of her new back position** — friendly fire is intentional.
+The AoE uses the `special attack` animation (26F). After this trigger,
+Archer continues battling normally with whatever HP she has. She flags
+`usedDeathDefy: true` at that point; any subsequent lethal damage in the
+same battle resolves as a normal death (no second interrupt).
+
+**`on_faint` interrupt contract (rendering + runtime):**
+1. Archer takes lethal damage → health drops to 0.
+2. She is queued into the death batch with `dying: true`.
+3. Her `on_faint` handler fires in registration order:
+   - Sets `dying: false`.
+   - Moves her to the back slot of her team.
+   - Fires the friendly-fire AoE against all units in slots in front of
+     her new position (both teams).
+4. Any new deaths caused by the AoE are appended to the SAME death batch
+   (not a new batch) and resolve via the normal slot-order tiebreak.
+5. One compaction runs after the whole batch settles. Archer is skipped
+   during removal because `dying === false`.
+6. Subsequent lethal damage skips the handler — she dies normally.
+
+Tier 3 / 4 Ancient Folk hybrid. Scales through Resonance and survives one
+lethal hit per battle.
 
 ## Rendering Notes
 

@@ -38,30 +38,37 @@ From AnimTester readout (tag — frame count):
 
 ## Abilities
 
-**Omnidirectional Slam.** Sleeping Giant attacks all living enemies
-simultaneously for 1 damage each, using the `super attack` animation (18F).
-Unlike most units that target a single foe, her slam radius hits the entire
-enemy lineup. Damage output scales with enemy density.
+Sleeping Giant has no unique unit ability handler. Her offensive profile is
+**the Ancient class mechanic in full**: Ancient AoE basic attack plus
+Ancient Resonance stacking.
 
-**Ancient Resonance (Faction Synergy).** Whenever ANY unit with the Ancient
-class deals damage to an enemy on your team, ALL OTHER Ancients on your team
-permanently gain **+1 attack to their ability** for the rest of the battle.
-Sleeping Giant plays the `buff` animation (13F) when receiving this buff stack,
-and the bonus is cumulative — multiple Ancients acting creates multiplicative
-bonuses.
+**Omnidirectional Slam (Ancient class AoE basic attack).** In place of a
+normal single-target attack, Sleeping Giant's basic action deals 1 damage
+(plus her current Resonance stacks) to every living enemy. Uses the
+`super attack` animation (18F). This is not a unique unit ability — every
+Ancient-class unit's "basic attack" is an Ancient AoE (Ancient Guardian's
+laser, Archer's volley, Blood King's death Heart Slam).
 
-Tier 4 tanky support unit. High health (6), low damage (1), but acts as a
-force multiplier for other Ancient-class units. Synergizes heavily with
-Ancient-heavy team compositions (e.g., Archer, Blood King, other Ancients).
+**Ancient Resonance (Ancient class synergy).** Whenever any Ancient-class
+unit on the team deals damage (basic attack OR ability), every OTHER
+Ancient on that team gains +1 Resonance stack, capped at 5 stacks per
+Ancient. Resonance stacks add directly to effective ATK for damage
+calculations. An Ancient never gains a stack from her own action — only
+from other Ancients'. Stack gain is one per action, not per damage
+instance (Sleeping Giant's AoE hitting 5 enemies grants 1 stack to each
+other Ancient, not 5). Sleeping Giant plays the `buff` animation (13F)
+when receiving a stack.
+
+Tier 4 tanky support unit. High health, low base damage, but acts as a
+force multiplier for Ancient-heavy compositions.
 
 ## Rendering Notes
 
-- **Spawn (non-standard):** Sleeping Giant does NOT use the standard spawn
-  animations. Instead, the unit begins the battle already on the field in
-  `static sleep` (1F dormant, asleep state). When conditions to activate are
-  met (trigger TBD — possibly turn 1, or event-based), plays `wake` (12F) to
-  transition into active combat. This is a special exception to the normal
-  spawn priority rules — no off-screen entry animation.
+- **Spawn:** Sleeping Giant acts from round 1 like any other Ancient — she
+  is NOT dormant in combat. The `static sleep` (1F) and `wake` (12F) tags
+  are available for out-of-combat / menu flavor use only. In battle, she
+  uses standard spawn priority (locomotion fallback since no `appear` is
+  present) and begins attacking on round 1.
 - **Death:** has `death` (21F) → roster eligible, plays `death` animation on KO.
 - **Attack animation:** uses `super attack` (18F) to deliver the omnidirectional
   slam to all enemies.

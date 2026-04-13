@@ -1,7 +1,7 @@
 ---
 id: slopper
 name: Slopper
-faction: Big Bug
+faction: Monster
 class: Assassin
 tier: 2
 hp: 5

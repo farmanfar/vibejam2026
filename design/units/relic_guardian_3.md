@@ -28,11 +28,19 @@ From AnimTester readout (tag — frame count):
 
 ## Abilities
 
-**Reactive Reinforcement.** Whenever another allied Robot unit dies on the
-field, Relic Guardian 3 gains +1 Attack permanently for the rest of the
-battle. Synergizes with Robot tribe density — the more Robots in your
-composition, the more triggering deaths, the faster the snowball grows.
-Triggers the `buff` animation on stack gain.
+**Reactive Reinforcement (unique unit ability, `on_ally_death`).** Whenever
+another **allied Robot** unit dies (from any source), Relic Guardian 3
+gains +1 ATK permanently for the rest of the battle. Only triggers on
+OTHER allied Robots — her own death does not trigger the handler (she's
+dead by the time it would fire). Non-Robot allies do not trigger the
+handler. Stacks cumulatively with no cap. Triggers the `buff` animation
+(13F) on each stack gain.
+
+Synergizes with Robot tribe density — the more Robots in your composition,
+the more triggering deaths, the faster the snowball grows. Particularly
+strong with Minion #001 / #002 / #003 (high-churn Robot Grunts) and
+Robot Ancients (whose death triggers can buff Relic Guardian 3's
+subsequent attacks).
 
 ## Rendering Notes
 

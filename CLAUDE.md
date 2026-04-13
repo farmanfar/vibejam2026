@@ -8,6 +8,9 @@
   - `GeometryMask` is Canvas-only in v4 WebGL. Masks moved to the filters system.
   - Scene lifecycle, input, and camera APIs have changed. Check the migration guide.
 - **Build:** `npm run dev` (Vite dev server)
+- **Test:** `npm test` (vitest, headless, Node env — alpha combat engine only)
+- **Alpha sim:** `npm run sim` (single battle CLI), `npm run sim:balance` (1000-battle bulk run + report)
+- **Unit generator:** `npm run alpha:generate` (reads `design/units/*.md` → `src/config/alpha-units.generated.json`)
 - **Stack:** Phaser 4 + Vite 8 + Supabase (auth/cloud)
 
 ## Game

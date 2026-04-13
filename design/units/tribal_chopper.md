@@ -30,13 +30,19 @@ From AnimTester readout (tag — frame count):
 
 ## Abilities
 
-**Bloodlust.** Whenever Tribal Chopper kills an enemy unit, it immediately
-gains a bonus attack action. The execution order is: kill enemy → bonus attack
-→ next enemy attacks Tribal Chopper → normal turn cycle resumes.
+**Bloodlust.** Whenever Tribal Chopper kills an enemy with a **regular
+attack action**, she immediately takes one bonus attack against the next
+frontmost enemy. The bonus attack does NOT chain: a kill from the bonus
+attack does not grant another bonus. Only kills from regular attack actions
+trigger Bloodlust. On her next regular action, another kill triggers a
+fresh bonus (bonuses are per-regular-action, not per-battle).
 
-High-risk high-reward attacker. Synergizes with Folk tribe (which buffs from
-deaths/sacrifices) — kills fuel attack chains, which can snowball if facing
-low-health enemies.
+Execution order: regular attack → kill → bonus attack (single, no chain) →
+next unit in slot order takes its action.
+
+High-risk high-reward attacker. Synergizes with Folk tribe (which buffs
+from deaths/sacrifices) — kills fuel attack chains, which can snowball
+against low-HP frontlines, but the no-chain rule prevents runaway loops.
 
 ## Rendering Notes
 

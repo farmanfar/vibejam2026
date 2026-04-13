@@ -36,17 +36,24 @@ From AnimTester readout (tag — frame count):
 
 ## Abilities
 
-**Sniper's Venom.** At the **start of battle**, if Cloaker is positioned in the
-**last lineup slot** (back of the line), she fires a volley using the `volley vfx`
-animation. This volley poisons **every living enemy on the field with 1 poison
-stack**, regardless of position or range.
+**Sniper's Venom (unique unit ability, `on_battle_start`).** At the start
+of battle, Cloaker fires a volley that applies **1 poison stack to every
+living enemy**, regardless of her own position. There is no back-slot
+positioning requirement — she fires from any slot. Uses the `volley vfx`
+animation (8F).
 
-Cloaker **cannot perform normal attacks** at any time. She is a utility assassin:
-low health (1), no offensive capability in normal combat, but devastating if
-positioned last for opening turn setup.
+**Cannot perform normal attacks.** Cloaker is flagged `skipBasicAttack:
+true` in the combat engine. Each round, the action loop skips her entirely;
+she never takes a basic action and never triggers on-attack effects. She
+still participates in Monster faction / Assassin class rules passively
+(e.g., she counts toward Knight/Monster count if her class/faction
+matched, though she is Folk Assassin — so her Assassin class poison
+application never happens because she never attacks).
 
-Synergizes with poison-scaling units and position-based team composition (bench
-optimizing for late-position abilities).
+Synergizes with poison-scaling units (Gnat, Bloat Flyer, Toxic Cascade
+global rule). Since she acts at battle start from any slot, she does not
+need to be positioned last — place her wherever her 1 HP is least
+exposed.
 
 ## Rendering Notes
 

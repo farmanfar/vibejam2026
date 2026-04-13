@@ -118,10 +118,23 @@ Each unit file records animation tags copied verbatim from AnimTester. Code gene
 - **Broken animations:** Mark individual tags as "(broken)" if they appear in red in AnimTester. Flag the whole file as "INCOMPLETE" or "NEEDS REPROCESSING" if most tags are broken.
 - **Non-standard canvas sizes:** If the sprite canvas is not standard (e.g., 174x25 or 166x96 instead of 192x192), document the actual size and note tag-derived frame fallback if applicable.
 
+## Generator Responsibilities
+
+`scripts/generate-alpha-units.mjs` reads all `design/units/*.md` files and produces `src/config/alpha-units.generated.json`. Run with `npm run alpha:generate`.
+
+**What the generator controls (not the design docs):**
+- **ability_id mapping** — `ABILITY_MAP` in the generator maps unit id → ability_id string. The `.md` file describes what the ability does in prose; the generator decides which `ability_id` string wires it to code.
+- **basicAttackOverride** — `BASIC_ATTACK_OVERRIDE` table. Units whose basic attack behavior deviates from their class mechanic (e.g., Blood King = Ancient class but single-target melee).
+- **skipBasicAttack** — `SKIP_BASIC_ATTACK` table. Units that never take a basic attack turn (e.g., Cloaker).
+- **art status** — `ART_STATUS` table (placeholder vs. imported).
+- **balance overrides** — `src/config/alpha-balance-overrides.json`. Stat adjustments applied on top of frontmatter values. Do NOT edit `alpha-units.generated.json` directly.
+
+**Rule:** If you change a unit's mechanic in its `.md`, also update the generator's `ABILITY_MAP` and the corresponding ability handler in `src/systems/combat/abilities/`. The `.md` and the code must stay in sync.
+
 ## Future Code Generation
 
-Once this folder is stable, a generator will read these files and produce:
-- `src/config/units.json` (stats, tier, faction, class)
+Once this folder is stable, the generator will also produce:
+- `src/config/units.json` (stats, tier, faction, class for the live game)
 - `src/config/unit-animations.json` (tag lists for spawn/death logic)
 
 Do NOT manually edit config files in `src/config/` — they will be overwritten. All source truth lives here.

@@ -1,7 +1,7 @@
 ---
 id: gnat
 name: Gnat
-faction: Big Bug
+faction: Monster
 class: Assassin
 tier: 1
 hp: 1
@@ -29,13 +29,25 @@ From AnimTester readout (tag — frame count):
 
 ## Abilities
 
-**Infectious Bite.** On each attack, Gnat has a 50% chance to instantly
-apply the maximum poison stack (5 stacks) to the target, bypassing the
-normal 1-per-hit accumulation. Synergizes with poison-bounce mechanics
-(Bloat Flyer's cascade, poison-triggered effects).
+**Infectious Bite (unique unit ability, interacts with Assassin class
+poison).** Gnat is an Assassin, so her Assassin class mechanic normally
+applies 1 poison stack per attack. Infectious Bite modifies that: on each
+regular attack action, Gnat rolls a 50% chance. On proc, she applies **5
+poison stacks** to the target instead of the class default of 1. On miss,
+she applies the class default 1 stack. The proc **replaces** the class 1
+stack — the two do not double-dip (a proc is 5, not 5+1).
+
+Poison stacks on a unit cap at 5, so a successful proc against an
+unpoisoned target fully loads them in one hit.
+
+> **Faction reframe:** Gnat is a Monster (previously Big Bug in earlier
+> drafts). She participates in Monster faction reanimate like any other
+> Monster.
 
 High-risk assassin: fragile (1 HP) but can rapidly contaminate priority
-targets with full poison load if lucky.
+targets with full poison load if lucky. Synergizes with poison-bounce
+mechanics (Toxic Cascade global rule, which bounces her 5-stack loads
+through the enemy team on death).
 
 ## Rendering Notes
 

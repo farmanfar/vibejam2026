@@ -32,18 +32,34 @@ From AnimTester readout (tag — frame count):
 
 ## Abilities
 
-**Undead Persistence (Faction Synergy).** When Ghoul dies, she has a **10% base
-chance to reanimate at the back of the lineup** instead of being permanently
-removed. This reanimation chance **increases by 10% for each additional Monster**
-on your team (i.e., 2 Monsters = 20% chance, 3 Monsters = 30%, etc.).
+Ghoul has no unique unit ability handler. Her identity is the **Monster
+faction synergy**, of which she is the archetypal representative.
 
-If reanimation procs, Ghoul is placed at the back of your team's lineup with
-full HP and resumes combat.
+## Faction Synergy — Undead Persistence (Monster)
 
-Tier 1 monster grunt with moderate durability (3 HP) and low damage (1). The
-reanimation mechanic rewards stacking Monsters — building a Monster-heavy comp
-grants access to pseudo-resurrection mechanics. Synergizes heavily with other
-Monster-class units.
+**Undead Persistence (Monster faction synergy, not a Ghoul unique).** Every
+Monster on the team has a **10% base chance to reanimate** on death,
+**+10% per OTHER Monster on the team**, capped at 50%. Solo Monster = 10%,
+2 Monsters = 20%, 3 Monsters = 30%, 4 Monsters = 40%, 5+ Monsters = 50%.
+
+> The "10% base + 10% per additional Monster" wording is preserved
+> literally from the original Ghoul doc. Solo Monsters retain the 10% base
+> rate; the rule generalizes to all Monsters, not just Ghoul.
+
+On death, the dying Monster rolls the reanimate chance. If it procs AND
+the alive count on her team is less than 5 (i.e., there's a back slot
+available after compaction), she is placed at the back slot with full HP
+and **acts starting the next round, not the round she reanimates**.
+
+**Slot-order tiebreak:** if multiple Monsters die in the same damage
+batch and both roll reanimate success, the lower-slot Monster claims the
+back slot first. Subsequent Monsters in the same batch fail their
+reanimate proc because no slot is available (batch emits a
+`reanimate_failed_slot_full` event for them).
+
+Tier 1 monster grunt with moderate durability and low damage. Synergizes
+heavily with other Monsters — stacking the faction grants pseudo-resurrection
+to the whole team.
 
 ## Rendering Notes
 
