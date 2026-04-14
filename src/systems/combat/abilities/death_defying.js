@@ -37,12 +37,15 @@ export const death_defying = {
     unit.hp = 1;
     ctx.log.push('death_defy_trigger', {
       unit: unit.unitId,
+      instanceId: unit.instanceId ?? null,
       oldSlot: unit.slot,
       team: unit.team,
+      newHp: unit.hp,
     });
     ctx.position.moveUnitToBack(unit);
     ctx.log.push('death_defy_repositioned', {
       unit: unit.unitId,
+      instanceId: unit.instanceId ?? null,
       newSlot: unit.slot,
       team: unit.team,
     });

@@ -5,10 +5,10 @@ import {
 import { ShopManager } from '../systems/ShopManager.js'
 import { GhostManager } from '../systems/GhostManager.js'
 import { BattleEngine } from '../systems/BattleEngine.js'
-import { getEnabledWarriors } from '../config/warriors.js'
+import { getEnabledAlphaWarriors as getEnabledWarriors } from '../config/alpha-units.js'
 import { finalizeCaptureScene } from '../systems/CaptureSupport.js'
 import { LayoutEditor } from '../systems/LayoutEditor.js'
-import { getUnitTextureKey } from '../rendering/UnitArt.js'
+import { getUnitPortraitRef } from '../rendering/UnitArt.js'
 import { SceneCrt } from '../rendering/SceneCrt.js'
 
 export class ShopScene extends Scene {
@@ -142,7 +142,8 @@ export class ShopScene extends Scene {
 
       if (this.team[i]) {
         const w = this.team[i]
-        const sprite = this.add.image(x, y - 6, getUnitTextureKey(this, w, 'shop bench')).setScale(1.3)
+        const ref = getUnitPortraitRef(this, w, 'shop bench')
+        const sprite = this.add.image(x, y - 6, ref.key, ref.frame).setScale(1.3)
         const name = this.add.bitmapText(x, y + 22, FONT_KEY, w.name, 7 * 1)
           .setOrigin(0.5).setTint(Theme.primaryText)
         this.benchGroup.add(sprite)

@@ -1,7 +1,7 @@
 import { GameObjects } from 'phaser';
 import { Theme, brighten } from './Theme.js';
 import { FONT_KEY } from './PixelFont.js';
-import { getUnitTextureKey } from '../rendering/UnitArt.js';
+import { getUnitPortraitRef } from '../rendering/UnitArt.js';
 
 /**
  * Warrior card for the shop - shows sprite, name, stats, cost, faction tag.
@@ -52,9 +52,9 @@ export class WarriorCard extends GameObjects.Container {
       this.add(factionTag);
     }
 
-    const spriteKey = getUnitTextureKey(scene, warrior, 'warrior card');
-    if (scene.textures.exists(spriteKey)) {
-      this.sprite = scene.add.image(0, -10, spriteKey).setScale(2);
+    const portraitRef = getUnitPortraitRef(scene, warrior, 'warrior card');
+    if (scene.textures.exists(portraitRef.key)) {
+      this.sprite = scene.add.image(0, -10, portraitRef.key, portraitRef.frame).setScale(2);
     } else {
       this.sprite = scene.add.rectangle(
         0,

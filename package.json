@@ -14,7 +14,8 @@
     "test:watch": "vitest --config vitest.config.js",
     "sim": "node scripts/sim-battle.mjs",
     "sim:balance": "node scripts/sim-battle.mjs --fixture fixtures/all-t1-mirror.json --bulk 1000 --report",
-    "alpha:generate": "node scripts/generate-alpha-units.mjs"
+    "alpha:generate": "node scripts/generate-alpha-units.mjs",
+    "alpha:sprites": "node scripts/import-alpha-sprites.mjs"
   },
   "devDependencies": {
     "playwright": "^1.59.1",

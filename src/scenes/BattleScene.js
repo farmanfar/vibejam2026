@@ -2,12 +2,12 @@ import { Scene } from 'phaser'
 import {
   Theme, FONT_KEY, PixelLabel, PixelHealthBar, FloatingBanner, PixelPanel,
 } from '../ui/index.js'
-import { BattleEngine } from '../systems/BattleEngine.js'
+import { runAlphaBattle } from '../systems/combat/BattleSceneAdapter.js'
 import { finalizeCaptureScene } from '../systems/CaptureSupport.js'
 import { ParallaxBackground } from '../rendering/ParallaxBackground.js'
 import { pickRandomSets } from '../rendering/FactionPalettes.js'
 import { LayoutEditor } from '../systems/LayoutEditor.js'
-import { getUnitTextureKey } from '../rendering/UnitArt.js'
+import { getUnitPortraitRef } from '../rendering/UnitArt.js'
 import { SceneCrt, startSceneWithCrtPolicy } from '../rendering/SceneCrt.js'
 
 export class BattleScene extends Scene {
@@ -73,11 +73,14 @@ export class BattleScene extends Scene {
     this.playerSprites = this.team.map((w, i) => {
       const x = 100 + i * 80
       const y = 320
-      const sprite = this.add.image(x, y, getUnitTextureKey(this, w, 'battle player'))
-        .setScale(2.5)
+      const ref = getUnitPortraitRef(this, w, 'battle player')
+      const scale = w.art?.displayScale ?? 2.5
+      const sprite = this.add.sprite(x, y, ref.key, ref.frame)
+        .setScale(scale)
         .setDepth(battleDepth)
       // Enable normal-map lighting on unit sprites only (not labels/health bars)
       if (useLights) sprite.setLighting(true)
+      this._wireAlphaAnimations(sprite, w, 'player')
       const light = useLights
         ? this.lights.addPointLight(x, y - 16, 0xffddaa, 90, 0.7)
         : null
@@ -87,17 +90,24 @@ export class BattleScene extends Scene {
         .setOrigin(0.5)
         .setTint(Theme.accent)
         .setDepth(battleDepth)
-      return { sprite, hpBar, name, light, warrior: { ...w, currentHp: w.hp } }
+      return {
+        sprite, hpBar, name, light,
+        warrior: { ...w, currentHp: w.hp },
+        instanceId: `p${i}`,
+      }
     })
 
     this.enemySprites = this.enemyTeam.map((w, i) => {
       const x = width - 100 - i * 80
       const y = 320
-      const sprite = this.add.image(x, y, getUnitTextureKey(this, w, 'battle enemy'))
-        .setScale(2.5)
+      const ref = getUnitPortraitRef(this, w, 'battle enemy')
+      const scale = w.art?.displayScale ?? 2.5
+      const sprite = this.add.sprite(x, y, ref.key, ref.frame)
+        .setScale(scale)
         .setFlipX(true)
         .setDepth(battleDepth)
       if (useLights) sprite.setLighting(true)
+      this._wireAlphaAnimations(sprite, w, 'enemy')
       const light = useLights
         ? this.lights.addPointLight(x, y - 16, 0xffddaa, 90, 0.7)
         : null
@@ -109,8 +119,19 @@ export class BattleScene extends Scene {
         .setOrigin(0.5)
         .setTint(Theme.error)
         .setDepth(battleDepth)
-      return { sprite, hpBar, name, light, warrior: { ...w, currentHp: w.hp } }
+      return {
+        sprite, hpBar, name, light,
+        warrior: { ...w, currentHp: w.hp },
+        instanceId: `e${i}`,
+      }
     })
+
+    // Sprite lookup by stable instance id — adapter emits *InstanceId on
+    // every relevant log step, so compaction / death-defy / reanimate no
+    // longer desync the visual layer from the logical one.
+    this.spriteByInstance = new Map()
+    this.playerSprites.forEach((s) => this.spriteByInstance.set(s.instanceId, s))
+    this.enemySprites.forEach((s) => this.spriteByInstance.set(s.instanceId, s))
 
     const yourTeamLabel = new PixelLabel(this, 100, 240, 'YOUR TEAM', {
       scale: 2, color: 'accent', align: 'center',
@@ -158,12 +179,54 @@ export class BattleScene extends Scene {
     if (this.parallax) this.parallax.update(time, delta)
   }
 
+  _wireAlphaAnimations(sprite, warrior, side) {
+    if (!warrior?.hasPortrait || !warrior.spriteKey) return
+    try {
+      // Passing `sprite` as 3rd arg routes createFromAseprite to the sprite's
+      // LOCAL anim manager — avoids global tag-name collisions across units.
+      this.anims.createFromAseprite(warrior.spriteKey, null, sprite)
+      const defaultTag = warrior.art?.defaultTag ?? 'idle'
+      if (sprite.anims && sprite.anims.exists(defaultTag)) {
+        sprite.anims.play({ key: defaultTag, repeat: -1 })
+        console.log(`[Battle] ${side} ${warrior.id} playing '${defaultTag}' (${warrior.art?.tags?.length ?? 0} tags available)`)
+      } else {
+        console.warn(`[Battle] ${side} ${warrior.id}: default tag '${defaultTag}' missing on sprite anim manager`)
+      }
+    } catch (err) {
+      console.error(`[Battle] Failed to wire anims for ${warrior.id}:`, err)
+    }
+  }
+
+  _playActorAnim(instanceId, tag) {
+    if (!instanceId) return
+    const entry = this.spriteByInstance?.get(instanceId)
+    if (!entry || !entry.sprite?.anims) return
+    const warrior = entry.warrior
+    if (!warrior?.hasPortrait) return
+    if (warrior.currentHp <= 0 && tag !== 'death') return
+    const defaultTag = warrior.art?.defaultTag ?? 'idle'
+    const targetTag = entry.sprite.anims.exists(tag)
+      ? tag
+      : (tag === 'special attack' && entry.sprite.anims.exists('attack'))
+        ? 'attack'
+        : null
+    if (!targetTag) return
+    entry.sprite.anims.play({ key: targetTag, repeat: 0 })
+    if (targetTag !== 'death') {
+      entry.sprite.once('animationcomplete', () => {
+        if (entry.warrior.currentHp > 0 && entry.sprite.anims.exists(defaultTag)) {
+          entry.sprite.anims.play({ key: defaultTag, repeat: -1 })
+        }
+      })
+    }
+  }
+
   _runBattle() {
-    const engine = new BattleEngine()
-    const result = engine.resolve(
+    const result = runAlphaBattle(
       this.playerSprites.map(s => s.warrior),
       this.enemySprites.map(s => s.warrior),
     )
+    console.log(`[Battle] engine=alpha, ${result.log.length} steps, won=${result.won}`)
 
     let stepIndex = 0
     const stepTimer = this.time.addEvent({
@@ -176,18 +239,26 @@ export class BattleScene extends Scene {
         }
 
         const step = result.log[stepIndex]
-        this.logText.setText(step.message)
+        this.logText.setText(step.message ?? '')
+        console.log(`[Battle] step ${stepIndex}: ${step.message ?? ''}${step.actorInstanceId ? ` actor=${step.actorInstanceId}` : ''}${step.targetInstanceId ? ` target=${step.targetInstanceId}` : ''}${step.animTag ? ` anim=${step.animTag}` : ''}`)
 
+        // Per-step actor/target animations — only plays on sprites with a
+        // real aseprite atlas; placeholders silently skip.
+        if (step.animTag === 'attack' && step.actorInstanceId) {
+          this._playActorAnim(step.actorInstanceId, 'attack')
+        } else if (step.animTag === 'death' && step.targetInstanceId) {
+          this._playActorAnim(step.targetInstanceId, 'death')
+        }
+
+        // HP bars follow shadow HP directly. Sprite dimming is decoupled
+        // from HP — between a lethal blow and faint_final, a unit may be
+        // saved by Death-Defy or Monster reanimate. Visual death only
+        // commits when the adapter emits `diedInstanceId`.
         if (step.playerHp) {
           this.playerSprites.forEach((s, i) => {
             if (step.playerHp[i] !== undefined) {
               s.warrior.currentHp = step.playerHp[i]
               s.hpBar.setHp(s.warrior.currentHp)
-              if (s.warrior.currentHp <= 0) {
-                s.sprite.setAlpha(0.2)
-                s.name.setAlpha(0.3)
-                if (s.light) { s.light.setActive(false); s.light.setVisible(false) }
-              }
             }
           })
         }
@@ -197,13 +268,44 @@ export class BattleScene extends Scene {
             if (step.enemyHp[i] !== undefined) {
               s.warrior.currentHp = step.enemyHp[i]
               s.hpBar.setHp(s.warrior.currentHp)
-              if (s.warrior.currentHp <= 0) {
-                s.sprite.setAlpha(0.2)
-                s.name.setAlpha(0.3)
-                if (s.light) { s.light.setActive(false); s.light.setVisible(false) }
-              }
             }
           })
+        }
+
+        if (step.diedInstanceId) {
+          const died = this.spriteByInstance?.get(step.diedInstanceId)
+          if (died) {
+            died.sprite.setAlpha(0.2)
+            died.name.setAlpha(0.3)
+            if (died.light) {
+              died.light.setActive(false)
+              died.light.setVisible(false)
+            }
+            console.log(`[Battle] committed death: ${step.diedInstanceId}`)
+          }
+        }
+
+        // Defensive revive path. In the current model the adapter never
+        // dims a sprite before a revive (death only commits at faint_final),
+        // so this branch is a no-op for Death-Defy / Monster reanimate.
+        // It exists so any future post-commit resurrection or mid-battle
+        // revive mechanic doesn't leave the sprite stuck at 20% alpha.
+        if (step.revivedInstanceId) {
+          const revived = this.spriteByInstance?.get(step.revivedInstanceId)
+          if (revived) {
+            revived.sprite.setAlpha(1)
+            revived.name.setAlpha(1)
+            if (revived.light) {
+              revived.light.setActive(true)
+              revived.light.setVisible(true)
+            }
+            const defaultTag = revived.warrior.art?.defaultTag ?? 'idle'
+            if (revived.warrior.hasPortrait
+              && revived.sprite.anims?.exists?.(defaultTag)) {
+              revived.sprite.anims.play({ key: defaultTag, repeat: -1 })
+            }
+            console.log(`[Battle] revived: ${step.revivedInstanceId}`)
+          }
         }
 
         this.cameras.main.shake(80, 0.004)

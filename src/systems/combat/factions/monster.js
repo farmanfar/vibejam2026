@@ -77,6 +77,7 @@ export const monsterFaction = {
     }
     ctx.log.push('reanimate_success', {
       unit: unit.unitId,
+      instanceId: unit.instanceId ?? null,
       newSlot: unit.slot,
       team: unit.team,
       newHp: unit.hp,

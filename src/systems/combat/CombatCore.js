@@ -106,6 +106,7 @@ export class CombatCore {
   _instantiate(def, teamId, slot) {
     return {
       unitId: def.id,
+      instanceId: def._instanceId ?? null,
       name: def.name ?? def.id,
       team: teamId,
       slot,
@@ -347,9 +348,11 @@ export class CombatCore {
     const killed = !blocked && target.hp <= 0;
     this.log.push('attack', {
       attacker: attacker.unitId,
+      attackerInstanceId: attacker.instanceId ?? null,
       attackerSlot: attacker.slot,
       attackerTeam: attacker.team,
       target: target.unitId,
+      targetInstanceId: target.instanceId ?? null,
       targetSlot: target.slot,
       targetTeam: target.team,
       damage: actualDamage,
@@ -412,9 +415,11 @@ export class CombatCore {
     }
     this.log.push('damage', {
       attacker: attacker ? attacker.unitId : null,
+      attackerInstanceId: attacker ? (attacker.instanceId ?? null) : null,
       attackerSlot: attacker ? attacker.slot : null,
       attackerTeam: attacker ? attacker.team : null,
       target: target.unitId,
+      targetInstanceId: target.instanceId ?? null,
       targetSlot: target.slot,
       targetTeam: target.team,
       damage: actual,
@@ -439,9 +444,11 @@ export class CombatCore {
     const proc = this.rng.chance(chance);
     this.log.push('reactive_armor_roll', {
       target: target.unitId,
+      targetInstanceId: target.instanceId ?? null,
       targetSlot: target.slot,
       targetTeam: target.team,
       attacker: attacker ? attacker.unitId : null,
+      attackerInstanceId: attacker ? (attacker.instanceId ?? null) : null,
       tankCount,
       chance,
       proc,
@@ -461,9 +468,11 @@ export class CombatCore {
       u.atk = u.baseAtk + u.resonanceStacks + (u.flags._staticBonusAtk || 0);
       this.log.push('resonance_stack', {
         source: source.unitId,
+        sourceInstanceId: source.instanceId ?? null,
         sourceSlot: source.slot,
         sourceTeam: source.team,
         target: u.unitId,
+        targetInstanceId: u.instanceId ?? null,
         targetSlot: u.slot,
         targetTeam: u.team,
         stacks: u.resonanceStacks,
@@ -522,6 +531,7 @@ export class CombatCore {
           removed++;
           this.log.push('faint_final', {
             unit: u.unitId,
+            instanceId: u.instanceId ?? null,
             slot: u.slot,
             team: u.team,
           });
@@ -531,8 +541,16 @@ export class CombatCore {
     if (removed > 0) {
       compactBothTeams(this.teams);
       this.log.push('compact', {
-        player: this.teams.player.slots.map((u) => ({ unitId: u.unitId, slot: u.slot })),
-        enemy: this.teams.enemy.slots.map((u) => ({ unitId: u.unitId, slot: u.slot })),
+        player: this.teams.player.slots.map((u) => ({
+          unitId: u.unitId,
+          instanceId: u.instanceId ?? null,
+          slot: u.slot,
+        })),
+        enemy: this.teams.enemy.slots.map((u) => ({
+          unitId: u.unitId,
+          instanceId: u.instanceId ?? null,
+          slot: u.slot,
+        })),
       });
     }
   }
@@ -540,6 +558,7 @@ export class CombatCore {
   _fireFaintHandlers(unit, queue) {
     this.log.push('faint_start', {
       unit: unit.unitId,
+      instanceId: unit.instanceId ?? null,
       slot: unit.slot,
       team: unit.team,
     });
@@ -604,6 +623,7 @@ export class CombatCore {
   _snapshot(unit) {
     return {
       unitId: unit.unitId,
+      instanceId: unit.instanceId ?? null,
       slot: unit.slot,
       team: unit.team,
       hp: unit.hp,

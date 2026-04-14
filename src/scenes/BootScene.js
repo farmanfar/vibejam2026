@@ -4,6 +4,7 @@ import { Theme } from '../ui/Theme.js';
 import { initAuth } from '../supabase.js';
 import { getAllParallaxAssets } from '../rendering/FactionPalettes.js';
 import { getWarriors } from '../config/warriors.js';
+import { getAlphaWarriors } from '../config/alpha-units.js';
 import { getCommanders } from '../config/commanders.js';
 import { resetCaptureReady, resolveCaptureRoute } from '../systems/CaptureSupport.js';
 import { attachGeneratedNormalMap } from '../rendering/NormalMapGenerator.js';
@@ -35,6 +36,25 @@ export class BootScene extends Scene {
       queuedPortraits++;
     }
     console.log(`[Boot] Queued ${queuedPortraits} unit portraits for preload`);
+
+    // Alpha units — Aseprite-baked multi-tag atlases. Animation creation
+    // happens per-sprite in BattleScene via createFromAseprite(key, null, sprite),
+    // so we only queue the atlas load here. Global createFromAseprite would
+    // collide on raw tag names (idle/attack/death) across units.
+    const alphas = getAlphaWarriors();
+    let queuedAlphas = 0;
+    for (const w of alphas) {
+      if (!w.hasPortrait) continue;
+      const pngPath = w.art?.pngPath;
+      const dataPath = w.art?.dataPath;
+      if (!pngPath || !dataPath) {
+        console.warn(`[Boot] Alpha ${w.id} has art entry but missing pngPath/dataPath — skipped`);
+        continue;
+      }
+      this.load.aseprite(w.spriteKey, pngPath, dataPath);
+      queuedAlphas++;
+    }
+    console.log(`[Boot] Queued ${queuedAlphas} alpha aseprite atlases`);
 
     // Preload commander card and trophy-room sprite images (Fantasy Cards pack)
     const commanders = getCommanders();
@@ -147,6 +167,17 @@ function _generateBattleNormalMaps(scene) {
     const key = warrior.spriteKey;
     if (!key) continue;
     if (attachGeneratedNormalMap(scene, key)) {
+      generated++;
+    } else {
+      skipped++;
+    }
+  }
+
+  // Alpha unit atlases — mapped alpha warriors with baked Aseprite art.
+  const alphas = getAlphaWarriors();
+  for (const w of alphas) {
+    if (!w.hasPortrait || !w.spriteKey) continue;
+    if (attachGeneratedNormalMap(scene, w.spriteKey)) {
       generated++;
     } else {
       skipped++;

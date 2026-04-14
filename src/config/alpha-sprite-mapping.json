@@ -1,0 +1,35 @@
+{
+  "hammertimeArtRoot": "../hammertime/art assets",
+  "units": {
+    "archer": {
+      "source": "THE DARK PAID ASSETS/08 DARK - Character Pack 2/Archer/ideas.aseprite",
+      "displayScale": 2.5,
+      "defaultTag": "idle",
+      "portraitFrame": 0
+    },
+    "blood_king": {
+      "source": "THE DARK PAID ASSETS/08 DARK - Character Pack 2/Blood King/blood_king.aseprite",
+      "displayScale": 2.5,
+      "defaultTag": "idle",
+      "portraitFrame": 0
+    },
+    "dagger_mush": {
+      "source": "THE DARK PAID ASSETS/07 DARK - Monster Pack 1/Dagger Mush/dagger_mush.aseprite",
+      "displayScale": 2.5,
+      "defaultTag": "idle",
+      "portraitFrame": 0
+    },
+    "ancient_guardian": {
+      "source": "THE DARK PAID ASSETS/07 DARK - Monster Pack 1/Ancient Guardian/ancient_guardian.aseprite",
+      "displayScale": 2.5,
+      "defaultTag": "idle",
+      "portraitFrame": 0
+    },
+    "assassin": {
+      "source": "THE DARK PAID ASSETS/08 DARK - Character Pack 2/Sneaky Swords/sneaky_swords.aseprite",
+      "displayScale": 2.5,
+      "defaultTag": "idle",
+      "portraitFrame": 0
+    }
+  }
+}

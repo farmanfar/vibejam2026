@@ -1,14 +1,14 @@
-import { getEnabledWarriors, SYNERGIES } from '../config/warriors.js';
+import { getEnabledAlphaWarriors as getEnabledWarriors, SYNERGIES } from '../config/alpha-units.js';
 
-/**
- * Auto-battle resolution engine.
- * Warriors take turns attacking. Front-most alive warriors attack first.
- * Generates a step-by-step log for animated playback.
- */
+// LEGACY — BattleEngine.resolve() is superseded by
+// src/systems/combat/BattleSceneAdapter.js `runAlphaBattle` inside BattleScene.
+// Only `generateEnemyTeam` is still used (GhostManager synthetic fallback).
 export class BattleEngine {
   generateEnemyTeam(stage) {
     const teamSize = Math.min(5, 1 + Math.floor(stage / 2));
-    const maxTier = Math.min(4, Math.floor(stage / 2));
+    // Alpha roster has NO tier 0 — lowest is tier 1. Clamp so stage 1/2
+    // can still roll from the tier-1 pool.
+    const maxTier = Math.max(1, Math.min(4, Math.floor(stage / 2)));
     const pool = getEnabledWarriors().filter(w => w.tier <= maxTier);
     if (pool.length === 0) return [];
 

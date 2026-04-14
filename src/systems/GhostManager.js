@@ -1,5 +1,26 @@
 import { supabase, getPlayerId } from '../supabase.js'
 import { BattleEngine } from './BattleEngine.js'
+import { getAlphaUnitById } from '../config/alpha-units.js'
+
+function filterToAlphaRoster(roster) {
+  if (!Array.isArray(roster)) return []
+  const kept = []
+  for (const entry of roster) {
+    if (!entry || !entry.id) continue
+    const alpha = getAlphaUnitById(entry.id)
+    if (!alpha) {
+      console.warn(`[Ghost] Dropping legacy-id ghost ${entry.id} — no alpha unit match`)
+      continue
+    }
+    // Merge legacy hp/atk overrides onto the alpha base.
+    kept.push({
+      ...alpha,
+      hp: entry.hp ?? alpha.hp,
+      atk: entry.atk ?? alpha.atk,
+    })
+  }
+  return kept
+}
 
 async function snapshotTeam(runId, wins, losses, stage, roster) {
   const playerId = getPlayerId()
@@ -48,7 +69,12 @@ async function fetchOpponent(wins, losses, stage) {
     } else if (data && data.length > 0) {
       console.log(`[Ghost] Found ${data.length} ghost(s) — picking one`)
       const pick = data[Math.floor(Math.random() * data.length)]
-      return pick.roster
+      const filtered = filterToAlphaRoster(pick.roster)
+      if (filtered.length === 0) {
+        console.warn('[Ghost] Ghost roster had no alpha-compatible units — falling through to synthetic')
+      } else {
+        return filtered
+      }
     } else {
       console.log('[Ghost] No ghosts found at this W/L — generating synthetic')
     }
