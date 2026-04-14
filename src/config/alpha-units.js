@@ -31,6 +31,7 @@ function toGameShape(alpha) {
     range: alpha.range ?? 1,
     cost: alpha.tier,
     ability_id: alpha.ability_id ?? null,
+    rules_text: alpha.rules_text ?? null,
     skipBasicAttack: !!alpha.skipBasicAttack,
     basicAttackOverride: alpha.basicAttackOverride ?? null,
     enabled: alpha.art_status !== 'blocked',

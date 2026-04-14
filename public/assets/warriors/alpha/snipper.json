@@ -1,0 +1,277 @@
+{ "frames": [
+   {
+    "filename": "Medium Insect 0.aseprite",
+    "frame": { "x": 0, "y": 0, "w": 34, "h": 37 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 34, "h": 37 },
+    "sourceSize": { "w": 34, "h": 37 },
+    "duration": 65
+   },
+   {
+    "filename": "Medium Insect 1.aseprite",
+    "frame": { "x": 34, "y": 0, "w": 34, "h": 37 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 34, "h": 37 },
+    "sourceSize": { "w": 34, "h": 37 },
+    "duration": 65
+   },
+   {
+    "filename": "Medium Insect 2.aseprite",
+    "frame": { "x": 68, "y": 0, "w": 34, "h": 37 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 34, "h": 37 },
+    "sourceSize": { "w": 34, "h": 37 },
+    "duration": 65
+   },
+   {
+    "filename": "Medium Insect 3.aseprite",
+    "frame": { "x": 102, "y": 0, "w": 34, "h": 37 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 34, "h": 37 },
+    "sourceSize": { "w": 34, "h": 37 },
+    "duration": 65
+   },
+   {
+    "filename": "Medium Insect 4.aseprite",
+    "frame": { "x": 136, "y": 0, "w": 34, "h": 37 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 34, "h": 37 },
+    "sourceSize": { "w": 34, "h": 37 },
+    "duration": 65
+   },
+   {
+    "filename": "Medium Insect 5.aseprite",
+    "frame": { "x": 170, "y": 0, "w": 34, "h": 37 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 34, "h": 37 },
+    "sourceSize": { "w": 34, "h": 37 },
+    "duration": 65
+   },
+   {
+    "filename": "Medium Insect 6.aseprite",
+    "frame": { "x": 0, "y": 37, "w": 34, "h": 37 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 34, "h": 37 },
+    "sourceSize": { "w": 34, "h": 37 },
+    "duration": 65
+   },
+   {
+    "filename": "Medium Insect 7.aseprite",
+    "frame": { "x": 34, "y": 37, "w": 34, "h": 37 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 34, "h": 37 },
+    "sourceSize": { "w": 34, "h": 37 },
+    "duration": 65
+   },
+   {
+    "filename": "Medium Insect 8.aseprite",
+    "frame": { "x": 68, "y": 37, "w": 34, "h": 37 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 34, "h": 37 },
+    "sourceSize": { "w": 34, "h": 37 },
+    "duration": 65
+   },
+   {
+    "filename": "Medium Insect 9.aseprite",
+    "frame": { "x": 0, "y": 0, "w": 34, "h": 37 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 34, "h": 37 },
+    "sourceSize": { "w": 34, "h": 37 },
+    "duration": 65
+   },
+   {
+    "filename": "Medium Insect 10.aseprite",
+    "frame": { "x": 102, "y": 37, "w": 34, "h": 37 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 34, "h": 37 },
+    "sourceSize": { "w": 34, "h": 37 },
+    "duration": 65
+   },
+   {
+    "filename": "Medium Insect 11.aseprite",
+    "frame": { "x": 136, "y": 37, "w": 34, "h": 37 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 34, "h": 37 },
+    "sourceSize": { "w": 34, "h": 37 },
+    "duration": 65
+   },
+   {
+    "filename": "Medium Insect 12.aseprite",
+    "frame": { "x": 170, "y": 37, "w": 34, "h": 37 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 34, "h": 37 },
+    "sourceSize": { "w": 34, "h": 37 },
+    "duration": 65
+   },
+   {
+    "filename": "Medium Insect 13.aseprite",
+    "frame": { "x": 0, "y": 74, "w": 34, "h": 37 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 34, "h": 37 },
+    "sourceSize": { "w": 34, "h": 37 },
+    "duration": 65
+   },
+   {
+    "filename": "Medium Insect 14.aseprite",
+    "frame": { "x": 34, "y": 74, "w": 34, "h": 37 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 34, "h": 37 },
+    "sourceSize": { "w": 34, "h": 37 },
+    "duration": 65
+   },
+   {
+    "filename": "Medium Insect 15.aseprite",
+    "frame": { "x": 68, "y": 74, "w": 34, "h": 37 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 34, "h": 37 },
+    "sourceSize": { "w": 34, "h": 37 },
+    "duration": 65
+   },
+   {
+    "filename": "Medium Insect 16.aseprite",
+    "frame": { "x": 102, "y": 74, "w": 34, "h": 37 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 34, "h": 37 },
+    "sourceSize": { "w": 34, "h": 37 },
+    "duration": 65
+   },
+   {
+    "filename": "Medium Insect 17.aseprite",
+    "frame": { "x": 136, "y": 74, "w": 34, "h": 37 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 34, "h": 37 },
+    "sourceSize": { "w": 34, "h": 37 },
+    "duration": 65
+   },
+   {
+    "filename": "Medium Insect 18.aseprite",
+    "frame": { "x": 170, "y": 74, "w": 34, "h": 37 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 34, "h": 37 },
+    "sourceSize": { "w": 34, "h": 37 },
+    "duration": 65
+   },
+   {
+    "filename": "Medium Insect 19.aseprite",
+    "frame": { "x": 0, "y": 0, "w": 34, "h": 37 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 34, "h": 37 },
+    "sourceSize": { "w": 34, "h": 37 },
+    "duration": 65
+   },
+   {
+    "filename": "Medium Insect 20.aseprite",
+    "frame": { "x": 0, "y": 111, "w": 34, "h": 37 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 34, "h": 37 },
+    "sourceSize": { "w": 34, "h": 37 },
+    "duration": 65
+   },
+   {
+    "filename": "Medium Insect 21.aseprite",
+    "frame": { "x": 34, "y": 111, "w": 34, "h": 37 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 34, "h": 37 },
+    "sourceSize": { "w": 34, "h": 37 },
+    "duration": 65
+   },
+   {
+    "filename": "Medium Insect 22.aseprite",
+    "frame": { "x": 68, "y": 111, "w": 34, "h": 37 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 34, "h": 37 },
+    "sourceSize": { "w": 34, "h": 37 },
+    "duration": 65
+   },
+   {
+    "filename": "Medium Insect 23.aseprite",
+    "frame": { "x": 102, "y": 111, "w": 34, "h": 37 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 34, "h": 37 },
+    "sourceSize": { "w": 34, "h": 37 },
+    "duration": 65
+   },
+   {
+    "filename": "Medium Insect 24.aseprite",
+    "frame": { "x": 136, "y": 111, "w": 34, "h": 37 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 34, "h": 37 },
+    "sourceSize": { "w": 34, "h": 37 },
+    "duration": 65
+   },
+   {
+    "filename": "Medium Insect 25.aseprite",
+    "frame": { "x": 170, "y": 111, "w": 34, "h": 37 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 34, "h": 37 },
+    "sourceSize": { "w": 34, "h": 37 },
+    "duration": 65
+   },
+   {
+    "filename": "Medium Insect 26.aseprite",
+    "frame": { "x": 0, "y": 148, "w": 34, "h": 37 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 34, "h": 37 },
+    "sourceSize": { "w": 34, "h": 37 },
+    "duration": 65
+   },
+   {
+    "filename": "Medium Insect 27.aseprite",
+    "frame": { "x": 34, "y": 148, "w": 34, "h": 37 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 34, "h": 37 },
+    "sourceSize": { "w": 34, "h": 37 },
+    "duration": 65
+   },
+   {
+    "filename": "Medium Insect 28.aseprite",
+    "frame": { "x": 68, "y": 148, "w": 34, "h": 37 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 34, "h": 37 },
+    "sourceSize": { "w": 34, "h": 37 },
+    "duration": 65
+   }
+ ],
+ "meta": {
+  "app": "https://www.aseprite.org/",
+  "version": "1.3.16.1-x64",
+  "image": "snipper.png",
+  "format": "RGBA8888",
+  "size": { "w": 204, "h": 185 },
+  "scale": "1",
+  "frameTags": [
+   { "name": "idleMove", "from": 1, "to": 8, "direction": "forward", "color": "#000000ff" },
+   { "name": "Attack", "from": 9, "to": 18, "direction": "forward", "color": "#000000ff" },
+   { "name": "Death", "from": 19, "to": 28, "direction": "forward", "color": "#000000ff" }
+  ]
+ }
+}

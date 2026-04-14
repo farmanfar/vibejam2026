@@ -48,34 +48,52 @@ export class ShopScene extends Scene {
     const headerPanel = new PixelPanel(this, 0, 0, width, 32, {
       bg: Theme.panelBg, border: Theme.panelBorder,
     })
+    headerPanel.setDepth(20)
     LayoutEditor.register(this, 'headerPanel', headerPanel, 0, 0)
 
     const stageLabel = new PixelLabel(this, 12, 8, `STAGE ${this.stage}`, { scale: 2, color: 'accent' })
+    stageLabel.setDepth(20)
     LayoutEditor.register(this, 'stageLabel', stageLabel, 12, 8)
 
     this.goldLabel = new PixelLabel(this, width / 2, 8, `GOLD: ${this.gold}`, {
       scale: 2, tint: Theme.warning, align: 'center',
     })
+    this.goldLabel.setDepth(20)
     LayoutEditor.register(this, 'goldLabel', this.goldLabel, width / 2, 8)
 
     const livesLabel = new PixelLabel(this, width - 12, 8, `LIVES: ${3 - this.losses}`, {
       scale: 2, color: 'error', align: 'right',
     })
+    livesLabel.setDepth(20)
     LayoutEditor.register(this, 'livesLabel', livesLabel, width - 12, 8)
 
     const merchantKey = this.textures.exists('merchant') ? 'merchant' : 'merchant_placeholder'
     const merchant = this.add.image(width / 2, 72, merchantKey).setScale(1.5)
+    merchant.setDepth(8)
     LayoutEditor.register(this, 'merchant', merchant, width / 2, 72)
 
     const merchantQuote = new PixelLabel(this, width / 2, 115, '"Choose your warriors wisely..."', {
       scale: 2, color: 'muted', align: 'center',
     })
+    merchantQuote.setDepth(8)
     LayoutEditor.register(this, 'merchantQuote', merchantQuote, width / 2, 115)
 
     this.cardGroup = this.add.group()
     this._drawShopCards()
 
+    // Card shelf — opaque panel that covers the bottom half of resting cards
+    // (depth 5: above cards at rest=1, below cards on hover=10). This is what
+    // creates the "half a card peeking" affordance.
+    this.cardShelf = this.add.graphics()
+    this.cardShelf.fillStyle(Theme.panelBg, 1)
+    this.cardShelf.fillRect(0, 230, width, 110)
+    this.cardShelf.lineStyle(1, Theme.panelBorder, 1)
+    this.cardShelf.lineBetween(0, 230, width, 230)
+    this.cardShelf.setDepth(5)
+    LayoutEditor.register(this, 'cardShelf', this.cardShelf, 0, 0)
+
     const teamPanel = new PixelPanel(this, 16, 340, width - 32, 100, { title: 'YOUR TEAM' })
+    teamPanel.setDepth(6)
     LayoutEditor.register(this, 'teamPanel', teamPanel, 16, 340)
 
     this._drawTeamBench()
@@ -83,16 +101,19 @@ export class ShopScene extends Scene {
     this.rerollBtn = new PixelButton(this, width / 2 - 130, 475, 'REROLL (1g)', () => {
       this._reroll()
     }, { style: 'filled', scale: 2, bg: Theme.accentDim, width: 140, height: 32 })
+    this.rerollBtn.setDepth(8)
     LayoutEditor.register(this, 'rerollBtn', this.rerollBtn, width / 2 - 130, 475)
 
     this.fightBtn = new PixelButton(this, width / 2 + 130, 475, 'FIGHT!', () => {
       this._startBattle()
     }, { style: 'filled', scale: 3, bg: Theme.accent, width: 160, height: 40 })
+    this.fightBtn.setDepth(8)
     LayoutEditor.register(this, 'fightBtn', this.fightBtn, width / 2 + 130, 475)
 
     this.teamCountLabel = new PixelLabel(this, width / 2, 475, `${this.team.length}/5`, {
       scale: 2, color: 'muted', align: 'center',
     })
+    this.teamCountLabel.setDepth(8)
     LayoutEditor.register(this, 'teamCount', this.teamCountLabel, width / 2, 475)
 
     // Shutdown cleanup
@@ -122,6 +143,10 @@ export class ShopScene extends Scene {
         onClick: () => this._buyWarrior(i),
       })
       LayoutEditor.register(this, `card_${i}`, card, x, y)
+      // Capture rest position AFTER LayoutEditor applies overrides — register()
+      // rewrites x/y immediately, so the constructor's snapshot is wrong.
+      card.captureRestPosition()
+      card.setDepth(1)
       this.cards.push(card)
     })
   }
@@ -138,14 +163,17 @@ export class ShopScene extends Scene {
 
       const slot = this.add.rectangle(x, y, 56, 56, Theme.screenBg)
         .setStrokeStyle(1, Theme.panelBorder)
+      slot.setDepth(7)
       this.benchGroup.add(slot)
 
       if (this.team[i]) {
         const w = this.team[i]
         const ref = getUnitPortraitRef(this, w, 'shop bench')
         const sprite = this.add.image(x, y - 6, ref.key, ref.frame).setScale(1.3)
+        sprite.setDepth(7)
         const name = this.add.bitmapText(x, y + 22, FONT_KEY, w.name, 7 * 1)
           .setOrigin(0.5).setTint(Theme.primaryText)
+        name.setDepth(7)
         this.benchGroup.add(sprite)
         this.benchGroup.add(name)
 

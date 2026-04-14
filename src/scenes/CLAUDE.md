@@ -9,8 +9,7 @@ Boot → Menu → Shop ⟷ Battle → Shop (win/loss, team persists — no perma
                  ↓              ↓ (3 losses) → GameOver
                  ↓              ↓ (9 wins) → HallOfFame
                  ├→ Settings (stub)
-                 ├→ HallOfFame (leaderboard viewer, no runId)
-                 └→ UnitLab (unit editor)
+                 └→ HallOfFame (leaderboard viewer, no runId)
 ```
 
 Scenes pass state via `init(data)` with: `{ stage, credits, wins, losses, team, runId, opponent, commander, merchant }`.
@@ -19,13 +18,12 @@ Dynamic run length: play rounds until 9 wins or 3 losses (not fixed 9 stages).
 ## Files
 
 - **BootScene.js** — Preloads parallax textures (29 PENUSBMIC sets, ~180 PNGs via `getAllParallaxAssets()`). Generates placeholder textures for warriors (colored squares with eyes, per tier). Generates merchant placeholder. Initializes PixelFont and Supabase auth. 600ms delay then transitions to Menu.
-- **MenuScene.js** — Title screen with name input (PixelTextInput), typewriter messages, merchant with idle bob/breathing animation + reflection. Buttons: START GAME, HALL OF FAME, SETTINGS, UNIT LAB. Shows art ready count (`${readyArtCount}/${totalUnits}`). Passes `{ stage: 1, gold: 10, wins: 0, losses: 0, team: [], runId }` to Shop. Scanline overlay.
+- **MenuScene.js** — Title screen with name input (PixelTextInput), typewriter messages, merchant with idle bob/breathing animation + reflection. Buttons: START GAME, HALL OF FAME, SETTINGS. Shows art ready count (`${readyArtCount}/${totalUnits}`). Passes `{ stage: 1, gold: 10, wins: 0, losses: 0, team: [], runId }` to Shop. Scanline overlay.
 - **ShopScene.js** — Core recruitment UI. Header: stage label, gold label, lives label (3 - losses). Merchant with quote. 4 shop cards via ShopManager. Team bench (5 slots) with sell-on-click (refunds 1 gold). Buttons: REROLL (1g), FIGHT! (triggers ghost snapshot + opponent fetch, then transitions to Battle).
 - **BattleScene.js** — Split parallax backgrounds (left/right random PENUSBMIC sets). Ground grid below parallax. Player team (left, x:100-420) vs enemy team (right, x:540-860) at y=320. Health bars above units. VS text center, battle log center-bottom. Animates at 500ms/step with camera shake. Awards gold on completion (3 + stage for win, 2 for loss). Survivors carry over (units with currentHp > 0). Routes to appropriate next scene.
 - **GameOverScene.js** — Shown at 3 losses. Displays W-L record. Buttons: PLAY AGAIN, MAIN MENU. Scanline overlay.
 - **HallOfFameScene.js** — Two modes: champion (has runId, submits to Supabase, shows "CHAMPION!") or leaderboard viewer (from menu, shows "HALL OF FAME"). Fetches and displays top 8 as `${wins}W - ${losses}L`. Buttons vary by mode.
 - **SettingsScene.js** — Stub. Shows "Nothing here yet..." placeholder and BACK button. Wired from Menu.
-- **UnitLabScene.js** — Full unit editor. Left panel: search filter, pagination (12 per page), unit list. Right panel: HP/ATK/COST/TIER/FACTION/DEV COMMENT/FLAVOR TEXT editing. Preview sprite. Import status and field validation. Buttons: EXPORT (downloads JSON), RESET (resets to repo defs), BACK. Autosaves drafts to localStorage.
 
 ## Patterns
 

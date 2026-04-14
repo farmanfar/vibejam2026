@@ -4,32 +4,159 @@
     "archer": {
       "source": "THE DARK PAID ASSETS/08 DARK - Character Pack 2/Archer/ideas.aseprite",
       "displayScale": 2.5,
-      "defaultTag": "idle",
-      "portraitFrame": 0
+      "defaultTag": "IDle",
+      "portraitFrame": 0,
+      "animTagOverrides": { "idle": "IDle", "death": "Death" }
     },
     "blood_king": {
-      "source": "THE DARK PAID ASSETS/08 DARK - Character Pack 2/Blood King/blood_king.aseprite",
+      "source": "THE DARK PAID ASSETS/The DARK Series - The Blood King/The DARK Series - The Blood King/The Blood King/The Blood King.aseprite",
       "displayScale": 2.5,
       "defaultTag": "idle",
-      "portraitFrame": 0
+      "portraitFrame": 0,
+      "animTagOverrides": { "death": "death/blood teleport" }
     },
     "dagger_mush": {
-      "source": "THE DARK PAID ASSETS/07 DARK - Monster Pack 1/Dagger Mush/dagger_mush.aseprite",
+      "source": "THE DARK PAID ASSETS/08 DARK - Character Pack 2/Dagger Mush/Dagger Mushroom.aseprite",
       "displayScale": 2.5,
-      "defaultTag": "idle",
-      "portraitFrame": 0
+      "defaultTag": "Idle",
+      "portraitFrame": 0,
+      "animTagOverrides": { "idle": "Idle", "attack": "throw", "death": "Death" }
     },
     "ancient_guardian": {
-      "source": "THE DARK PAID ASSETS/07 DARK - Monster Pack 1/Ancient Guardian/ancient_guardian.aseprite",
+      "source": "THE DARK PAID ASSETS/DARK 52 Ancient guardian/Guardian.aseprite",
       "displayScale": 2.5,
-      "defaultTag": "idle",
-      "portraitFrame": 0
+      "defaultTag": "Idle",
+      "portraitFrame": 0,
+      "animTagOverrides": { "idle": "Idle", "attack": "Laser" }
     },
     "assassin": {
-      "source": "THE DARK PAID ASSETS/08 DARK - Character Pack 2/Sneaky Swords/sneaky_swords.aseprite",
+      "source": "THE DARK PAID ASSETS/All 3 Sprites/assassin/Assassin.aseprite",
       "displayScale": 2.5,
       "defaultTag": "idle",
-      "portraitFrame": 0
+      "portraitFrame": 0,
+      "animTagOverrides": { "attack": "attack 1" }
+    },
+    "bloat_flyer": {
+      "source": "STRANDED PAID ASSETS/STRANDED - Insect Enemy Pack/Big Bug/Big Insect.aseprite",
+      "displayScale": 2.5,
+      "defaultTag": "moveidle",
+      "portraitFrame": 0,
+      "animTagOverrides": { "idle": "moveidle", "attack": "Attack", "death": "Death" }
+    },
+    "gnat": {
+      "source": "STRANDED PAID ASSETS/STRANDED - Insect Enemy Pack/Small Bug/Small Insect.aseprite",
+      "displayScale": 2.5,
+      "defaultTag": "Move/Idle",
+      "portraitFrame": 0,
+      "animTagOverrides": { "idle": "Move/Idle", "attack": "Attack", "death": "Death" }
+    },
+    "slopper": {
+      "source": "STRANDED PAID ASSETS/STRANDED - Insect Enemy Pack/Medium bug 2/Medium2 bug.aseprite",
+      "displayScale": 2.5,
+      "defaultTag": "Idle Move",
+      "portraitFrame": 0,
+      "animTagOverrides": { "idle": "Idle Move", "attack": "Attack", "death": "Death" }
+    },
+    "snipper": {
+      "source": "STRANDED PAID ASSETS/STRANDED - Insect Enemy Pack/Medium Bug/Medium Insect.aseprite",
+      "displayScale": 2.5,
+      "defaultTag": "idleMove",
+      "portraitFrame": 0,
+      "animTagOverrides": { "idle": "idleMove", "attack": "Attack", "death": "Death" }
+    },
+    "ghoul": {
+      "source": "THE DARK PAID ASSETS/DARK - Character Pack 3/Ghoul/Ghoul.aseprite",
+      "displayScale": 2.5,
+      "defaultTag": "Walk",
+      "portraitFrame": 0,
+      "animTagOverrides": { "idle": "Walk", "attack": "Attack" }
+    },
+    "minion_001": {
+      "source": "STRANDED PAID ASSETS/STRANDED - Relic Minions/Minion 1/Minion 1.aseprite",
+      "displayScale": 2.5,
+      "defaultTag": "idle",
+      "portraitFrame": 0,
+      "animTagOverrides": { "attack": "Attack", "death": "Death" }
+    },
+    "minion_002": {
+      "source": "STRANDED PAID ASSETS/STRANDED - Relic Minions/Minion 2/Minion 2.aseprite",
+      "displayScale": 4.0,
+      "defaultTag": "Idle",
+      "portraitFrame": 0,
+      "trim": true,
+      "portraitFrame": 1,
+      "animTagOverrides": { "idle": "Idle", "attack": "Prep Explode", "death": "Explode " }
+    },
+    "minion_003": {
+      "source": "STRANDED PAID ASSETS/STRANDED - Relic Minions/Minion 3/Minion 3.aseprite",
+      "displayScale": 2.5,
+      "defaultTag": "Idle",
+      "portraitFrame": 0,
+      "animTagOverrides": { "idle": "Idle", "attack": "Range Attack", "death": "Death" }
+    },
+    "relic_guardian_3": {
+      "source": "STRANDED PAID ASSETS/STRANDED - Relic Guardian 3/Guardian Sprite Sheets/Relic Guardian 3 Export Ready.aseprite",
+      "displayScale": 2.5,
+      "defaultTag": "Idle",
+      "portraitFrame": 0,
+      "animTagOverrides": { "idle": "Idle", "attack": "Cast Sword", "death": "Death" }
+    },
+    "dark_mec": {
+      "source": "THE DARK PAID ASSETS/Dark Series Char pack 4 v1.1/Dark Mec/Dark Mec.aseprite",
+      "displayScale": 2.5,
+      "defaultTag": "walk",
+      "portraitFrame": 0,
+      "animTagOverrides": { "idle": "walk", "attack": "attack low" }
+    },
+    "electrocutioner": {
+      "source": "STRANDED PAID ASSETS/STRANDED - Electrocutioner/Electricuitioner.aseprite",
+      "displayScale": 2.5,
+      "defaultTag": "Idle",
+      "portraitFrame": 0,
+      "ignoreLayers": ["Flattened"],
+      "animTagOverrides": { "idle": "Idle", "attack": "Attack", "death": "Death" }
+    },
+    "glitch_samurai": {
+      "source": "THE DARK PAID ASSETS/DARK - Glitch Samurai/Glitch Samurai.aseprite",
+      "displayScale": 2.5,
+      "defaultTag": "Idle",
+      "portraitFrame": 0,
+      "animTagOverrides": { "idle": "Idle", "attack": "Gltich Attack", "death": "Death Frame" }
+    },
+    "colossal_boss": {
+      "source": "THE DARK PAID ASSETS/DARK Series - Colossal Boss/Ancient Boss.aseprite",
+      "displayScale": 2.5,
+      "defaultTag": "Idle",
+      "portraitFrame": 0,
+      "animTagOverrides": { "idle": "Idle", "attack": "Burst", "death": "Death" }
+    },
+    "archer_bandit": {
+      "source": "THE DARK PAID ASSETS/DARK - Bandit Bros/Archer Bandit/Archer Bandit.aseprite",
+      "displayScale": 2.5,
+      "defaultTag": "Idle",
+      "portraitFrame": 0,
+      "animTagOverrides": { "idle": "Idle", "attack": "Attack 1", "death": "Death" }
+    },
+    "dagger_bandit": {
+      "source": "THE DARK PAID ASSETS/DARK - Bandit Bros/Dagger Bandit/Dagger Bandit.aseprite",
+      "displayScale": 2.5,
+      "defaultTag": "Idle",
+      "portraitFrame": 0,
+      "animTagOverrides": { "idle": "Idle", "attack": "Attack", "death": "Death" }
+    },
+    "hog_knight": {
+      "source": "STRANDED PAID ASSETS/Stranded Pack 3/Enemies/Tribe Hunter/Tribe Hunter.aseprite",
+      "displayScale": 2.5,
+      "defaultTag": "idle",
+      "portraitFrame": 0,
+      "animTagOverrides": { "attack": "Shoot" }
+    },
+    "tribal_chopper": {
+      "source": "STRANDED PAID ASSETS/Stranded Pack 3/Enemies/Tribe Warrior/Tribe Warrior.aseprite",
+      "displayScale": 2.5,
+      "defaultTag": "Idle",
+      "portraitFrame": 0,
+      "animTagOverrides": { "idle": "Idle" }
     }
   }
 }

@@ -1,0 +1,1663 @@
+{ "frames": [
+   {
+    "filename": "Ancient Boss 0.aseprite",
+    "frame": { "x": 0, "y": 0, "w": 201, "h": 94 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 201, "h": 94 },
+    "sourceSize": { "w": 201, "h": 94 },
+    "duration": 100
+   },
+   {
+    "filename": "Ancient Boss 1.aseprite",
+    "frame": { "x": 201, "y": 0, "w": 201, "h": 94 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 201, "h": 94 },
+    "sourceSize": { "w": 201, "h": 94 },
+    "duration": 100
+   },
+   {
+    "filename": "Ancient Boss 2.aseprite",
+    "frame": { "x": 402, "y": 0, "w": 201, "h": 94 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 201, "h": 94 },
+    "sourceSize": { "w": 201, "h": 94 },
+    "duration": 100
+   },
+   {
+    "filename": "Ancient Boss 3.aseprite",
+    "frame": { "x": 603, "y": 0, "w": 201, "h": 94 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 201, "h": 94 },
+    "sourceSize": { "w": 201, "h": 94 },
+    "duration": 100
+   },
+   {
+    "filename": "Ancient Boss 4.aseprite",
+    "frame": { "x": 804, "y": 0, "w": 201, "h": 94 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 201, "h": 94 },
+    "sourceSize": { "w": 201, "h": 94 },
+    "duration": 100
+   },
+   {
+    "filename": "Ancient Boss 5.aseprite",
+    "frame": { "x": 1005, "y": 0, "w": 201, "h": 94 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 201, "h": 94 },
+    "sourceSize": { "w": 201, "h": 94 },
+    "duration": 100
+   },
+   {
+    "filename": "Ancient Boss 6.aseprite",
+    "frame": { "x": 1206, "y": 0, "w": 201, "h": 94 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 201, "h": 94 },
+    "sourceSize": { "w": 201, "h": 94 },
+    "duration": 100
+   },
+   {
+    "filename": "Ancient Boss 7.aseprite",
+    "frame": { "x": 1407, "y": 0, "w": 201, "h": 94 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 201, "h": 94 },
+    "sourceSize": { "w": 201, "h": 94 },
+    "duration": 100
+   },
+   {
+    "filename": "Ancient Boss 8.aseprite",
+    "frame": { "x": 1608, "y": 0, "w": 201, "h": 94 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 201, "h": 94 },
+    "sourceSize": { "w": 201, "h": 94 },
+    "duration": 100
+   },
+   {
+    "filename": "Ancient Boss 9.aseprite",
+    "frame": { "x": 1809, "y": 0, "w": 201, "h": 94 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 201, "h": 94 },
+    "sourceSize": { "w": 201, "h": 94 },
+    "duration": 100
+   },
+   {
+    "filename": "Ancient Boss 10.aseprite",
+    "frame": { "x": 2010, "y": 0, "w": 201, "h": 94 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 201, "h": 94 },
+    "sourceSize": { "w": 201, "h": 94 },
+    "duration": 100
+   },
+   {
+    "filename": "Ancient Boss 11.aseprite",
+    "frame": { "x": 2211, "y": 0, "w": 201, "h": 94 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 201, "h": 94 },
+    "sourceSize": { "w": 201, "h": 94 },
+    "duration": 100
+   },
+   {
+    "filename": "Ancient Boss 12.aseprite",
+    "frame": { "x": 2412, "y": 0, "w": 201, "h": 94 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 201, "h": 94 },
+    "sourceSize": { "w": 201, "h": 94 },
+    "duration": 100
+   },
+   {
+    "filename": "Ancient Boss 13.aseprite",
+    "frame": { "x": 0, "y": 94, "w": 201, "h": 94 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 201, "h": 94 },
+    "sourceSize": { "w": 201, "h": 94 },
+    "duration": 100
+   },
+   {
+    "filename": "Ancient Boss 14.aseprite",
+    "frame": { "x": 201, "y": 94, "w": 201, "h": 94 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 201, "h": 94 },
+    "sourceSize": { "w": 201, "h": 94 },
+    "duration": 100
+   },
+   {
+    "filename": "Ancient Boss 15.aseprite",
+    "frame": { "x": 402, "y": 94, "w": 201, "h": 94 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 201, "h": 94 },
+    "sourceSize": { "w": 201, "h": 94 },
+    "duration": 100
+   },
+   {
+    "filename": "Ancient Boss 16.aseprite",
+    "frame": { "x": 603, "y": 94, "w": 201, "h": 94 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 201, "h": 94 },
+    "sourceSize": { "w": 201, "h": 94 },
+    "duration": 100
+   },
+   {
+    "filename": "Ancient Boss 17.aseprite",
+    "frame": { "x": 804, "y": 94, "w": 201, "h": 94 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 201, "h": 94 },
+    "sourceSize": { "w": 201, "h": 94 },
+    "duration": 100
+   },
+   {
+    "filename": "Ancient Boss 18.aseprite",
+    "frame": { "x": 1005, "y": 94, "w": 201, "h": 94 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 201, "h": 94 },
+    "sourceSize": { "w": 201, "h": 94 },
+    "duration": 100
+   },
+   {
+    "filename": "Ancient Boss 19.aseprite",
+    "frame": { "x": 1206, "y": 94, "w": 201, "h": 94 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 201, "h": 94 },
+    "sourceSize": { "w": 201, "h": 94 },
+    "duration": 100
+   },
+   {
+    "filename": "Ancient Boss 20.aseprite",
+    "frame": { "x": 1407, "y": 94, "w": 201, "h": 94 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 201, "h": 94 },
+    "sourceSize": { "w": 201, "h": 94 },
+    "duration": 100
+   },
+   {
+    "filename": "Ancient Boss 21.aseprite",
+    "frame": { "x": 1608, "y": 94, "w": 201, "h": 94 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 201, "h": 94 },
+    "sourceSize": { "w": 201, "h": 94 },
+    "duration": 100
+   },
+   {
+    "filename": "Ancient Boss 22.aseprite",
+    "frame": { "x": 1608, "y": 94, "w": 201, "h": 94 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 201, "h": 94 },
+    "sourceSize": { "w": 201, "h": 94 },
+    "duration": 100
+   },
+   {
+    "filename": "Ancient Boss 23.aseprite",
+    "frame": { "x": 1809, "y": 94, "w": 201, "h": 94 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 201, "h": 94 },
+    "sourceSize": { "w": 201, "h": 94 },
+    "duration": 100
+   },
+   {
+    "filename": "Ancient Boss 24.aseprite",
+    "frame": { "x": 2010, "y": 94, "w": 201, "h": 94 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 201, "h": 94 },
+    "sourceSize": { "w": 201, "h": 94 },
+    "duration": 100
+   },
+   {
+    "filename": "Ancient Boss 25.aseprite",
+    "frame": { "x": 2211, "y": 94, "w": 201, "h": 94 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 201, "h": 94 },
+    "sourceSize": { "w": 201, "h": 94 },
+    "duration": 100
+   },
+   {
+    "filename": "Ancient Boss 26.aseprite",
+    "frame": { "x": 2412, "y": 94, "w": 201, "h": 94 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 201, "h": 94 },
+    "sourceSize": { "w": 201, "h": 94 },
+    "duration": 100
+   },
+   {
+    "filename": "Ancient Boss 27.aseprite",
+    "frame": { "x": 0, "y": 188, "w": 201, "h": 94 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 201, "h": 94 },
+    "sourceSize": { "w": 201, "h": 94 },
+    "duration": 100
+   },
+   {
+    "filename": "Ancient Boss 28.aseprite",
+    "frame": { "x": 201, "y": 188, "w": 201, "h": 94 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 201, "h": 94 },
+    "sourceSize": { "w": 201, "h": 94 },
+    "duration": 100
+   },
+   {
+    "filename": "Ancient Boss 29.aseprite",
+    "frame": { "x": 402, "y": 188, "w": 201, "h": 94 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 201, "h": 94 },
+    "sourceSize": { "w": 201, "h": 94 },
+    "duration": 100
+   },
+   {
+    "filename": "Ancient Boss 30.aseprite",
+    "frame": { "x": 603, "y": 188, "w": 201, "h": 94 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 201, "h": 94 },
+    "sourceSize": { "w": 201, "h": 94 },
+    "duration": 100
+   },
+   {
+    "filename": "Ancient Boss 31.aseprite",
+    "frame": { "x": 804, "y": 188, "w": 201, "h": 94 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 201, "h": 94 },
+    "sourceSize": { "w": 201, "h": 94 },
+    "duration": 100
+   },
+   {
+    "filename": "Ancient Boss 32.aseprite",
+    "frame": { "x": 1407, "y": 94, "w": 201, "h": 94 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 201, "h": 94 },
+    "sourceSize": { "w": 201, "h": 94 },
+    "duration": 100
+   },
+   {
+    "filename": "Ancient Boss 33.aseprite",
+    "frame": { "x": 1608, "y": 94, "w": 201, "h": 94 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 201, "h": 94 },
+    "sourceSize": { "w": 201, "h": 94 },
+    "duration": 100
+   },
+   {
+    "filename": "Ancient Boss 34.aseprite",
+    "frame": { "x": 1608, "y": 94, "w": 201, "h": 94 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 201, "h": 94 },
+    "sourceSize": { "w": 201, "h": 94 },
+    "duration": 100
+   },
+   {
+    "filename": "Ancient Boss 35.aseprite",
+    "frame": { "x": 1809, "y": 94, "w": 201, "h": 94 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 201, "h": 94 },
+    "sourceSize": { "w": 201, "h": 94 },
+    "duration": 100
+   },
+   {
+    "filename": "Ancient Boss 36.aseprite",
+    "frame": { "x": 1809, "y": 94, "w": 201, "h": 94 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 201, "h": 94 },
+    "sourceSize": { "w": 201, "h": 94 },
+    "duration": 100
+   },
+   {
+    "filename": "Ancient Boss 37.aseprite",
+    "frame": { "x": 1005, "y": 188, "w": 201, "h": 94 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 201, "h": 94 },
+    "sourceSize": { "w": 201, "h": 94 },
+    "duration": 100
+   },
+   {
+    "filename": "Ancient Boss 38.aseprite",
+    "frame": { "x": 1206, "y": 188, "w": 201, "h": 94 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 201, "h": 94 },
+    "sourceSize": { "w": 201, "h": 94 },
+    "duration": 100
+   },
+   {
+    "filename": "Ancient Boss 39.aseprite",
+    "frame": { "x": 1407, "y": 188, "w": 201, "h": 94 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 201, "h": 94 },
+    "sourceSize": { "w": 201, "h": 94 },
+    "duration": 100
+   },
+   {
+    "filename": "Ancient Boss 40.aseprite",
+    "frame": { "x": 1608, "y": 188, "w": 201, "h": 94 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 201, "h": 94 },
+    "sourceSize": { "w": 201, "h": 94 },
+    "duration": 100
+   },
+   {
+    "filename": "Ancient Boss 41.aseprite",
+    "frame": { "x": 1809, "y": 188, "w": 201, "h": 94 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 201, "h": 94 },
+    "sourceSize": { "w": 201, "h": 94 },
+    "duration": 100
+   },
+   {
+    "filename": "Ancient Boss 42.aseprite",
+    "frame": { "x": 2010, "y": 188, "w": 201, "h": 94 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 201, "h": 94 },
+    "sourceSize": { "w": 201, "h": 94 },
+    "duration": 100
+   },
+   {
+    "filename": "Ancient Boss 43.aseprite",
+    "frame": { "x": 2211, "y": 188, "w": 201, "h": 94 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 201, "h": 94 },
+    "sourceSize": { "w": 201, "h": 94 },
+    "duration": 100
+   },
+   {
+    "filename": "Ancient Boss 44.aseprite",
+    "frame": { "x": 2412, "y": 188, "w": 201, "h": 94 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 201, "h": 94 },
+    "sourceSize": { "w": 201, "h": 94 },
+    "duration": 100
+   },
+   {
+    "filename": "Ancient Boss 45.aseprite",
+    "frame": { "x": 0, "y": 282, "w": 201, "h": 94 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 201, "h": 94 },
+    "sourceSize": { "w": 201, "h": 94 },
+    "duration": 100
+   },
+   {
+    "filename": "Ancient Boss 46.aseprite",
+    "frame": { "x": 0, "y": 282, "w": 201, "h": 94 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 201, "h": 94 },
+    "sourceSize": { "w": 201, "h": 94 },
+    "duration": 100
+   },
+   {
+    "filename": "Ancient Boss 47.aseprite",
+    "frame": { "x": 201, "y": 282, "w": 201, "h": 94 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 201, "h": 94 },
+    "sourceSize": { "w": 201, "h": 94 },
+    "duration": 100
+   },
+   {
+    "filename": "Ancient Boss 48.aseprite",
+    "frame": { "x": 402, "y": 282, "w": 201, "h": 94 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 201, "h": 94 },
+    "sourceSize": { "w": 201, "h": 94 },
+    "duration": 100
+   },
+   {
+    "filename": "Ancient Boss 49.aseprite",
+    "frame": { "x": 603, "y": 282, "w": 201, "h": 94 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 201, "h": 94 },
+    "sourceSize": { "w": 201, "h": 94 },
+    "duration": 100
+   },
+   {
+    "filename": "Ancient Boss 50.aseprite",
+    "frame": { "x": 804, "y": 282, "w": 201, "h": 94 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 201, "h": 94 },
+    "sourceSize": { "w": 201, "h": 94 },
+    "duration": 100
+   },
+   {
+    "filename": "Ancient Boss 51.aseprite",
+    "frame": { "x": 1005, "y": 282, "w": 201, "h": 94 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 201, "h": 94 },
+    "sourceSize": { "w": 201, "h": 94 },
+    "duration": 100
+   },
+   {
+    "filename": "Ancient Boss 52.aseprite",
+    "frame": { "x": 1206, "y": 282, "w": 201, "h": 94 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 201, "h": 94 },
+    "sourceSize": { "w": 201, "h": 94 },
+    "duration": 100
+   },
+   {
+    "filename": "Ancient Boss 53.aseprite",
+    "frame": { "x": 1407, "y": 282, "w": 201, "h": 94 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 201, "h": 94 },
+    "sourceSize": { "w": 201, "h": 94 },
+    "duration": 100
+   },
+   {
+    "filename": "Ancient Boss 54.aseprite",
+    "frame": { "x": 1608, "y": 282, "w": 201, "h": 94 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 201, "h": 94 },
+    "sourceSize": { "w": 201, "h": 94 },
+    "duration": 100
+   },
+   {
+    "filename": "Ancient Boss 55.aseprite",
+    "frame": { "x": 1809, "y": 282, "w": 201, "h": 94 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 201, "h": 94 },
+    "sourceSize": { "w": 201, "h": 94 },
+    "duration": 100
+   },
+   {
+    "filename": "Ancient Boss 56.aseprite",
+    "frame": { "x": 2412, "y": 188, "w": 201, "h": 94 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 201, "h": 94 },
+    "sourceSize": { "w": 201, "h": 94 },
+    "duration": 100
+   },
+   {
+    "filename": "Ancient Boss 57.aseprite",
+    "frame": { "x": 0, "y": 282, "w": 201, "h": 94 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 201, "h": 94 },
+    "sourceSize": { "w": 201, "h": 94 },
+    "duration": 100
+   },
+   {
+    "filename": "Ancient Boss 58.aseprite",
+    "frame": { "x": 0, "y": 282, "w": 201, "h": 94 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 201, "h": 94 },
+    "sourceSize": { "w": 201, "h": 94 },
+    "duration": 100
+   },
+   {
+    "filename": "Ancient Boss 59.aseprite",
+    "frame": { "x": 201, "y": 282, "w": 201, "h": 94 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 201, "h": 94 },
+    "sourceSize": { "w": 201, "h": 94 },
+    "duration": 100
+   },
+   {
+    "filename": "Ancient Boss 60.aseprite",
+    "frame": { "x": 201, "y": 282, "w": 201, "h": 94 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 201, "h": 94 },
+    "sourceSize": { "w": 201, "h": 94 },
+    "duration": 100
+   },
+   {
+    "filename": "Ancient Boss 61.aseprite",
+    "frame": { "x": 2010, "y": 282, "w": 201, "h": 94 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 201, "h": 94 },
+    "sourceSize": { "w": 201, "h": 94 },
+    "duration": 100
+   },
+   {
+    "filename": "Ancient Boss 62.aseprite",
+    "frame": { "x": 2211, "y": 282, "w": 201, "h": 94 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 201, "h": 94 },
+    "sourceSize": { "w": 201, "h": 94 },
+    "duration": 100
+   },
+   {
+    "filename": "Ancient Boss 63.aseprite",
+    "frame": { "x": 2412, "y": 282, "w": 201, "h": 94 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 201, "h": 94 },
+    "sourceSize": { "w": 201, "h": 94 },
+    "duration": 100
+   },
+   {
+    "filename": "Ancient Boss 64.aseprite",
+    "frame": { "x": 0, "y": 376, "w": 201, "h": 94 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 201, "h": 94 },
+    "sourceSize": { "w": 201, "h": 94 },
+    "duration": 100
+   },
+   {
+    "filename": "Ancient Boss 65.aseprite",
+    "frame": { "x": 201, "y": 376, "w": 201, "h": 94 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 201, "h": 94 },
+    "sourceSize": { "w": 201, "h": 94 },
+    "duration": 100
+   },
+   {
+    "filename": "Ancient Boss 66.aseprite",
+    "frame": { "x": 402, "y": 376, "w": 201, "h": 94 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 201, "h": 94 },
+    "sourceSize": { "w": 201, "h": 94 },
+    "duration": 100
+   },
+   {
+    "filename": "Ancient Boss 67.aseprite",
+    "frame": { "x": 603, "y": 376, "w": 201, "h": 94 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 201, "h": 94 },
+    "sourceSize": { "w": 201, "h": 94 },
+    "duration": 100
+   },
+   {
+    "filename": "Ancient Boss 68.aseprite",
+    "frame": { "x": 804, "y": 376, "w": 201, "h": 94 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 201, "h": 94 },
+    "sourceSize": { "w": 201, "h": 94 },
+    "duration": 100
+   },
+   {
+    "filename": "Ancient Boss 69.aseprite",
+    "frame": { "x": 1005, "y": 376, "w": 201, "h": 94 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 201, "h": 94 },
+    "sourceSize": { "w": 201, "h": 94 },
+    "duration": 100
+   },
+   {
+    "filename": "Ancient Boss 70.aseprite",
+    "frame": { "x": 1206, "y": 376, "w": 201, "h": 94 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 201, "h": 94 },
+    "sourceSize": { "w": 201, "h": 94 },
+    "duration": 100
+   },
+   {
+    "filename": "Ancient Boss 71.aseprite",
+    "frame": { "x": 201, "y": 376, "w": 201, "h": 94 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 201, "h": 94 },
+    "sourceSize": { "w": 201, "h": 94 },
+    "duration": 100
+   },
+   {
+    "filename": "Ancient Boss 72.aseprite",
+    "frame": { "x": 0, "y": 376, "w": 201, "h": 94 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 201, "h": 94 },
+    "sourceSize": { "w": 201, "h": 94 },
+    "duration": 100
+   },
+   {
+    "filename": "Ancient Boss 73.aseprite",
+    "frame": { "x": 1407, "y": 376, "w": 201, "h": 94 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 201, "h": 94 },
+    "sourceSize": { "w": 201, "h": 94 },
+    "duration": 100
+   },
+   {
+    "filename": "Ancient Boss 74.aseprite",
+    "frame": { "x": 2211, "y": 282, "w": 201, "h": 94 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 201, "h": 94 },
+    "sourceSize": { "w": 201, "h": 94 },
+    "duration": 100
+   },
+   {
+    "filename": "Ancient Boss 75.aseprite",
+    "frame": { "x": 2010, "y": 282, "w": 201, "h": 94 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 201, "h": 94 },
+    "sourceSize": { "w": 201, "h": 94 },
+    "duration": 100
+   },
+   {
+    "filename": "Ancient Boss 76.aseprite",
+    "frame": { "x": 2010, "y": 282, "w": 201, "h": 94 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 201, "h": 94 },
+    "sourceSize": { "w": 201, "h": 94 },
+    "duration": 100
+   },
+   {
+    "filename": "Ancient Boss 77.aseprite",
+    "frame": { "x": 1608, "y": 376, "w": 201, "h": 94 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 201, "h": 94 },
+    "sourceSize": { "w": 201, "h": 94 },
+    "duration": 100
+   },
+   {
+    "filename": "Ancient Boss 78.aseprite",
+    "frame": { "x": 1809, "y": 376, "w": 201, "h": 94 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 201, "h": 94 },
+    "sourceSize": { "w": 201, "h": 94 },
+    "duration": 100
+   },
+   {
+    "filename": "Ancient Boss 79.aseprite",
+    "frame": { "x": 2010, "y": 376, "w": 201, "h": 94 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 201, "h": 94 },
+    "sourceSize": { "w": 201, "h": 94 },
+    "duration": 100
+   },
+   {
+    "filename": "Ancient Boss 80.aseprite",
+    "frame": { "x": 2211, "y": 376, "w": 201, "h": 94 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 201, "h": 94 },
+    "sourceSize": { "w": 201, "h": 94 },
+    "duration": 100
+   },
+   {
+    "filename": "Ancient Boss 81.aseprite",
+    "frame": { "x": 2412, "y": 376, "w": 201, "h": 94 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 201, "h": 94 },
+    "sourceSize": { "w": 201, "h": 94 },
+    "duration": 100
+   },
+   {
+    "filename": "Ancient Boss 82.aseprite",
+    "frame": { "x": 0, "y": 470, "w": 201, "h": 94 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 201, "h": 94 },
+    "sourceSize": { "w": 201, "h": 94 },
+    "duration": 100
+   },
+   {
+    "filename": "Ancient Boss 83.aseprite",
+    "frame": { "x": 201, "y": 470, "w": 201, "h": 94 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 201, "h": 94 },
+    "sourceSize": { "w": 201, "h": 94 },
+    "duration": 100
+   },
+   {
+    "filename": "Ancient Boss 84.aseprite",
+    "frame": { "x": 402, "y": 470, "w": 201, "h": 94 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 201, "h": 94 },
+    "sourceSize": { "w": 201, "h": 94 },
+    "duration": 100
+   },
+   {
+    "filename": "Ancient Boss 85.aseprite",
+    "frame": { "x": 603, "y": 470, "w": 201, "h": 94 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 201, "h": 94 },
+    "sourceSize": { "w": 201, "h": 94 },
+    "duration": 100
+   },
+   {
+    "filename": "Ancient Boss 86.aseprite",
+    "frame": { "x": 804, "y": 470, "w": 201, "h": 94 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 201, "h": 94 },
+    "sourceSize": { "w": 201, "h": 94 },
+    "duration": 100
+   },
+   {
+    "filename": "Ancient Boss 87.aseprite",
+    "frame": { "x": 1005, "y": 470, "w": 201, "h": 94 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 201, "h": 94 },
+    "sourceSize": { "w": 201, "h": 94 },
+    "duration": 100
+   },
+   {
+    "filename": "Ancient Boss 88.aseprite",
+    "frame": { "x": 1206, "y": 470, "w": 201, "h": 94 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 201, "h": 94 },
+    "sourceSize": { "w": 201, "h": 94 },
+    "duration": 100
+   },
+   {
+    "filename": "Ancient Boss 89.aseprite",
+    "frame": { "x": 1407, "y": 470, "w": 201, "h": 94 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 201, "h": 94 },
+    "sourceSize": { "w": 201, "h": 94 },
+    "duration": 100
+   },
+   {
+    "filename": "Ancient Boss 90.aseprite",
+    "frame": { "x": 1608, "y": 470, "w": 201, "h": 94 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 201, "h": 94 },
+    "sourceSize": { "w": 201, "h": 94 },
+    "duration": 100
+   },
+   {
+    "filename": "Ancient Boss 91.aseprite",
+    "frame": { "x": 1809, "y": 470, "w": 201, "h": 94 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 201, "h": 94 },
+    "sourceSize": { "w": 201, "h": 94 },
+    "duration": 100
+   },
+   {
+    "filename": "Ancient Boss 92.aseprite",
+    "frame": { "x": 2010, "y": 470, "w": 201, "h": 94 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 201, "h": 94 },
+    "sourceSize": { "w": 201, "h": 94 },
+    "duration": 100
+   },
+   {
+    "filename": "Ancient Boss 93.aseprite",
+    "frame": { "x": 2211, "y": 470, "w": 201, "h": 94 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 201, "h": 94 },
+    "sourceSize": { "w": 201, "h": 94 },
+    "duration": 100
+   },
+   {
+    "filename": "Ancient Boss 94.aseprite",
+    "frame": { "x": 2412, "y": 470, "w": 201, "h": 94 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 201, "h": 94 },
+    "sourceSize": { "w": 201, "h": 94 },
+    "duration": 100
+   },
+   {
+    "filename": "Ancient Boss 95.aseprite",
+    "frame": { "x": 0, "y": 564, "w": 201, "h": 94 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 201, "h": 94 },
+    "sourceSize": { "w": 201, "h": 94 },
+    "duration": 100
+   },
+   {
+    "filename": "Ancient Boss 96.aseprite",
+    "frame": { "x": 201, "y": 564, "w": 201, "h": 94 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 201, "h": 94 },
+    "sourceSize": { "w": 201, "h": 94 },
+    "duration": 100
+   },
+   {
+    "filename": "Ancient Boss 97.aseprite",
+    "frame": { "x": 402, "y": 564, "w": 201, "h": 94 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 201, "h": 94 },
+    "sourceSize": { "w": 201, "h": 94 },
+    "duration": 100
+   },
+   {
+    "filename": "Ancient Boss 98.aseprite",
+    "frame": { "x": 603, "y": 564, "w": 201, "h": 94 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 201, "h": 94 },
+    "sourceSize": { "w": 201, "h": 94 },
+    "duration": 100
+   },
+   {
+    "filename": "Ancient Boss 99.aseprite",
+    "frame": { "x": 804, "y": 564, "w": 201, "h": 94 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 201, "h": 94 },
+    "sourceSize": { "w": 201, "h": 94 },
+    "duration": 100
+   },
+   {
+    "filename": "Ancient Boss 100.aseprite",
+    "frame": { "x": 1005, "y": 564, "w": 201, "h": 94 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 201, "h": 94 },
+    "sourceSize": { "w": 201, "h": 94 },
+    "duration": 100
+   },
+   {
+    "filename": "Ancient Boss 101.aseprite",
+    "frame": { "x": 1206, "y": 564, "w": 201, "h": 94 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 201, "h": 94 },
+    "sourceSize": { "w": 201, "h": 94 },
+    "duration": 100
+   },
+   {
+    "filename": "Ancient Boss 102.aseprite",
+    "frame": { "x": 1407, "y": 564, "w": 201, "h": 94 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 201, "h": 94 },
+    "sourceSize": { "w": 201, "h": 94 },
+    "duration": 100
+   },
+   {
+    "filename": "Ancient Boss 103.aseprite",
+    "frame": { "x": 1608, "y": 564, "w": 201, "h": 94 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 201, "h": 94 },
+    "sourceSize": { "w": 201, "h": 94 },
+    "duration": 100
+   },
+   {
+    "filename": "Ancient Boss 104.aseprite",
+    "frame": { "x": 1809, "y": 564, "w": 201, "h": 94 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 201, "h": 94 },
+    "sourceSize": { "w": 201, "h": 94 },
+    "duration": 100
+   },
+   {
+    "filename": "Ancient Boss 105.aseprite",
+    "frame": { "x": 2010, "y": 564, "w": 201, "h": 94 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 201, "h": 94 },
+    "sourceSize": { "w": 201, "h": 94 },
+    "duration": 100
+   },
+   {
+    "filename": "Ancient Boss 106.aseprite",
+    "frame": { "x": 2211, "y": 564, "w": 201, "h": 94 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 201, "h": 94 },
+    "sourceSize": { "w": 201, "h": 94 },
+    "duration": 100
+   },
+   {
+    "filename": "Ancient Boss 107.aseprite",
+    "frame": { "x": 2211, "y": 564, "w": 201, "h": 94 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 201, "h": 94 },
+    "sourceSize": { "w": 201, "h": 94 },
+    "duration": 100
+   },
+   {
+    "filename": "Ancient Boss 108.aseprite",
+    "frame": { "x": 2412, "y": 564, "w": 201, "h": 94 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 201, "h": 94 },
+    "sourceSize": { "w": 201, "h": 94 },
+    "duration": 100
+   },
+   {
+    "filename": "Ancient Boss 109.aseprite",
+    "frame": { "x": 0, "y": 658, "w": 201, "h": 94 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 201, "h": 94 },
+    "sourceSize": { "w": 201, "h": 94 },
+    "duration": 100
+   },
+   {
+    "filename": "Ancient Boss 110.aseprite",
+    "frame": { "x": 201, "y": 658, "w": 201, "h": 94 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 201, "h": 94 },
+    "sourceSize": { "w": 201, "h": 94 },
+    "duration": 100
+   },
+   {
+    "filename": "Ancient Boss 111.aseprite",
+    "frame": { "x": 402, "y": 658, "w": 201, "h": 94 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 201, "h": 94 },
+    "sourceSize": { "w": 201, "h": 94 },
+    "duration": 100
+   },
+   {
+    "filename": "Ancient Boss 112.aseprite",
+    "frame": { "x": 603, "y": 658, "w": 201, "h": 94 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 201, "h": 94 },
+    "sourceSize": { "w": 201, "h": 94 },
+    "duration": 100
+   },
+   {
+    "filename": "Ancient Boss 113.aseprite",
+    "frame": { "x": 804, "y": 658, "w": 201, "h": 94 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 201, "h": 94 },
+    "sourceSize": { "w": 201, "h": 94 },
+    "duration": 100
+   },
+   {
+    "filename": "Ancient Boss 114.aseprite",
+    "frame": { "x": 1005, "y": 658, "w": 201, "h": 94 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 201, "h": 94 },
+    "sourceSize": { "w": 201, "h": 94 },
+    "duration": 100
+   },
+   {
+    "filename": "Ancient Boss 115.aseprite",
+    "frame": { "x": 1206, "y": 658, "w": 201, "h": 94 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 201, "h": 94 },
+    "sourceSize": { "w": 201, "h": 94 },
+    "duration": 100
+   },
+   {
+    "filename": "Ancient Boss 116.aseprite",
+    "frame": { "x": 1407, "y": 658, "w": 201, "h": 94 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 201, "h": 94 },
+    "sourceSize": { "w": 201, "h": 94 },
+    "duration": 100
+   },
+   {
+    "filename": "Ancient Boss 117.aseprite",
+    "frame": { "x": 1608, "y": 658, "w": 201, "h": 94 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 201, "h": 94 },
+    "sourceSize": { "w": 201, "h": 94 },
+    "duration": 100
+   },
+   {
+    "filename": "Ancient Boss 118.aseprite",
+    "frame": { "x": 1809, "y": 658, "w": 201, "h": 94 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 201, "h": 94 },
+    "sourceSize": { "w": 201, "h": 94 },
+    "duration": 100
+   },
+   {
+    "filename": "Ancient Boss 119.aseprite",
+    "frame": { "x": 2010, "y": 658, "w": 201, "h": 94 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 201, "h": 94 },
+    "sourceSize": { "w": 201, "h": 94 },
+    "duration": 100
+   },
+   {
+    "filename": "Ancient Boss 120.aseprite",
+    "frame": { "x": 2211, "y": 658, "w": 201, "h": 94 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 201, "h": 94 },
+    "sourceSize": { "w": 201, "h": 94 },
+    "duration": 100
+   },
+   {
+    "filename": "Ancient Boss 121.aseprite",
+    "frame": { "x": 2010, "y": 282, "w": 201, "h": 94 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 201, "h": 94 },
+    "sourceSize": { "w": 201, "h": 94 },
+    "duration": 100
+   },
+   {
+    "filename": "Ancient Boss 122.aseprite",
+    "frame": { "x": 2412, "y": 658, "w": 201, "h": 94 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 201, "h": 94 },
+    "sourceSize": { "w": 201, "h": 94 },
+    "duration": 100
+   },
+   {
+    "filename": "Ancient Boss 123.aseprite",
+    "frame": { "x": 0, "y": 752, "w": 201, "h": 94 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 201, "h": 94 },
+    "sourceSize": { "w": 201, "h": 94 },
+    "duration": 100
+   },
+   {
+    "filename": "Ancient Boss 124.aseprite",
+    "frame": { "x": 201, "y": 752, "w": 201, "h": 94 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 201, "h": 94 },
+    "sourceSize": { "w": 201, "h": 94 },
+    "duration": 100
+   },
+   {
+    "filename": "Ancient Boss 125.aseprite",
+    "frame": { "x": 402, "y": 752, "w": 201, "h": 94 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 201, "h": 94 },
+    "sourceSize": { "w": 201, "h": 94 },
+    "duration": 100
+   },
+   {
+    "filename": "Ancient Boss 126.aseprite",
+    "frame": { "x": 603, "y": 752, "w": 201, "h": 94 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 201, "h": 94 },
+    "sourceSize": { "w": 201, "h": 94 },
+    "duration": 100
+   },
+   {
+    "filename": "Ancient Boss 127.aseprite",
+    "frame": { "x": 804, "y": 752, "w": 201, "h": 94 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 201, "h": 94 },
+    "sourceSize": { "w": 201, "h": 94 },
+    "duration": 100
+   },
+   {
+    "filename": "Ancient Boss 128.aseprite",
+    "frame": { "x": 402, "y": 752, "w": 201, "h": 94 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 201, "h": 94 },
+    "sourceSize": { "w": 201, "h": 94 },
+    "duration": 100
+   },
+   {
+    "filename": "Ancient Boss 129.aseprite",
+    "frame": { "x": 1005, "y": 752, "w": 201, "h": 94 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 201, "h": 94 },
+    "sourceSize": { "w": 201, "h": 94 },
+    "duration": 100
+   },
+   {
+    "filename": "Ancient Boss 130.aseprite",
+    "frame": { "x": 1206, "y": 752, "w": 201, "h": 94 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 201, "h": 94 },
+    "sourceSize": { "w": 201, "h": 94 },
+    "duration": 100
+   },
+   {
+    "filename": "Ancient Boss 131.aseprite",
+    "frame": { "x": 1407, "y": 752, "w": 201, "h": 94 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 201, "h": 94 },
+    "sourceSize": { "w": 201, "h": 94 },
+    "duration": 100
+   },
+   {
+    "filename": "Ancient Boss 132.aseprite",
+    "frame": { "x": 1608, "y": 752, "w": 201, "h": 94 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 201, "h": 94 },
+    "sourceSize": { "w": 201, "h": 94 },
+    "duration": 100
+   },
+   {
+    "filename": "Ancient Boss 133.aseprite",
+    "frame": { "x": 1809, "y": 752, "w": 201, "h": 94 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 201, "h": 94 },
+    "sourceSize": { "w": 201, "h": 94 },
+    "duration": 100
+   },
+   {
+    "filename": "Ancient Boss 134.aseprite",
+    "frame": { "x": 2010, "y": 752, "w": 201, "h": 94 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 201, "h": 94 },
+    "sourceSize": { "w": 201, "h": 94 },
+    "duration": 100
+   },
+   {
+    "filename": "Ancient Boss 135.aseprite",
+    "frame": { "x": 2211, "y": 752, "w": 201, "h": 94 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 201, "h": 94 },
+    "sourceSize": { "w": 201, "h": 94 },
+    "duration": 100
+   },
+   {
+    "filename": "Ancient Boss 136.aseprite",
+    "frame": { "x": 2412, "y": 752, "w": 201, "h": 94 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 201, "h": 94 },
+    "sourceSize": { "w": 201, "h": 94 },
+    "duration": 100
+   },
+   {
+    "filename": "Ancient Boss 137.aseprite",
+    "frame": { "x": 0, "y": 846, "w": 201, "h": 94 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 201, "h": 94 },
+    "sourceSize": { "w": 201, "h": 94 },
+    "duration": 100
+   },
+   {
+    "filename": "Ancient Boss 138.aseprite",
+    "frame": { "x": 201, "y": 846, "w": 201, "h": 94 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 201, "h": 94 },
+    "sourceSize": { "w": 201, "h": 94 },
+    "duration": 100
+   },
+   {
+    "filename": "Ancient Boss 139.aseprite",
+    "frame": { "x": 402, "y": 846, "w": 201, "h": 94 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 201, "h": 94 },
+    "sourceSize": { "w": 201, "h": 94 },
+    "duration": 100
+   },
+   {
+    "filename": "Ancient Boss 140.aseprite",
+    "frame": { "x": 603, "y": 846, "w": 201, "h": 94 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 201, "h": 94 },
+    "sourceSize": { "w": 201, "h": 94 },
+    "duration": 100
+   },
+   {
+    "filename": "Ancient Boss 141.aseprite",
+    "frame": { "x": 804, "y": 846, "w": 201, "h": 94 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 201, "h": 94 },
+    "sourceSize": { "w": 201, "h": 94 },
+    "duration": 100
+   },
+   {
+    "filename": "Ancient Boss 142.aseprite",
+    "frame": { "x": 2010, "y": 282, "w": 201, "h": 94 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 201, "h": 94 },
+    "sourceSize": { "w": 201, "h": 94 },
+    "duration": 100
+   },
+   {
+    "filename": "Ancient Boss 143.aseprite",
+    "frame": { "x": 2010, "y": 282, "w": 201, "h": 94 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 201, "h": 94 },
+    "sourceSize": { "w": 201, "h": 94 },
+    "duration": 100
+   },
+   {
+    "filename": "Ancient Boss 144.aseprite",
+    "frame": { "x": 1608, "y": 376, "w": 201, "h": 94 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 201, "h": 94 },
+    "sourceSize": { "w": 201, "h": 94 },
+    "duration": 100
+   },
+   {
+    "filename": "Ancient Boss 145.aseprite",
+    "frame": { "x": 1809, "y": 376, "w": 201, "h": 94 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 201, "h": 94 },
+    "sourceSize": { "w": 201, "h": 94 },
+    "duration": 100
+   },
+   {
+    "filename": "Ancient Boss 146.aseprite",
+    "frame": { "x": 2010, "y": 376, "w": 201, "h": 94 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 201, "h": 94 },
+    "sourceSize": { "w": 201, "h": 94 },
+    "duration": 100
+   },
+   {
+    "filename": "Ancient Boss 147.aseprite",
+    "frame": { "x": 2211, "y": 376, "w": 201, "h": 94 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 201, "h": 94 },
+    "sourceSize": { "w": 201, "h": 94 },
+    "duration": 100
+   },
+   {
+    "filename": "Ancient Boss 148.aseprite",
+    "frame": { "x": 2412, "y": 376, "w": 201, "h": 94 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 201, "h": 94 },
+    "sourceSize": { "w": 201, "h": 94 },
+    "duration": 100
+   },
+   {
+    "filename": "Ancient Boss 149.aseprite",
+    "frame": { "x": 0, "y": 470, "w": 201, "h": 94 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 201, "h": 94 },
+    "sourceSize": { "w": 201, "h": 94 },
+    "duration": 100
+   },
+   {
+    "filename": "Ancient Boss 150.aseprite",
+    "frame": { "x": 1005, "y": 846, "w": 201, "h": 94 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 201, "h": 94 },
+    "sourceSize": { "w": 201, "h": 94 },
+    "duration": 100
+   },
+   {
+    "filename": "Ancient Boss 151.aseprite",
+    "frame": { "x": 1206, "y": 846, "w": 201, "h": 94 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 201, "h": 94 },
+    "sourceSize": { "w": 201, "h": 94 },
+    "duration": 100
+   },
+   {
+    "filename": "Ancient Boss 152.aseprite",
+    "frame": { "x": 1407, "y": 846, "w": 201, "h": 94 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 201, "h": 94 },
+    "sourceSize": { "w": 201, "h": 94 },
+    "duration": 100
+   },
+   {
+    "filename": "Ancient Boss 153.aseprite",
+    "frame": { "x": 1608, "y": 846, "w": 201, "h": 94 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 201, "h": 94 },
+    "sourceSize": { "w": 201, "h": 94 },
+    "duration": 100
+   },
+   {
+    "filename": "Ancient Boss 154.aseprite",
+    "frame": { "x": 1809, "y": 846, "w": 201, "h": 94 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 201, "h": 94 },
+    "sourceSize": { "w": 201, "h": 94 },
+    "duration": 100
+   },
+   {
+    "filename": "Ancient Boss 155.aseprite",
+    "frame": { "x": 2010, "y": 846, "w": 201, "h": 94 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 201, "h": 94 },
+    "sourceSize": { "w": 201, "h": 94 },
+    "duration": 100
+   },
+   {
+    "filename": "Ancient Boss 156.aseprite",
+    "frame": { "x": 2211, "y": 846, "w": 201, "h": 94 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 201, "h": 94 },
+    "sourceSize": { "w": 201, "h": 94 },
+    "duration": 100
+   },
+   {
+    "filename": "Ancient Boss 157.aseprite",
+    "frame": { "x": 2412, "y": 846, "w": 201, "h": 94 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 201, "h": 94 },
+    "sourceSize": { "w": 201, "h": 94 },
+    "duration": 100
+   },
+   {
+    "filename": "Ancient Boss 158.aseprite",
+    "frame": { "x": 0, "y": 940, "w": 201, "h": 94 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 201, "h": 94 },
+    "sourceSize": { "w": 201, "h": 94 },
+    "duration": 100
+   },
+   {
+    "filename": "Ancient Boss 159.aseprite",
+    "frame": { "x": 201, "y": 940, "w": 201, "h": 94 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 201, "h": 94 },
+    "sourceSize": { "w": 201, "h": 94 },
+    "duration": 100
+   },
+   {
+    "filename": "Ancient Boss 160.aseprite",
+    "frame": { "x": 402, "y": 940, "w": 201, "h": 94 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 201, "h": 94 },
+    "sourceSize": { "w": 201, "h": 94 },
+    "duration": 100
+   },
+   {
+    "filename": "Ancient Boss 161.aseprite",
+    "frame": { "x": 603, "y": 940, "w": 201, "h": 94 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 201, "h": 94 },
+    "sourceSize": { "w": 201, "h": 94 },
+    "duration": 100
+   },
+   {
+    "filename": "Ancient Boss 162.aseprite",
+    "frame": { "x": 804, "y": 940, "w": 201, "h": 94 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 201, "h": 94 },
+    "sourceSize": { "w": 201, "h": 94 },
+    "duration": 100
+   },
+   {
+    "filename": "Ancient Boss 163.aseprite",
+    "frame": { "x": 1005, "y": 940, "w": 201, "h": 94 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 201, "h": 94 },
+    "sourceSize": { "w": 201, "h": 94 },
+    "duration": 100
+   },
+   {
+    "filename": "Ancient Boss 164.aseprite",
+    "frame": { "x": 1206, "y": 940, "w": 201, "h": 94 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 201, "h": 94 },
+    "sourceSize": { "w": 201, "h": 94 },
+    "duration": 100
+   },
+   {
+    "filename": "Ancient Boss 165.aseprite",
+    "frame": { "x": 1407, "y": 940, "w": 201, "h": 94 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 201, "h": 94 },
+    "sourceSize": { "w": 201, "h": 94 },
+    "duration": 100
+   },
+   {
+    "filename": "Ancient Boss 166.aseprite",
+    "frame": { "x": 1608, "y": 940, "w": 201, "h": 94 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 201, "h": 94 },
+    "sourceSize": { "w": 201, "h": 94 },
+    "duration": 100
+   },
+   {
+    "filename": "Ancient Boss 167.aseprite",
+    "frame": { "x": 1809, "y": 940, "w": 201, "h": 94 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 201, "h": 94 },
+    "sourceSize": { "w": 201, "h": 94 },
+    "duration": 100
+   },
+   {
+    "filename": "Ancient Boss 168.aseprite",
+    "frame": { "x": 2010, "y": 940, "w": 201, "h": 94 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 201, "h": 94 },
+    "sourceSize": { "w": 201, "h": 94 },
+    "duration": 100
+   },
+   {
+    "filename": "Ancient Boss 169.aseprite",
+    "frame": { "x": 2211, "y": 940, "w": 201, "h": 94 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 201, "h": 94 },
+    "sourceSize": { "w": 201, "h": 94 },
+    "duration": 100
+   },
+   {
+    "filename": "Ancient Boss 170.aseprite",
+    "frame": { "x": 2412, "y": 940, "w": 201, "h": 94 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 201, "h": 94 },
+    "sourceSize": { "w": 201, "h": 94 },
+    "duration": 100
+   },
+   {
+    "filename": "Ancient Boss 171.aseprite",
+    "frame": { "x": 0, "y": 1034, "w": 201, "h": 94 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 201, "h": 94 },
+    "sourceSize": { "w": 201, "h": 94 },
+    "duration": 100
+   },
+   {
+    "filename": "Ancient Boss 172.aseprite",
+    "frame": { "x": 201, "y": 1034, "w": 201, "h": 94 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 201, "h": 94 },
+    "sourceSize": { "w": 201, "h": 94 },
+    "duration": 100
+   },
+   {
+    "filename": "Ancient Boss 173.aseprite",
+    "frame": { "x": 402, "y": 1034, "w": 201, "h": 94 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 201, "h": 94 },
+    "sourceSize": { "w": 201, "h": 94 },
+    "duration": 100
+   },
+   {
+    "filename": "Ancient Boss 174.aseprite",
+    "frame": { "x": 603, "y": 1034, "w": 201, "h": 94 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 201, "h": 94 },
+    "sourceSize": { "w": 201, "h": 94 },
+    "duration": 100
+   },
+   {
+    "filename": "Ancient Boss 175.aseprite",
+    "frame": { "x": 804, "y": 1034, "w": 201, "h": 94 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 201, "h": 94 },
+    "sourceSize": { "w": 201, "h": 94 },
+    "duration": 100
+   },
+   {
+    "filename": "Ancient Boss 176.aseprite",
+    "frame": { "x": 603, "y": 1034, "w": 201, "h": 94 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 201, "h": 94 },
+    "sourceSize": { "w": 201, "h": 94 },
+    "duration": 100
+   },
+   {
+    "filename": "Ancient Boss 177.aseprite",
+    "frame": { "x": 603, "y": 1034, "w": 201, "h": 94 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 201, "h": 94 },
+    "sourceSize": { "w": 201, "h": 94 },
+    "duration": 100
+   },
+   {
+    "filename": "Ancient Boss 178.aseprite",
+    "frame": { "x": 1005, "y": 1034, "w": 201, "h": 94 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 201, "h": 94 },
+    "sourceSize": { "w": 201, "h": 94 },
+    "duration": 100
+   },
+   {
+    "filename": "Ancient Boss 179.aseprite",
+    "frame": { "x": 1206, "y": 1034, "w": 201, "h": 94 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 201, "h": 94 },
+    "sourceSize": { "w": 201, "h": 94 },
+    "duration": 100
+   },
+   {
+    "filename": "Ancient Boss 180.aseprite",
+    "frame": { "x": 1407, "y": 1034, "w": 201, "h": 94 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 201, "h": 94 },
+    "sourceSize": { "w": 201, "h": 94 },
+    "duration": 100
+   },
+   {
+    "filename": "Ancient Boss 181.aseprite",
+    "frame": { "x": 1608, "y": 1034, "w": 201, "h": 94 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 201, "h": 94 },
+    "sourceSize": { "w": 201, "h": 94 },
+    "duration": 100
+   }
+ ],
+ "meta": {
+  "app": "https://www.aseprite.org/",
+  "version": "1.3.16.1-x64",
+  "image": "colossal_boss.png",
+  "format": "RGBA8888",
+  "size": { "w": 2613, "h": 1128 },
+  "scale": "1",
+  "frameTags": [
+   { "name": "Wake", "from": 1, "to": 12, "direction": "forward", "color": "#000000ff" },
+   { "name": "Idle", "from": 13, "to": 36, "direction": "forward", "color": "#000000ff" },
+   { "name": "Move", "from": 37, "to": 60, "direction": "forward", "color": "#000000ff" },
+   { "name": "turnaround", "from": 61, "to": 68, "direction": "forward", "color": "#000000ff" },
+   { "name": "turnaround 2", "from": 69, "to": 75, "direction": "forward", "color": "#000000ff" },
+   { "name": "Buff", "from": 76, "to": 88, "direction": "forward", "color": "#000000ff" },
+   { "name": "Spin Attack", "from": 89, "to": 95, "direction": "forward", "color": "#000000ff" },
+   { "name": "Spin End", "from": 96, "to": 98, "direction": "forward", "color": "#000000ff" },
+   { "name": "Attack", "from": 99, "to": 121, "direction": "forward", "color": "#000000ff" },
+   { "name": "Range Attack", "from": 122, "to": 142, "direction": "forward", "color": "#000000ff" },
+   { "name": "Burst", "from": 143, "to": 160, "direction": "forward", "color": "#000000ff" },
+   { "name": "Death", "from": 161, "to": 181, "direction": "forward", "color": "#000000ff" }
+  ]
+ }
+}

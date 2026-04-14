@@ -8,7 +8,6 @@ import { BattleScene } from './scenes/BattleScene.js';
 import { GameOverScene } from './scenes/GameOverScene.js';
 import { HallOfFameScene } from './scenes/HallOfFameScene.js';
 import { SettingsScene } from './scenes/SettingsScene.js';
-import { UnitLabScene } from './scenes/UnitLabScene.js';
 import { LayoutEditor } from './systems/LayoutEditor.js';
 import { resetCaptureReady } from './systems/CaptureSupport.js';
 
@@ -30,7 +29,7 @@ const config = {
     // Reserve up to 12 simultaneous point lights for BattleScene unit lighting
     maxLights: 12,
   },
-  scene: [BootScene, MenuScene, CommanderSelectScene, ShopScene, BattleScene, GameOverScene, HallOfFameScene, SettingsScene, UnitLabScene],
+  scene: [BootScene, MenuScene, CommanderSelectScene, ShopScene, BattleScene, GameOverScene, HallOfFameScene, SettingsScene],
 };
 
 resetCaptureReady();

@@ -70,7 +70,7 @@ Log aggressively. The user debugs by pasting console output — silent failures 
 - **Every network call:** before, result, error with context
 - **Every fallback path:** log WHY the fallback was taken
 - **Every error:** never `catch (_) {}` — always `catch (e) { console.error('[System] context:', e) }`
-- **System prefixes:** `[Layout]`, `[Editor]`, `[Auth]`, `[Ghost]`, `[Shop]`, `[Battle]`, `[Menu]`, `[Boot]`, `[UnitLab]`
+- **System prefixes:** `[Layout]`, `[Editor]`, `[Auth]`, `[Ghost]`, `[Shop]`, `[Battle]`, `[Menu]`, `[Boot]`
 
 ## UI / Visual Work
 

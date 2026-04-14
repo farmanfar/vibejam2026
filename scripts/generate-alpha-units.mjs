@@ -53,6 +53,27 @@ const ABILITY_MAP = {
   lone_star: null,
 };
 
+// One-line rules text shown on the shop card (bottom half, revealed on hover).
+// Keep each entry short enough to wrap to ~3 lines at 7px font in a ~108px column.
+// `null` (or missing) → card shows "-" placeholder.
+const RULES_TEXT = {
+  dagger_mush: 'On entering combat, throws a dagger at the backmost enemy for 1 damage.',
+  caged_shocker: 'On death, deals 1 damage to a random enemy.',
+  assassin: 'Attacks the 3 frontmost enemies for 1 damage each, simultaneously.',
+  blood_king: 'On death, deals 1 + Resonance to every living enemy.',
+  archer_bandit: 'Battle start: applies 1 poison to every enemy. Cannot attack normally.',
+  archer: 'Hits all enemies for 1 + Resonance. Survives first lethal hit once.',
+  electrocutioner: 'Attacks pierce the first 2 enemies in line.',
+  gnat: 'On attack, 50% chance to apply 5 poison instead of 1.',
+  hog_knight: 'When any enemy dies, fires a 1-damage shot at the next enemy.',
+  minion_002: 'On death, explodes: 2 damage to nearby allies and frontmost 2 enemies.',
+  minion_003: 'Ranged attacker. Lobs single-target bolts up to 3 tiles away.',
+  relic_guardian_3: 'When another allied Robot dies, gain +1 ATK permanently.',
+  starter_warrior: 'On death, grants +1 ATK to the unit directly behind.',
+  tribal_chopper: 'On killing an enemy with a normal attack, attack again immediately.',
+  valiant: 'On kill, attack pierces and deals current ATK to the next enemy.',
+};
+
 // Units whose basic attack should stay single-target even though their class
 // has an onAction override (Blood King is an Ancient, but basic = single-target).
 const BASIC_ATTACK_OVERRIDE = {
@@ -133,6 +154,7 @@ function main() {
       atk: ov.atk ?? fm.attack ?? 1,
       range: fm.range ?? 1,
       ability_id,
+      rules_text: RULES_TEXT[id] ?? null,
       skipBasicAttack: SKIP_BASIC_ATTACK[id] ?? false,
       art_status: ART_STATUS[id] ?? 'ok',
     };

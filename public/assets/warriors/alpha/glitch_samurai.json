@@ -1,0 +1,981 @@
+{ "frames": [
+   {
+    "filename": "Glitch Samurai 0.aseprite",
+    "frame": { "x": 0, "y": 0, "w": 192, "h": 192 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 192, "h": 192 },
+    "sourceSize": { "w": 192, "h": 192 },
+    "duration": 73
+   },
+   {
+    "filename": "Glitch Samurai 1.aseprite",
+    "frame": { "x": 192, "y": 0, "w": 192, "h": 192 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 192, "h": 192 },
+    "sourceSize": { "w": 192, "h": 192 },
+    "duration": 73
+   },
+   {
+    "filename": "Glitch Samurai 2.aseprite",
+    "frame": { "x": 384, "y": 0, "w": 192, "h": 192 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 192, "h": 192 },
+    "sourceSize": { "w": 192, "h": 192 },
+    "duration": 73
+   },
+   {
+    "filename": "Glitch Samurai 3.aseprite",
+    "frame": { "x": 576, "y": 0, "w": 192, "h": 192 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 192, "h": 192 },
+    "sourceSize": { "w": 192, "h": 192 },
+    "duration": 73
+   },
+   {
+    "filename": "Glitch Samurai 4.aseprite",
+    "frame": { "x": 768, "y": 0, "w": 192, "h": 192 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 192, "h": 192 },
+    "sourceSize": { "w": 192, "h": 192 },
+    "duration": 73
+   },
+   {
+    "filename": "Glitch Samurai 5.aseprite",
+    "frame": { "x": 960, "y": 0, "w": 192, "h": 192 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 192, "h": 192 },
+    "sourceSize": { "w": 192, "h": 192 },
+    "duration": 73
+   },
+   {
+    "filename": "Glitch Samurai 6.aseprite",
+    "frame": { "x": 1152, "y": 0, "w": 192, "h": 192 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 192, "h": 192 },
+    "sourceSize": { "w": 192, "h": 192 },
+    "duration": 73
+   },
+   {
+    "filename": "Glitch Samurai 7.aseprite",
+    "frame": { "x": 1344, "y": 0, "w": 192, "h": 192 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 192, "h": 192 },
+    "sourceSize": { "w": 192, "h": 192 },
+    "duration": 73
+   },
+   {
+    "filename": "Glitch Samurai 8.aseprite",
+    "frame": { "x": 1536, "y": 0, "w": 192, "h": 192 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 192, "h": 192 },
+    "sourceSize": { "w": 192, "h": 192 },
+    "duration": 73
+   },
+   {
+    "filename": "Glitch Samurai 9.aseprite",
+    "frame": { "x": 1728, "y": 0, "w": 192, "h": 192 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 192, "h": 192 },
+    "sourceSize": { "w": 192, "h": 192 },
+    "duration": 73
+   },
+   {
+    "filename": "Glitch Samurai 10.aseprite",
+    "frame": { "x": 0, "y": 192, "w": 192, "h": 192 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 192, "h": 192 },
+    "sourceSize": { "w": 192, "h": 192 },
+    "duration": 73
+   },
+   {
+    "filename": "Glitch Samurai 11.aseprite",
+    "frame": { "x": 192, "y": 192, "w": 192, "h": 192 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 192, "h": 192 },
+    "sourceSize": { "w": 192, "h": 192 },
+    "duration": 73
+   },
+   {
+    "filename": "Glitch Samurai 12.aseprite",
+    "frame": { "x": 384, "y": 192, "w": 192, "h": 192 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 192, "h": 192 },
+    "sourceSize": { "w": 192, "h": 192 },
+    "duration": 73
+   },
+   {
+    "filename": "Glitch Samurai 13.aseprite",
+    "frame": { "x": 576, "y": 192, "w": 192, "h": 192 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 192, "h": 192 },
+    "sourceSize": { "w": 192, "h": 192 },
+    "duration": 73
+   },
+   {
+    "filename": "Glitch Samurai 14.aseprite",
+    "frame": { "x": 576, "y": 0, "w": 192, "h": 192 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 192, "h": 192 },
+    "sourceSize": { "w": 192, "h": 192 },
+    "duration": 73
+   },
+   {
+    "filename": "Glitch Samurai 15.aseprite",
+    "frame": { "x": 768, "y": 0, "w": 192, "h": 192 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 192, "h": 192 },
+    "sourceSize": { "w": 192, "h": 192 },
+    "duration": 73
+   },
+   {
+    "filename": "Glitch Samurai 16.aseprite",
+    "frame": { "x": 768, "y": 192, "w": 192, "h": 192 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 192, "h": 192 },
+    "sourceSize": { "w": 192, "h": 192 },
+    "duration": 73
+   },
+   {
+    "filename": "Glitch Samurai 17.aseprite",
+    "frame": { "x": 1152, "y": 0, "w": 192, "h": 192 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 192, "h": 192 },
+    "sourceSize": { "w": 192, "h": 192 },
+    "duration": 73
+   },
+   {
+    "filename": "Glitch Samurai 18.aseprite",
+    "frame": { "x": 960, "y": 192, "w": 192, "h": 192 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 192, "h": 192 },
+    "sourceSize": { "w": 192, "h": 192 },
+    "duration": 73
+   },
+   {
+    "filename": "Glitch Samurai 19.aseprite",
+    "frame": { "x": 1152, "y": 192, "w": 192, "h": 192 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 192, "h": 192 },
+    "sourceSize": { "w": 192, "h": 192 },
+    "duration": 73
+   },
+   {
+    "filename": "Glitch Samurai 20.aseprite",
+    "frame": { "x": 1728, "y": 0, "w": 192, "h": 192 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 192, "h": 192 },
+    "sourceSize": { "w": 192, "h": 192 },
+    "duration": 73
+   },
+   {
+    "filename": "Glitch Samurai 21.aseprite",
+    "frame": { "x": 1344, "y": 192, "w": 192, "h": 192 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 192, "h": 192 },
+    "sourceSize": { "w": 192, "h": 192 },
+    "duration": 73
+   },
+   {
+    "filename": "Glitch Samurai 22.aseprite",
+    "frame": { "x": 1536, "y": 192, "w": 192, "h": 192 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 192, "h": 192 },
+    "sourceSize": { "w": 192, "h": 192 },
+    "duration": 73
+   },
+   {
+    "filename": "Glitch Samurai 23.aseprite",
+    "frame": { "x": 384, "y": 192, "w": 192, "h": 192 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 192, "h": 192 },
+    "sourceSize": { "w": 192, "h": 192 },
+    "duration": 73
+   },
+   {
+    "filename": "Glitch Samurai 24.aseprite",
+    "frame": { "x": 576, "y": 192, "w": 192, "h": 192 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 192, "h": 192 },
+    "sourceSize": { "w": 192, "h": 192 },
+    "duration": 73
+   },
+   {
+    "filename": "Glitch Samurai 25.aseprite",
+    "frame": { "x": 1728, "y": 192, "w": 192, "h": 192 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 192, "h": 192 },
+    "sourceSize": { "w": 192, "h": 192 },
+    "duration": 73
+   },
+   {
+    "filename": "Glitch Samurai 26.aseprite",
+    "frame": { "x": 0, "y": 384, "w": 192, "h": 192 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 192, "h": 192 },
+    "sourceSize": { "w": 192, "h": 192 },
+    "duration": 73
+   },
+   {
+    "filename": "Glitch Samurai 27.aseprite",
+    "frame": { "x": 192, "y": 384, "w": 192, "h": 192 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 192, "h": 192 },
+    "sourceSize": { "w": 192, "h": 192 },
+    "duration": 73
+   },
+   {
+    "filename": "Glitch Samurai 28.aseprite",
+    "frame": { "x": 384, "y": 384, "w": 192, "h": 192 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 192, "h": 192 },
+    "sourceSize": { "w": 192, "h": 192 },
+    "duration": 73
+   },
+   {
+    "filename": "Glitch Samurai 29.aseprite",
+    "frame": { "x": 576, "y": 384, "w": 192, "h": 192 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 192, "h": 192 },
+    "sourceSize": { "w": 192, "h": 192 },
+    "duration": 73
+   },
+   {
+    "filename": "Glitch Samurai 30.aseprite",
+    "frame": { "x": 768, "y": 384, "w": 192, "h": 192 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 192, "h": 192 },
+    "sourceSize": { "w": 192, "h": 192 },
+    "duration": 73
+   },
+   {
+    "filename": "Glitch Samurai 31.aseprite",
+    "frame": { "x": 960, "y": 384, "w": 192, "h": 192 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 192, "h": 192 },
+    "sourceSize": { "w": 192, "h": 192 },
+    "duration": 73
+   },
+   {
+    "filename": "Glitch Samurai 32.aseprite",
+    "frame": { "x": 1152, "y": 384, "w": 192, "h": 192 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 192, "h": 192 },
+    "sourceSize": { "w": 192, "h": 192 },
+    "duration": 73
+   },
+   {
+    "filename": "Glitch Samurai 33.aseprite",
+    "frame": { "x": 1344, "y": 384, "w": 192, "h": 192 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 192, "h": 192 },
+    "sourceSize": { "w": 192, "h": 192 },
+    "duration": 73
+   },
+   {
+    "filename": "Glitch Samurai 34.aseprite",
+    "frame": { "x": 1536, "y": 384, "w": 192, "h": 192 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 192, "h": 192 },
+    "sourceSize": { "w": 192, "h": 192 },
+    "duration": 73
+   },
+   {
+    "filename": "Glitch Samurai 35.aseprite",
+    "frame": { "x": 1728, "y": 384, "w": 192, "h": 192 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 192, "h": 192 },
+    "sourceSize": { "w": 192, "h": 192 },
+    "duration": 73
+   },
+   {
+    "filename": "Glitch Samurai 36.aseprite",
+    "frame": { "x": 0, "y": 576, "w": 192, "h": 192 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 192, "h": 192 },
+    "sourceSize": { "w": 192, "h": 192 },
+    "duration": 73
+   },
+   {
+    "filename": "Glitch Samurai 37.aseprite",
+    "frame": { "x": 192, "y": 576, "w": 192, "h": 192 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 192, "h": 192 },
+    "sourceSize": { "w": 192, "h": 192 },
+    "duration": 73
+   },
+   {
+    "filename": "Glitch Samurai 38.aseprite",
+    "frame": { "x": 384, "y": 576, "w": 192, "h": 192 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 192, "h": 192 },
+    "sourceSize": { "w": 192, "h": 192 },
+    "duration": 73
+   },
+   {
+    "filename": "Glitch Samurai 39.aseprite",
+    "frame": { "x": 576, "y": 576, "w": 192, "h": 192 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 192, "h": 192 },
+    "sourceSize": { "w": 192, "h": 192 },
+    "duration": 73
+   },
+   {
+    "filename": "Glitch Samurai 40.aseprite",
+    "frame": { "x": 768, "y": 576, "w": 192, "h": 192 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 192, "h": 192 },
+    "sourceSize": { "w": 192, "h": 192 },
+    "duration": 73
+   },
+   {
+    "filename": "Glitch Samurai 41.aseprite",
+    "frame": { "x": 960, "y": 576, "w": 192, "h": 192 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 192, "h": 192 },
+    "sourceSize": { "w": 192, "h": 192 },
+    "duration": 73
+   },
+   {
+    "filename": "Glitch Samurai 42.aseprite",
+    "frame": { "x": 1152, "y": 576, "w": 192, "h": 192 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 192, "h": 192 },
+    "sourceSize": { "w": 192, "h": 192 },
+    "duration": 73
+   },
+   {
+    "filename": "Glitch Samurai 43.aseprite",
+    "frame": { "x": 1344, "y": 576, "w": 192, "h": 192 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 192, "h": 192 },
+    "sourceSize": { "w": 192, "h": 192 },
+    "duration": 73
+   },
+   {
+    "filename": "Glitch Samurai 44.aseprite",
+    "frame": { "x": 1536, "y": 576, "w": 192, "h": 192 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 192, "h": 192 },
+    "sourceSize": { "w": 192, "h": 192 },
+    "duration": 73
+   },
+   {
+    "filename": "Glitch Samurai 45.aseprite",
+    "frame": { "x": 1728, "y": 576, "w": 192, "h": 192 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 192, "h": 192 },
+    "sourceSize": { "w": 192, "h": 192 },
+    "duration": 73
+   },
+   {
+    "filename": "Glitch Samurai 46.aseprite",
+    "frame": { "x": 0, "y": 768, "w": 192, "h": 192 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 192, "h": 192 },
+    "sourceSize": { "w": 192, "h": 192 },
+    "duration": 73
+   },
+   {
+    "filename": "Glitch Samurai 47.aseprite",
+    "frame": { "x": 192, "y": 768, "w": 192, "h": 192 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 192, "h": 192 },
+    "sourceSize": { "w": 192, "h": 192 },
+    "duration": 73
+   },
+   {
+    "filename": "Glitch Samurai 48.aseprite",
+    "frame": { "x": 384, "y": 768, "w": 192, "h": 192 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 192, "h": 192 },
+    "sourceSize": { "w": 192, "h": 192 },
+    "duration": 73
+   },
+   {
+    "filename": "Glitch Samurai 49.aseprite",
+    "frame": { "x": 576, "y": 768, "w": 192, "h": 192 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 192, "h": 192 },
+    "sourceSize": { "w": 192, "h": 192 },
+    "duration": 73
+   },
+   {
+    "filename": "Glitch Samurai 50.aseprite",
+    "frame": { "x": 768, "y": 768, "w": 192, "h": 192 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 192, "h": 192 },
+    "sourceSize": { "w": 192, "h": 192 },
+    "duration": 73
+   },
+   {
+    "filename": "Glitch Samurai 51.aseprite",
+    "frame": { "x": 960, "y": 768, "w": 192, "h": 192 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 192, "h": 192 },
+    "sourceSize": { "w": 192, "h": 192 },
+    "duration": 73
+   },
+   {
+    "filename": "Glitch Samurai 52.aseprite",
+    "frame": { "x": 1152, "y": 768, "w": 192, "h": 192 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 192, "h": 192 },
+    "sourceSize": { "w": 192, "h": 192 },
+    "duration": 73
+   },
+   {
+    "filename": "Glitch Samurai 53.aseprite",
+    "frame": { "x": 1344, "y": 768, "w": 192, "h": 192 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 192, "h": 192 },
+    "sourceSize": { "w": 192, "h": 192 },
+    "duration": 73
+   },
+   {
+    "filename": "Glitch Samurai 54.aseprite",
+    "frame": { "x": 1536, "y": 768, "w": 192, "h": 192 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 192, "h": 192 },
+    "sourceSize": { "w": 192, "h": 192 },
+    "duration": 73
+   },
+   {
+    "filename": "Glitch Samurai 55.aseprite",
+    "frame": { "x": 1728, "y": 768, "w": 192, "h": 192 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 192, "h": 192 },
+    "sourceSize": { "w": 192, "h": 192 },
+    "duration": 73
+   },
+   {
+    "filename": "Glitch Samurai 56.aseprite",
+    "frame": { "x": 0, "y": 960, "w": 192, "h": 192 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 192, "h": 192 },
+    "sourceSize": { "w": 192, "h": 192 },
+    "duration": 73
+   },
+   {
+    "filename": "Glitch Samurai 57.aseprite",
+    "frame": { "x": 192, "y": 960, "w": 192, "h": 192 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 192, "h": 192 },
+    "sourceSize": { "w": 192, "h": 192 },
+    "duration": 73
+   },
+   {
+    "filename": "Glitch Samurai 58.aseprite",
+    "frame": { "x": 384, "y": 960, "w": 192, "h": 192 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 192, "h": 192 },
+    "sourceSize": { "w": 192, "h": 192 },
+    "duration": 73
+   },
+   {
+    "filename": "Glitch Samurai 59.aseprite",
+    "frame": { "x": 576, "y": 960, "w": 192, "h": 192 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 192, "h": 192 },
+    "sourceSize": { "w": 192, "h": 192 },
+    "duration": 73
+   },
+   {
+    "filename": "Glitch Samurai 60.aseprite",
+    "frame": { "x": 768, "y": 960, "w": 192, "h": 192 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 192, "h": 192 },
+    "sourceSize": { "w": 192, "h": 192 },
+    "duration": 73
+   },
+   {
+    "filename": "Glitch Samurai 61.aseprite",
+    "frame": { "x": 960, "y": 960, "w": 192, "h": 192 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 192, "h": 192 },
+    "sourceSize": { "w": 192, "h": 192 },
+    "duration": 73
+   },
+   {
+    "filename": "Glitch Samurai 62.aseprite",
+    "frame": { "x": 1152, "y": 960, "w": 192, "h": 192 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 192, "h": 192 },
+    "sourceSize": { "w": 192, "h": 192 },
+    "duration": 73
+   },
+   {
+    "filename": "Glitch Samurai 63.aseprite",
+    "frame": { "x": 1344, "y": 960, "w": 192, "h": 192 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 192, "h": 192 },
+    "sourceSize": { "w": 192, "h": 192 },
+    "duration": 73
+   },
+   {
+    "filename": "Glitch Samurai 64.aseprite",
+    "frame": { "x": 1536, "y": 960, "w": 192, "h": 192 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 192, "h": 192 },
+    "sourceSize": { "w": 192, "h": 192 },
+    "duration": 73
+   },
+   {
+    "filename": "Glitch Samurai 65.aseprite",
+    "frame": { "x": 1728, "y": 960, "w": 192, "h": 192 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 192, "h": 192 },
+    "sourceSize": { "w": 192, "h": 192 },
+    "duration": 73
+   },
+   {
+    "filename": "Glitch Samurai 66.aseprite",
+    "frame": { "x": 0, "y": 1152, "w": 192, "h": 192 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 192, "h": 192 },
+    "sourceSize": { "w": 192, "h": 192 },
+    "duration": 73
+   },
+   {
+    "filename": "Glitch Samurai 67.aseprite",
+    "frame": { "x": 192, "y": 1152, "w": 192, "h": 192 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 192, "h": 192 },
+    "sourceSize": { "w": 192, "h": 192 },
+    "duration": 73
+   },
+   {
+    "filename": "Glitch Samurai 68.aseprite",
+    "frame": { "x": 384, "y": 1152, "w": 192, "h": 192 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 192, "h": 192 },
+    "sourceSize": { "w": 192, "h": 192 },
+    "duration": 73
+   },
+   {
+    "filename": "Glitch Samurai 69.aseprite",
+    "frame": { "x": 576, "y": 1152, "w": 192, "h": 192 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 192, "h": 192 },
+    "sourceSize": { "w": 192, "h": 192 },
+    "duration": 73
+   },
+   {
+    "filename": "Glitch Samurai 70.aseprite",
+    "frame": { "x": 768, "y": 1152, "w": 192, "h": 192 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 192, "h": 192 },
+    "sourceSize": { "w": 192, "h": 192 },
+    "duration": 73
+   },
+   {
+    "filename": "Glitch Samurai 71.aseprite",
+    "frame": { "x": 960, "y": 1152, "w": 192, "h": 192 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 192, "h": 192 },
+    "sourceSize": { "w": 192, "h": 192 },
+    "duration": 73
+   },
+   {
+    "filename": "Glitch Samurai 72.aseprite",
+    "frame": { "x": 1152, "y": 1152, "w": 192, "h": 192 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 192, "h": 192 },
+    "sourceSize": { "w": 192, "h": 192 },
+    "duration": 73
+   },
+   {
+    "filename": "Glitch Samurai 73.aseprite",
+    "frame": { "x": 1344, "y": 1152, "w": 192, "h": 192 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 192, "h": 192 },
+    "sourceSize": { "w": 192, "h": 192 },
+    "duration": 73
+   },
+   {
+    "filename": "Glitch Samurai 74.aseprite",
+    "frame": { "x": 1536, "y": 1152, "w": 192, "h": 192 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 192, "h": 192 },
+    "sourceSize": { "w": 192, "h": 192 },
+    "duration": 73
+   },
+   {
+    "filename": "Glitch Samurai 75.aseprite",
+    "frame": { "x": 1536, "y": 1152, "w": 192, "h": 192 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 192, "h": 192 },
+    "sourceSize": { "w": 192, "h": 192 },
+    "duration": 73
+   },
+   {
+    "filename": "Glitch Samurai 76.aseprite",
+    "frame": { "x": 1536, "y": 1152, "w": 192, "h": 192 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 192, "h": 192 },
+    "sourceSize": { "w": 192, "h": 192 },
+    "duration": 73
+   },
+   {
+    "filename": "Glitch Samurai 77.aseprite",
+    "frame": { "x": 1728, "y": 1152, "w": 192, "h": 192 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 192, "h": 192 },
+    "sourceSize": { "w": 192, "h": 192 },
+    "duration": 73
+   },
+   {
+    "filename": "Glitch Samurai 78.aseprite",
+    "frame": { "x": 0, "y": 1344, "w": 192, "h": 192 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 192, "h": 192 },
+    "sourceSize": { "w": 192, "h": 192 },
+    "duration": 73
+   },
+   {
+    "filename": "Glitch Samurai 79.aseprite",
+    "frame": { "x": 192, "y": 1344, "w": 192, "h": 192 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 192, "h": 192 },
+    "sourceSize": { "w": 192, "h": 192 },
+    "duration": 73
+   },
+   {
+    "filename": "Glitch Samurai 80.aseprite",
+    "frame": { "x": 384, "y": 1344, "w": 192, "h": 192 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 192, "h": 192 },
+    "sourceSize": { "w": 192, "h": 192 },
+    "duration": 73
+   },
+   {
+    "filename": "Glitch Samurai 81.aseprite",
+    "frame": { "x": 576, "y": 1344, "w": 192, "h": 192 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 192, "h": 192 },
+    "sourceSize": { "w": 192, "h": 192 },
+    "duration": 73
+   },
+   {
+    "filename": "Glitch Samurai 82.aseprite",
+    "frame": { "x": 768, "y": 1344, "w": 192, "h": 192 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 192, "h": 192 },
+    "sourceSize": { "w": 192, "h": 192 },
+    "duration": 73
+   },
+   {
+    "filename": "Glitch Samurai 83.aseprite",
+    "frame": { "x": 960, "y": 1344, "w": 192, "h": 192 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 192, "h": 192 },
+    "sourceSize": { "w": 192, "h": 192 },
+    "duration": 73
+   },
+   {
+    "filename": "Glitch Samurai 84.aseprite",
+    "frame": { "x": 1152, "y": 1344, "w": 192, "h": 192 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 192, "h": 192 },
+    "sourceSize": { "w": 192, "h": 192 },
+    "duration": 73
+   },
+   {
+    "filename": "Glitch Samurai 85.aseprite",
+    "frame": { "x": 1344, "y": 1344, "w": 192, "h": 192 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 192, "h": 192 },
+    "sourceSize": { "w": 192, "h": 192 },
+    "duration": 73
+   },
+   {
+    "filename": "Glitch Samurai 86.aseprite",
+    "frame": { "x": 1536, "y": 1152, "w": 192, "h": 192 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 192, "h": 192 },
+    "sourceSize": { "w": 192, "h": 192 },
+    "duration": 73
+   },
+   {
+    "filename": "Glitch Samurai 87.aseprite",
+    "frame": { "x": 1536, "y": 1152, "w": 192, "h": 192 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 192, "h": 192 },
+    "sourceSize": { "w": 192, "h": 192 },
+    "duration": 73
+   },
+   {
+    "filename": "Glitch Samurai 88.aseprite",
+    "frame": { "x": 1536, "y": 1344, "w": 192, "h": 192 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 192, "h": 192 },
+    "sourceSize": { "w": 192, "h": 192 },
+    "duration": 73
+   },
+   {
+    "filename": "Glitch Samurai 89.aseprite",
+    "frame": { "x": 1728, "y": 1344, "w": 192, "h": 192 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 192, "h": 192 },
+    "sourceSize": { "w": 192, "h": 192 },
+    "duration": 73
+   },
+   {
+    "filename": "Glitch Samurai 90.aseprite",
+    "frame": { "x": 0, "y": 1536, "w": 192, "h": 192 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 192, "h": 192 },
+    "sourceSize": { "w": 192, "h": 192 },
+    "duration": 73
+   },
+   {
+    "filename": "Glitch Samurai 91.aseprite",
+    "frame": { "x": 192, "y": 1536, "w": 192, "h": 192 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 192, "h": 192 },
+    "sourceSize": { "w": 192, "h": 192 },
+    "duration": 73
+   },
+   {
+    "filename": "Glitch Samurai 92.aseprite",
+    "frame": { "x": 384, "y": 1536, "w": 192, "h": 192 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 192, "h": 192 },
+    "sourceSize": { "w": 192, "h": 192 },
+    "duration": 73
+   },
+   {
+    "filename": "Glitch Samurai 93.aseprite",
+    "frame": { "x": 576, "y": 1536, "w": 192, "h": 192 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 192, "h": 192 },
+    "sourceSize": { "w": 192, "h": 192 },
+    "duration": 73
+   },
+   {
+    "filename": "Glitch Samurai 94.aseprite",
+    "frame": { "x": 768, "y": 1536, "w": 192, "h": 192 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 192, "h": 192 },
+    "sourceSize": { "w": 192, "h": 192 },
+    "duration": 73
+   },
+   {
+    "filename": "Glitch Samurai 95.aseprite",
+    "frame": { "x": 960, "y": 1536, "w": 192, "h": 192 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 192, "h": 192 },
+    "sourceSize": { "w": 192, "h": 192 },
+    "duration": 73
+   },
+   {
+    "filename": "Glitch Samurai 96.aseprite",
+    "frame": { "x": 1152, "y": 1536, "w": 192, "h": 192 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 192, "h": 192 },
+    "sourceSize": { "w": 192, "h": 192 },
+    "duration": 73
+   },
+   {
+    "filename": "Glitch Samurai 97.aseprite",
+    "frame": { "x": 1344, "y": 1536, "w": 192, "h": 192 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 192, "h": 192 },
+    "sourceSize": { "w": 192, "h": 192 },
+    "duration": 73
+   },
+   {
+    "filename": "Glitch Samurai 98.aseprite",
+    "frame": { "x": 1536, "y": 1536, "w": 192, "h": 192 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 192, "h": 192 },
+    "sourceSize": { "w": 192, "h": 192 },
+    "duration": 73
+   },
+   {
+    "filename": "Glitch Samurai 99.aseprite",
+    "frame": { "x": 1728, "y": 1536, "w": 192, "h": 192 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 192, "h": 192 },
+    "sourceSize": { "w": 192, "h": 192 },
+    "duration": 73
+   },
+   {
+    "filename": "Glitch Samurai 100.aseprite",
+    "frame": { "x": 0, "y": 1728, "w": 192, "h": 192 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 192, "h": 192 },
+    "sourceSize": { "w": 192, "h": 192 },
+    "duration": 73
+   },
+   {
+    "filename": "Glitch Samurai 101.aseprite",
+    "frame": { "x": 192, "y": 1728, "w": 192, "h": 192 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 192, "h": 192 },
+    "sourceSize": { "w": 192, "h": 192 },
+    "duration": 73
+   },
+   {
+    "filename": "Glitch Samurai 102.aseprite",
+    "frame": { "x": 384, "y": 1728, "w": 192, "h": 192 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 192, "h": 192 },
+    "sourceSize": { "w": 192, "h": 192 },
+    "duration": 73
+   },
+   {
+    "filename": "Glitch Samurai 103.aseprite",
+    "frame": { "x": 576, "y": 1728, "w": 192, "h": 192 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 192, "h": 192 },
+    "sourceSize": { "w": 192, "h": 192 },
+    "duration": 73
+   },
+   {
+    "filename": "Glitch Samurai 104.aseprite",
+    "frame": { "x": 576, "y": 1728, "w": 192, "h": 192 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 192, "h": 192 },
+    "sourceSize": { "w": 192, "h": 192 },
+    "duration": 73
+   },
+   {
+    "filename": "Glitch Samurai 105.aseprite",
+    "frame": { "x": 576, "y": 1728, "w": 192, "h": 192 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 192, "h": 192 },
+    "sourceSize": { "w": 192, "h": 192 },
+    "duration": 73
+   }
+ ],
+ "meta": {
+  "app": "https://www.aseprite.org/",
+  "version": "1.3.16.1-x64",
+  "image": "glitch_samurai.png",
+  "format": "RGBA8888",
+  "size": { "w": 1920, "h": 1920 },
+  "scale": "1",
+  "frameTags": [
+   { "name": "Idle", "from": 3, "to": 13, "direction": "forward", "color": "#000000ff" },
+   { "name": "Idle Gltich", "from": 14, "to": 24, "direction": "forward", "color": "#000000ff" },
+   { "name": "Run", "from": 25, "to": 36, "direction": "forward", "color": "#000000ff" },
+   { "name": "Wall SIt", "from": 37, "to": 37, "direction": "forward", "color": "#000000ff" },
+   { "name": "Wall Slide", "from": 38, "to": 41, "direction": "forward", "color": "#000000ff" },
+   { "name": "Jump", "from": 42, "to": 45, "direction": "forward", "color": "#000000ff" },
+   { "name": "Jump Glitch", "from": 46, "to": 49, "direction": "forward", "color": "#000000ff" },
+   { "name": "Fall", "from": 50, "to": 53, "direction": "forward", "color": "#000000ff" },
+   { "name": "Land", "from": 54, "to": 56, "direction": "forward", "color": "#000000ff" },
+   { "name": "Slash 1", "from": 57, "to": 63, "direction": "forward", "color": "#000000ff" },
+   { "name": "Slash 2", "from": 64, "to": 68, "direction": "forward", "color": "#000000ff" },
+   { "name": "Glitch Out", "from": 69, "to": 73, "direction": "forward", "color": "#000000ff" },
+   { "name": "Gltich Attack", "from": 74, "to": 93, "direction": "forward", "color": "#000000ff" },
+   { "name": "Death Frame", "from": 94, "to": 105, "direction": "forward", "color": "#000000ff" }
+  ]
+ }
+}

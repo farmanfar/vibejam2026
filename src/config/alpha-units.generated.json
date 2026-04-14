@@ -10,6 +10,7 @@
       "atk": 1,
       "range": 1,
       "ability_id": null,
+      "rules_text": null,
       "skipBasicAttack": false,
       "art_status": "ok"
     },
@@ -23,6 +24,7 @@
       "atk": 1,
       "range": 1,
       "ability_id": "death_defying",
+      "rules_text": "Hits all enemies for 1 + Resonance. Survives first lethal hit once.",
       "skipBasicAttack": false,
       "art_status": "ok"
     },
@@ -36,6 +38,7 @@
       "atk": 1,
       "range": 1,
       "ability_id": "snipers_venom",
+      "rules_text": "Battle start: applies 1 poison to every enemy. Cannot attack normally.",
       "skipBasicAttack": true,
       "art_status": "ok"
     },
@@ -49,6 +52,7 @@
       "atk": 1,
       "range": 3,
       "ability_id": "sweeping_strikes",
+      "rules_text": "Attacks the 3 frontmost enemies for 1 damage each, simultaneously.",
       "skipBasicAttack": false,
       "art_status": "ok"
     },
@@ -62,6 +66,7 @@
       "atk": 2,
       "range": 1,
       "ability_id": null,
+      "rules_text": null,
       "skipBasicAttack": false,
       "art_status": "blocked"
     },
@@ -75,6 +80,7 @@
       "atk": 1,
       "range": 1,
       "ability_id": null,
+      "rules_text": null,
       "skipBasicAttack": false,
       "art_status": "ok"
     },
@@ -88,6 +94,7 @@
       "atk": 2,
       "range": 1,
       "ability_id": "heart_slam_on_death",
+      "rules_text": "On death, deals 1 + Resonance to every living enemy.",
       "skipBasicAttack": false,
       "art_status": "ok",
       "basicAttackOverride": "single_target"
@@ -102,6 +109,7 @@
       "atk": 3,
       "range": 1,
       "ability_id": "spiteful_demise",
+      "rules_text": "On death, deals 1 damage to a random enemy.",
       "skipBasicAttack": false,
       "art_status": "blocked"
     },
@@ -115,6 +123,7 @@
       "atk": 1,
       "range": 1,
       "ability_id": null,
+      "rules_text": null,
       "skipBasicAttack": false,
       "art_status": "ok"
     },
@@ -128,6 +137,7 @@
       "atk": 2,
       "range": 1,
       "ability_id": null,
+      "rules_text": null,
       "skipBasicAttack": false,
       "art_status": "ok"
     },
@@ -141,6 +151,7 @@
       "atk": 2,
       "range": 1,
       "ability_id": "ricochet_volley",
+      "rules_text": "On entering combat, throws a dagger at the backmost enemy for 1 damage.",
       "skipBasicAttack": false,
       "art_status": "ok"
     },
@@ -154,6 +165,7 @@
       "atk": 1,
       "range": 1,
       "ability_id": null,
+      "rules_text": null,
       "skipBasicAttack": false,
       "art_status": "ok"
     },
@@ -167,6 +179,7 @@
       "atk": 2,
       "range": 2,
       "ability_id": "piercing_bolt",
+      "rules_text": "Attacks pierce the first 2 enemies in line.",
       "skipBasicAttack": false,
       "art_status": "ok"
     },
@@ -180,6 +193,7 @@
       "atk": 1,
       "range": 1,
       "ability_id": null,
+      "rules_text": null,
       "skipBasicAttack": false,
       "art_status": "ok"
     },
@@ -193,6 +207,7 @@
       "atk": 2,
       "range": 1,
       "ability_id": null,
+      "rules_text": null,
       "skipBasicAttack": false,
       "art_status": "ok"
     },
@@ -206,6 +221,7 @@
       "atk": 1,
       "range": 1,
       "ability_id": "infectious_bite",
+      "rules_text": "On attack, 50% chance to apply 5 poison instead of 1.",
       "skipBasicAttack": false,
       "art_status": "ok"
     },
@@ -219,6 +235,7 @@
       "atk": 1,
       "range": 1,
       "ability_id": "ricochet_shot",
+      "rules_text": "When any enemy dies, fires a 1-damage shot at the next enemy.",
       "skipBasicAttack": false,
       "art_status": "ok"
     },
@@ -232,6 +249,7 @@
       "atk": 1,
       "range": 2,
       "ability_id": null,
+      "rules_text": null,
       "skipBasicAttack": false,
       "art_status": "blocked"
     },
@@ -245,6 +263,7 @@
       "atk": 2,
       "range": 1,
       "ability_id": null,
+      "rules_text": null,
       "skipBasicAttack": false,
       "art_status": "ok"
     },
@@ -258,6 +277,7 @@
       "atk": 1,
       "range": 1,
       "ability_id": "volatile_payload",
+      "rules_text": "On death, explodes: 2 damage to nearby allies and frontmost 2 enemies.",
       "skipBasicAttack": false,
       "art_status": "ok"
     },
@@ -271,6 +291,7 @@
       "atk": 2,
       "range": 3,
       "ability_id": "lobbed_bolt",
+      "rules_text": "Ranged attacker. Lobs single-target bolts up to 3 tiles away.",
       "skipBasicAttack": false,
       "art_status": "ok"
     },
@@ -284,6 +305,7 @@
       "atk": 3,
       "range": 1,
       "ability_id": "reactive_reinforcement",
+      "rules_text": "When another allied Robot dies, gain +1 ATK permanently.",
       "skipBasicAttack": false,
       "art_status": "ok"
     },
@@ -297,6 +319,7 @@
       "atk": 1,
       "range": 1,
       "ability_id": null,
+      "rules_text": null,
       "skipBasicAttack": false,
       "art_status": "ok"
     },
@@ -310,6 +333,7 @@
       "atk": 2,
       "range": 1,
       "ability_id": null,
+      "rules_text": null,
       "skipBasicAttack": false,
       "art_status": "ok"
     },
@@ -323,6 +347,7 @@
       "atk": 2,
       "range": 1,
       "ability_id": "sacrifice_pass",
+      "rules_text": "On death, grants +1 ATK to the unit directly behind.",
       "skipBasicAttack": false,
       "art_status": "blocked"
     },
@@ -336,6 +361,7 @@
       "atk": 3,
       "range": 1,
       "ability_id": "bloodlust",
+      "rules_text": "On killing an enemy with a normal attack, attack again immediately.",
       "skipBasicAttack": false,
       "art_status": "ok"
     },
@@ -349,6 +375,7 @@
       "atk": 1,
       "range": 1,
       "ability_id": "kill_piercing",
+      "rules_text": "On kill, attack pierces and deals current ATK to the next enemy.",
       "skipBasicAttack": false,
       "art_status": "blocked"
     }

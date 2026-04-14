@@ -64,6 +64,19 @@ export class BootScene extends Scene {
     }
     console.log(`[Boot] Queued ${commanders.length} commander card textures and ${commanders.length} commander sprites for preload`);
 
+    // Preload blank fantasy card frames (PENUSBMIC Fantasy Cards pack) used by
+    // WarriorCard. NOTE: file #11 has an extra space in its filename.
+    const blankCardFiles = [
+      'blank cards1.png', 'blank cards2.png', 'blank cards3.png',
+      'blank cards4.png', 'blank cards5.png', 'blank cards6.png',
+      'blank cards7.png', 'blank cards8.png', 'blank cards9.png',
+      'blank cards10.png', 'blank cards 11.png',
+    ];
+    blankCardFiles.forEach((file, i) => {
+      this.load.image(`card-blank-${i + 1}`, `assets/cards/blanks/${file}`);
+    });
+    console.log(`[Boot] Queued ${blankCardFiles.length} blank fantasy card frames for preload`);
+
     // Generate placeholder textures for warriors (before font is ready)
     const colors = [0x64b4d2, 0x7cceff, 0x66cc66, 0xffcc78, 0xcc66ff];
     colors.forEach((color, i) => {

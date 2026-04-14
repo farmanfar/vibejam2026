@@ -95,14 +95,14 @@ export function buildFeaturedLayer(scene, container, items, slots, config, callb
 
     const shadow     = scene.add.ellipse(0, 82, 110, 26, 0x000000, 0.34)
     const glow       = scene.add.ellipse(0, 78, 130, 30, Theme.accent, 0.08)
-    const frame      = scene.add.rectangle(0, -30, 110, 118, 0x13151c, 0.56).setStrokeStyle(2, Theme.panelBorder, 0.88)
-    const namePlate  = scene.add.rectangle(0, 104, 118, 18, Theme.fantasyPurpleDark, 0.88).setStrokeStyle(1, Theme.fantasyBorderGold, 0.72)
-    const nameText   = scene.add.bitmapText(0, 97, FONT_KEY, config.visuals.labelForItem(item), 8).setOrigin(0.5).setTint(Theme.primaryText)
-    const hint       = scene.add.bitmapText(0, 118, FONT_KEY, 'SELECT', 8).setOrigin(0.5).setTint(Theme.ambientText)
-    const hitZone    = scene.add.zone(0, 14, 136, 228).setInteractive({ useHandCursor: true })
+    const frame      = scene.add.rectangle(0, -46, 110, 152, 0x13151c, 0.94).setStrokeStyle(2, Theme.panelBorder, 0.88)
+    const namePlate  = scene.add.rectangle(0, 22, 118, 18, Theme.fantasyPurpleDark, 1.0).setStrokeStyle(1, Theme.fantasyBorderGold, 0.72)
+    const nameText   = scene.add.bitmapText(0, 15, FONT_KEY, config.visuals.labelForItem(item), 8).setOrigin(0.5).setTint(Theme.primaryText)
+    const hint       = scene.add.bitmapText(0, 38, FONT_KEY, 'SELECT', 8).setOrigin(0.5).setTint(Theme.ambientText)
+    const hitZone    = scene.add.zone(0, 20, 160, 252).setInteractive({ useHandCursor: true })
 
     display.add([shadow, glow, frame, namePlate, nameText, hint])
-    const art = buildItemSprite(scene, display, item, 0, -44, 0.48, config.visuals)
+    const art = buildItemSprite(scene, display, item, 0, -72, 0.9, config.visuals)
     display.add(hitZone)
 
     display.shadow  = shadow

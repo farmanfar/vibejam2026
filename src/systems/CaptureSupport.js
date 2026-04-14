@@ -180,9 +180,6 @@ export function resolveCaptureRoute() {
       case 'settings':
         return { sceneKey: 'Settings', data: {} }
 
-      case 'unitlab':
-        return { sceneKey: 'UnitLab', data: {} }
-
       case 'commander': {
         const commanderView = params.get('commanderView') ?? null
         return {

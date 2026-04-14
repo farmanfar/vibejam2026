@@ -1,0 +1,959 @@
+{ "frames": [
+   {
+    "filename": "Tribe Warrior 0.aseprite",
+    "frame": { "x": 0, "y": 0, "w": 80, "h": 70 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 80, "h": 70 },
+    "sourceSize": { "w": 80, "h": 70 },
+    "duration": 65
+   },
+   {
+    "filename": "Tribe Warrior 1.aseprite",
+    "frame": { "x": 80, "y": 0, "w": 80, "h": 70 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 80, "h": 70 },
+    "sourceSize": { "w": 80, "h": 70 },
+    "duration": 65
+   },
+   {
+    "filename": "Tribe Warrior 2.aseprite",
+    "frame": { "x": 160, "y": 0, "w": 80, "h": 70 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 80, "h": 70 },
+    "sourceSize": { "w": 80, "h": 70 },
+    "duration": 65
+   },
+   {
+    "filename": "Tribe Warrior 3.aseprite",
+    "frame": { "x": 240, "y": 0, "w": 80, "h": 70 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 80, "h": 70 },
+    "sourceSize": { "w": 80, "h": 70 },
+    "duration": 65
+   },
+   {
+    "filename": "Tribe Warrior 4.aseprite",
+    "frame": { "x": 320, "y": 0, "w": 80, "h": 70 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 80, "h": 70 },
+    "sourceSize": { "w": 80, "h": 70 },
+    "duration": 65
+   },
+   {
+    "filename": "Tribe Warrior 5.aseprite",
+    "frame": { "x": 400, "y": 0, "w": 80, "h": 70 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 80, "h": 70 },
+    "sourceSize": { "w": 80, "h": 70 },
+    "duration": 65
+   },
+   {
+    "filename": "Tribe Warrior 6.aseprite",
+    "frame": { "x": 480, "y": 0, "w": 80, "h": 70 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 80, "h": 70 },
+    "sourceSize": { "w": 80, "h": 70 },
+    "duration": 65
+   },
+   {
+    "filename": "Tribe Warrior 7.aseprite",
+    "frame": { "x": 560, "y": 0, "w": 80, "h": 70 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 80, "h": 70 },
+    "sourceSize": { "w": 80, "h": 70 },
+    "duration": 65
+   },
+   {
+    "filename": "Tribe Warrior 8.aseprite",
+    "frame": { "x": 640, "y": 0, "w": 80, "h": 70 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 80, "h": 70 },
+    "sourceSize": { "w": 80, "h": 70 },
+    "duration": 65
+   },
+   {
+    "filename": "Tribe Warrior 9.aseprite",
+    "frame": { "x": 720, "y": 0, "w": 80, "h": 70 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 80, "h": 70 },
+    "sourceSize": { "w": 80, "h": 70 },
+    "duration": 65
+   },
+   {
+    "filename": "Tribe Warrior 10.aseprite",
+    "frame": { "x": 0, "y": 70, "w": 80, "h": 70 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 80, "h": 70 },
+    "sourceSize": { "w": 80, "h": 70 },
+    "duration": 65
+   },
+   {
+    "filename": "Tribe Warrior 11.aseprite",
+    "frame": { "x": 80, "y": 70, "w": 80, "h": 70 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 80, "h": 70 },
+    "sourceSize": { "w": 80, "h": 70 },
+    "duration": 65
+   },
+   {
+    "filename": "Tribe Warrior 12.aseprite",
+    "frame": { "x": 160, "y": 70, "w": 80, "h": 70 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 80, "h": 70 },
+    "sourceSize": { "w": 80, "h": 70 },
+    "duration": 65
+   },
+   {
+    "filename": "Tribe Warrior 13.aseprite",
+    "frame": { "x": 240, "y": 70, "w": 80, "h": 70 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 80, "h": 70 },
+    "sourceSize": { "w": 80, "h": 70 },
+    "duration": 65
+   },
+   {
+    "filename": "Tribe Warrior 14.aseprite",
+    "frame": { "x": 320, "y": 70, "w": 80, "h": 70 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 80, "h": 70 },
+    "sourceSize": { "w": 80, "h": 70 },
+    "duration": 65
+   },
+   {
+    "filename": "Tribe Warrior 15.aseprite",
+    "frame": { "x": 400, "y": 70, "w": 80, "h": 70 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 80, "h": 70 },
+    "sourceSize": { "w": 80, "h": 70 },
+    "duration": 65
+   },
+   {
+    "filename": "Tribe Warrior 16.aseprite",
+    "frame": { "x": 480, "y": 70, "w": 80, "h": 70 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 80, "h": 70 },
+    "sourceSize": { "w": 80, "h": 70 },
+    "duration": 65
+   },
+   {
+    "filename": "Tribe Warrior 17.aseprite",
+    "frame": { "x": 560, "y": 70, "w": 80, "h": 70 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 80, "h": 70 },
+    "sourceSize": { "w": 80, "h": 70 },
+    "duration": 65
+   },
+   {
+    "filename": "Tribe Warrior 18.aseprite",
+    "frame": { "x": 640, "y": 70, "w": 80, "h": 70 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 80, "h": 70 },
+    "sourceSize": { "w": 80, "h": 70 },
+    "duration": 65
+   },
+   {
+    "filename": "Tribe Warrior 19.aseprite",
+    "frame": { "x": 720, "y": 70, "w": 80, "h": 70 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 80, "h": 70 },
+    "sourceSize": { "w": 80, "h": 70 },
+    "duration": 65
+   },
+   {
+    "filename": "Tribe Warrior 20.aseprite",
+    "frame": { "x": 0, "y": 140, "w": 80, "h": 70 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 80, "h": 70 },
+    "sourceSize": { "w": 80, "h": 70 },
+    "duration": 65
+   },
+   {
+    "filename": "Tribe Warrior 21.aseprite",
+    "frame": { "x": 80, "y": 140, "w": 80, "h": 70 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 80, "h": 70 },
+    "sourceSize": { "w": 80, "h": 70 },
+    "duration": 65
+   },
+   {
+    "filename": "Tribe Warrior 22.aseprite",
+    "frame": { "x": 160, "y": 140, "w": 80, "h": 70 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 80, "h": 70 },
+    "sourceSize": { "w": 80, "h": 70 },
+    "duration": 65
+   },
+   {
+    "filename": "Tribe Warrior 23.aseprite",
+    "frame": { "x": 240, "y": 140, "w": 80, "h": 70 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 80, "h": 70 },
+    "sourceSize": { "w": 80, "h": 70 },
+    "duration": 65
+   },
+   {
+    "filename": "Tribe Warrior 24.aseprite",
+    "frame": { "x": 320, "y": 140, "w": 80, "h": 70 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 80, "h": 70 },
+    "sourceSize": { "w": 80, "h": 70 },
+    "duration": 65
+   },
+   {
+    "filename": "Tribe Warrior 25.aseprite",
+    "frame": { "x": 400, "y": 140, "w": 80, "h": 70 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 80, "h": 70 },
+    "sourceSize": { "w": 80, "h": 70 },
+    "duration": 65
+   },
+   {
+    "filename": "Tribe Warrior 26.aseprite",
+    "frame": { "x": 480, "y": 140, "w": 80, "h": 70 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 80, "h": 70 },
+    "sourceSize": { "w": 80, "h": 70 },
+    "duration": 65
+   },
+   {
+    "filename": "Tribe Warrior 27.aseprite",
+    "frame": { "x": 560, "y": 140, "w": 80, "h": 70 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 80, "h": 70 },
+    "sourceSize": { "w": 80, "h": 70 },
+    "duration": 65
+   },
+   {
+    "filename": "Tribe Warrior 28.aseprite",
+    "frame": { "x": 640, "y": 140, "w": 80, "h": 70 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 80, "h": 70 },
+    "sourceSize": { "w": 80, "h": 70 },
+    "duration": 65
+   },
+   {
+    "filename": "Tribe Warrior 29.aseprite",
+    "frame": { "x": 720, "y": 140, "w": 80, "h": 70 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 80, "h": 70 },
+    "sourceSize": { "w": 80, "h": 70 },
+    "duration": 65
+   },
+   {
+    "filename": "Tribe Warrior 30.aseprite",
+    "frame": { "x": 0, "y": 210, "w": 80, "h": 70 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 80, "h": 70 },
+    "sourceSize": { "w": 80, "h": 70 },
+    "duration": 65
+   },
+   {
+    "filename": "Tribe Warrior 31.aseprite",
+    "frame": { "x": 80, "y": 210, "w": 80, "h": 70 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 80, "h": 70 },
+    "sourceSize": { "w": 80, "h": 70 },
+    "duration": 65
+   },
+   {
+    "filename": "Tribe Warrior 32.aseprite",
+    "frame": { "x": 160, "y": 210, "w": 80, "h": 70 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 80, "h": 70 },
+    "sourceSize": { "w": 80, "h": 70 },
+    "duration": 65
+   },
+   {
+    "filename": "Tribe Warrior 33.aseprite",
+    "frame": { "x": 240, "y": 210, "w": 80, "h": 70 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 80, "h": 70 },
+    "sourceSize": { "w": 80, "h": 70 },
+    "duration": 65
+   },
+   {
+    "filename": "Tribe Warrior 34.aseprite",
+    "frame": { "x": 320, "y": 210, "w": 80, "h": 70 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 80, "h": 70 },
+    "sourceSize": { "w": 80, "h": 70 },
+    "duration": 65
+   },
+   {
+    "filename": "Tribe Warrior 35.aseprite",
+    "frame": { "x": 400, "y": 210, "w": 80, "h": 70 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 80, "h": 70 },
+    "sourceSize": { "w": 80, "h": 70 },
+    "duration": 65
+   },
+   {
+    "filename": "Tribe Warrior 36.aseprite",
+    "frame": { "x": 480, "y": 210, "w": 80, "h": 70 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 80, "h": 70 },
+    "sourceSize": { "w": 80, "h": 70 },
+    "duration": 65
+   },
+   {
+    "filename": "Tribe Warrior 37.aseprite",
+    "frame": { "x": 560, "y": 210, "w": 80, "h": 70 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 80, "h": 70 },
+    "sourceSize": { "w": 80, "h": 70 },
+    "duration": 65
+   },
+   {
+    "filename": "Tribe Warrior 38.aseprite",
+    "frame": { "x": 640, "y": 210, "w": 80, "h": 70 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 80, "h": 70 },
+    "sourceSize": { "w": 80, "h": 70 },
+    "duration": 65
+   },
+   {
+    "filename": "Tribe Warrior 39.aseprite",
+    "frame": { "x": 720, "y": 210, "w": 80, "h": 70 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 80, "h": 70 },
+    "sourceSize": { "w": 80, "h": 70 },
+    "duration": 65
+   },
+   {
+    "filename": "Tribe Warrior 40.aseprite",
+    "frame": { "x": 0, "y": 280, "w": 80, "h": 70 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 80, "h": 70 },
+    "sourceSize": { "w": 80, "h": 70 },
+    "duration": 65
+   },
+   {
+    "filename": "Tribe Warrior 41.aseprite",
+    "frame": { "x": 80, "y": 280, "w": 80, "h": 70 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 80, "h": 70 },
+    "sourceSize": { "w": 80, "h": 70 },
+    "duration": 65
+   },
+   {
+    "filename": "Tribe Warrior 42.aseprite",
+    "frame": { "x": 160, "y": 280, "w": 80, "h": 70 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 80, "h": 70 },
+    "sourceSize": { "w": 80, "h": 70 },
+    "duration": 65
+   },
+   {
+    "filename": "Tribe Warrior 43.aseprite",
+    "frame": { "x": 240, "y": 280, "w": 80, "h": 70 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 80, "h": 70 },
+    "sourceSize": { "w": 80, "h": 70 },
+    "duration": 65
+   },
+   {
+    "filename": "Tribe Warrior 44.aseprite",
+    "frame": { "x": 320, "y": 280, "w": 80, "h": 70 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 80, "h": 70 },
+    "sourceSize": { "w": 80, "h": 70 },
+    "duration": 65
+   },
+   {
+    "filename": "Tribe Warrior 45.aseprite",
+    "frame": { "x": 400, "y": 280, "w": 80, "h": 70 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 80, "h": 70 },
+    "sourceSize": { "w": 80, "h": 70 },
+    "duration": 65
+   },
+   {
+    "filename": "Tribe Warrior 46.aseprite",
+    "frame": { "x": 480, "y": 280, "w": 80, "h": 70 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 80, "h": 70 },
+    "sourceSize": { "w": 80, "h": 70 },
+    "duration": 65
+   },
+   {
+    "filename": "Tribe Warrior 47.aseprite",
+    "frame": { "x": 560, "y": 280, "w": 80, "h": 70 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 80, "h": 70 },
+    "sourceSize": { "w": 80, "h": 70 },
+    "duration": 65
+   },
+   {
+    "filename": "Tribe Warrior 48.aseprite",
+    "frame": { "x": 640, "y": 280, "w": 80, "h": 70 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 80, "h": 70 },
+    "sourceSize": { "w": 80, "h": 70 },
+    "duration": 65
+   },
+   {
+    "filename": "Tribe Warrior 49.aseprite",
+    "frame": { "x": 720, "y": 280, "w": 80, "h": 70 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 80, "h": 70 },
+    "sourceSize": { "w": 80, "h": 70 },
+    "duration": 65
+   },
+   {
+    "filename": "Tribe Warrior 50.aseprite",
+    "frame": { "x": 0, "y": 350, "w": 80, "h": 70 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 80, "h": 70 },
+    "sourceSize": { "w": 80, "h": 70 },
+    "duration": 65
+   },
+   {
+    "filename": "Tribe Warrior 51.aseprite",
+    "frame": { "x": 80, "y": 350, "w": 80, "h": 70 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 80, "h": 70 },
+    "sourceSize": { "w": 80, "h": 70 },
+    "duration": 65
+   },
+   {
+    "filename": "Tribe Warrior 52.aseprite",
+    "frame": { "x": 160, "y": 350, "w": 80, "h": 70 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 80, "h": 70 },
+    "sourceSize": { "w": 80, "h": 70 },
+    "duration": 65
+   },
+   {
+    "filename": "Tribe Warrior 53.aseprite",
+    "frame": { "x": 240, "y": 350, "w": 80, "h": 70 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 80, "h": 70 },
+    "sourceSize": { "w": 80, "h": 70 },
+    "duration": 65
+   },
+   {
+    "filename": "Tribe Warrior 54.aseprite",
+    "frame": { "x": 240, "y": 140, "w": 80, "h": 70 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 80, "h": 70 },
+    "sourceSize": { "w": 80, "h": 70 },
+    "duration": 65
+   },
+   {
+    "filename": "Tribe Warrior 55.aseprite",
+    "frame": { "x": 320, "y": 350, "w": 80, "h": 70 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 80, "h": 70 },
+    "sourceSize": { "w": 80, "h": 70 },
+    "duration": 65
+   },
+   {
+    "filename": "Tribe Warrior 56.aseprite",
+    "frame": { "x": 400, "y": 350, "w": 80, "h": 70 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 80, "h": 70 },
+    "sourceSize": { "w": 80, "h": 70 },
+    "duration": 65
+   },
+   {
+    "filename": "Tribe Warrior 57.aseprite",
+    "frame": { "x": 480, "y": 350, "w": 80, "h": 70 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 80, "h": 70 },
+    "sourceSize": { "w": 80, "h": 70 },
+    "duration": 65
+   },
+   {
+    "filename": "Tribe Warrior 58.aseprite",
+    "frame": { "x": 560, "y": 350, "w": 80, "h": 70 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 80, "h": 70 },
+    "sourceSize": { "w": 80, "h": 70 },
+    "duration": 65
+   },
+   {
+    "filename": "Tribe Warrior 59.aseprite",
+    "frame": { "x": 640, "y": 350, "w": 80, "h": 70 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 80, "h": 70 },
+    "sourceSize": { "w": 80, "h": 70 },
+    "duration": 65
+   },
+   {
+    "filename": "Tribe Warrior 60.aseprite",
+    "frame": { "x": 720, "y": 350, "w": 80, "h": 70 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 80, "h": 70 },
+    "sourceSize": { "w": 80, "h": 70 },
+    "duration": 65
+   },
+   {
+    "filename": "Tribe Warrior 61.aseprite",
+    "frame": { "x": 0, "y": 420, "w": 80, "h": 70 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 80, "h": 70 },
+    "sourceSize": { "w": 80, "h": 70 },
+    "duration": 65
+   },
+   {
+    "filename": "Tribe Warrior 62.aseprite",
+    "frame": { "x": 80, "y": 420, "w": 80, "h": 70 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 80, "h": 70 },
+    "sourceSize": { "w": 80, "h": 70 },
+    "duration": 65
+   },
+   {
+    "filename": "Tribe Warrior 63.aseprite",
+    "frame": { "x": 160, "y": 420, "w": 80, "h": 70 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 80, "h": 70 },
+    "sourceSize": { "w": 80, "h": 70 },
+    "duration": 65
+   },
+   {
+    "filename": "Tribe Warrior 64.aseprite",
+    "frame": { "x": 240, "y": 420, "w": 80, "h": 70 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 80, "h": 70 },
+    "sourceSize": { "w": 80, "h": 70 },
+    "duration": 65
+   },
+   {
+    "filename": "Tribe Warrior 65.aseprite",
+    "frame": { "x": 320, "y": 420, "w": 80, "h": 70 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 80, "h": 70 },
+    "sourceSize": { "w": 80, "h": 70 },
+    "duration": 65
+   },
+   {
+    "filename": "Tribe Warrior 66.aseprite",
+    "frame": { "x": 400, "y": 420, "w": 80, "h": 70 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 80, "h": 70 },
+    "sourceSize": { "w": 80, "h": 70 },
+    "duration": 65
+   },
+   {
+    "filename": "Tribe Warrior 67.aseprite",
+    "frame": { "x": 480, "y": 420, "w": 80, "h": 70 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 80, "h": 70 },
+    "sourceSize": { "w": 80, "h": 70 },
+    "duration": 65
+   },
+   {
+    "filename": "Tribe Warrior 68.aseprite",
+    "frame": { "x": 560, "y": 420, "w": 80, "h": 70 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 80, "h": 70 },
+    "sourceSize": { "w": 80, "h": 70 },
+    "duration": 65
+   },
+   {
+    "filename": "Tribe Warrior 69.aseprite",
+    "frame": { "x": 640, "y": 420, "w": 80, "h": 70 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 80, "h": 70 },
+    "sourceSize": { "w": 80, "h": 70 },
+    "duration": 65
+   },
+   {
+    "filename": "Tribe Warrior 70.aseprite",
+    "frame": { "x": 720, "y": 420, "w": 80, "h": 70 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 80, "h": 70 },
+    "sourceSize": { "w": 80, "h": 70 },
+    "duration": 65
+   },
+   {
+    "filename": "Tribe Warrior 71.aseprite",
+    "frame": { "x": 0, "y": 490, "w": 80, "h": 70 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 80, "h": 70 },
+    "sourceSize": { "w": 80, "h": 70 },
+    "duration": 65
+   },
+   {
+    "filename": "Tribe Warrior 72.aseprite",
+    "frame": { "x": 80, "y": 490, "w": 80, "h": 70 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 80, "h": 70 },
+    "sourceSize": { "w": 80, "h": 70 },
+    "duration": 65
+   },
+   {
+    "filename": "Tribe Warrior 73.aseprite",
+    "frame": { "x": 160, "y": 490, "w": 80, "h": 70 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 80, "h": 70 },
+    "sourceSize": { "w": 80, "h": 70 },
+    "duration": 65
+   },
+   {
+    "filename": "Tribe Warrior 74.aseprite",
+    "frame": { "x": 240, "y": 490, "w": 80, "h": 70 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 80, "h": 70 },
+    "sourceSize": { "w": 80, "h": 70 },
+    "duration": 65
+   },
+   {
+    "filename": "Tribe Warrior 75.aseprite",
+    "frame": { "x": 320, "y": 490, "w": 80, "h": 70 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 80, "h": 70 },
+    "sourceSize": { "w": 80, "h": 70 },
+    "duration": 65
+   },
+   {
+    "filename": "Tribe Warrior 76.aseprite",
+    "frame": { "x": 400, "y": 490, "w": 80, "h": 70 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 80, "h": 70 },
+    "sourceSize": { "w": 80, "h": 70 },
+    "duration": 65
+   },
+   {
+    "filename": "Tribe Warrior 77.aseprite",
+    "frame": { "x": 480, "y": 490, "w": 80, "h": 70 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 80, "h": 70 },
+    "sourceSize": { "w": 80, "h": 70 },
+    "duration": 65
+   },
+   {
+    "filename": "Tribe Warrior 78.aseprite",
+    "frame": { "x": 560, "y": 490, "w": 80, "h": 70 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 80, "h": 70 },
+    "sourceSize": { "w": 80, "h": 70 },
+    "duration": 65
+   },
+   {
+    "filename": "Tribe Warrior 79.aseprite",
+    "frame": { "x": 640, "y": 490, "w": 80, "h": 70 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 80, "h": 70 },
+    "sourceSize": { "w": 80, "h": 70 },
+    "duration": 65
+   },
+   {
+    "filename": "Tribe Warrior 80.aseprite",
+    "frame": { "x": 720, "y": 490, "w": 80, "h": 70 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 80, "h": 70 },
+    "sourceSize": { "w": 80, "h": 70 },
+    "duration": 65
+   },
+   {
+    "filename": "Tribe Warrior 81.aseprite",
+    "frame": { "x": 0, "y": 560, "w": 80, "h": 70 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 80, "h": 70 },
+    "sourceSize": { "w": 80, "h": 70 },
+    "duration": 65
+   },
+   {
+    "filename": "Tribe Warrior 82.aseprite",
+    "frame": { "x": 80, "y": 560, "w": 80, "h": 70 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 80, "h": 70 },
+    "sourceSize": { "w": 80, "h": 70 },
+    "duration": 65
+   },
+   {
+    "filename": "Tribe Warrior 83.aseprite",
+    "frame": { "x": 160, "y": 560, "w": 80, "h": 70 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 80, "h": 70 },
+    "sourceSize": { "w": 80, "h": 70 },
+    "duration": 65
+   },
+   {
+    "filename": "Tribe Warrior 84.aseprite",
+    "frame": { "x": 240, "y": 560, "w": 80, "h": 70 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 80, "h": 70 },
+    "sourceSize": { "w": 80, "h": 70 },
+    "duration": 65
+   },
+   {
+    "filename": "Tribe Warrior 85.aseprite",
+    "frame": { "x": 320, "y": 560, "w": 80, "h": 70 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 80, "h": 70 },
+    "sourceSize": { "w": 80, "h": 70 },
+    "duration": 65
+   },
+   {
+    "filename": "Tribe Warrior 86.aseprite",
+    "frame": { "x": 400, "y": 560, "w": 80, "h": 70 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 80, "h": 70 },
+    "sourceSize": { "w": 80, "h": 70 },
+    "duration": 65
+   },
+   {
+    "filename": "Tribe Warrior 87.aseprite",
+    "frame": { "x": 480, "y": 560, "w": 80, "h": 70 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 80, "h": 70 },
+    "sourceSize": { "w": 80, "h": 70 },
+    "duration": 65
+   },
+   {
+    "filename": "Tribe Warrior 88.aseprite",
+    "frame": { "x": 560, "y": 560, "w": 80, "h": 70 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 80, "h": 70 },
+    "sourceSize": { "w": 80, "h": 70 },
+    "duration": 65
+   },
+   {
+    "filename": "Tribe Warrior 89.aseprite",
+    "frame": { "x": 640, "y": 560, "w": 80, "h": 70 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 80, "h": 70 },
+    "sourceSize": { "w": 80, "h": 70 },
+    "duration": 65
+   },
+   {
+    "filename": "Tribe Warrior 90.aseprite",
+    "frame": { "x": 720, "y": 560, "w": 80, "h": 70 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 80, "h": 70 },
+    "sourceSize": { "w": 80, "h": 70 },
+    "duration": 65
+   },
+   {
+    "filename": "Tribe Warrior 91.aseprite",
+    "frame": { "x": 0, "y": 630, "w": 80, "h": 70 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 80, "h": 70 },
+    "sourceSize": { "w": 80, "h": 70 },
+    "duration": 65
+   },
+   {
+    "filename": "Tribe Warrior 92.aseprite",
+    "frame": { "x": 80, "y": 630, "w": 80, "h": 70 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 80, "h": 70 },
+    "sourceSize": { "w": 80, "h": 70 },
+    "duration": 65
+   },
+   {
+    "filename": "Tribe Warrior 93.aseprite",
+    "frame": { "x": 160, "y": 630, "w": 80, "h": 70 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 80, "h": 70 },
+    "sourceSize": { "w": 80, "h": 70 },
+    "duration": 65
+   },
+   {
+    "filename": "Tribe Warrior 94.aseprite",
+    "frame": { "x": 240, "y": 630, "w": 80, "h": 70 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 80, "h": 70 },
+    "sourceSize": { "w": 80, "h": 70 },
+    "duration": 65
+   },
+   {
+    "filename": "Tribe Warrior 95.aseprite",
+    "frame": { "x": 240, "y": 630, "w": 80, "h": 70 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 80, "h": 70 },
+    "sourceSize": { "w": 80, "h": 70 },
+    "duration": 65
+   },
+   {
+    "filename": "Tribe Warrior 96.aseprite",
+    "frame": { "x": 240, "y": 630, "w": 80, "h": 70 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 80, "h": 70 },
+    "sourceSize": { "w": 80, "h": 70 },
+    "duration": 65
+   },
+   {
+    "filename": "Tribe Warrior 97.aseprite",
+    "frame": { "x": 240, "y": 630, "w": 80, "h": 70 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 80, "h": 70 },
+    "sourceSize": { "w": 80, "h": 70 },
+    "duration": 65
+   },
+   {
+    "filename": "Tribe Warrior 98.aseprite",
+    "frame": { "x": 240, "y": 630, "w": 80, "h": 70 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 80, "h": 70 },
+    "sourceSize": { "w": 80, "h": 70 },
+    "duration": 65
+   },
+   {
+    "filename": "Tribe Warrior 99.aseprite",
+    "frame": { "x": 240, "y": 630, "w": 80, "h": 70 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 80, "h": 70 },
+    "sourceSize": { "w": 80, "h": 70 },
+    "duration": 65
+   },
+   {
+    "filename": "Tribe Warrior 100.aseprite",
+    "frame": { "x": 240, "y": 630, "w": 80, "h": 70 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 80, "h": 70 },
+    "sourceSize": { "w": 80, "h": 70 },
+    "duration": 65
+   },
+   {
+    "filename": "Tribe Warrior 101.aseprite",
+    "frame": { "x": 240, "y": 630, "w": 80, "h": 70 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 80, "h": 70 },
+    "sourceSize": { "w": 80, "h": 70 },
+    "duration": 65
+   },
+   {
+    "filename": "Tribe Warrior 102.aseprite",
+    "frame": { "x": 240, "y": 630, "w": 80, "h": 70 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 80, "h": 70 },
+    "sourceSize": { "w": 80, "h": 70 },
+    "duration": 65
+   },
+   {
+    "filename": "Tribe Warrior 103.aseprite",
+    "frame": { "x": 240, "y": 630, "w": 80, "h": 70 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 80, "h": 70 },
+    "sourceSize": { "w": 80, "h": 70 },
+    "duration": 65
+   }
+ ],
+ "meta": {
+  "app": "https://www.aseprite.org/",
+  "version": "1.3.16.1-x64",
+  "image": "tribal_chopper.png",
+  "format": "RGBA8888",
+  "size": { "w": 800, "h": 700 },
+  "scale": "1",
+  "frameTags": [
+   { "name": "Idle", "from": 0, "to": 5, "direction": "forward", "color": "#000000ff" },
+   { "name": "idle down", "from": 6, "to": 11, "direction": "forward", "color": "#000000ff" },
+   { "name": "idle up", "from": 12, "to": 17, "direction": "forward", "color": "#000000ff" },
+   { "name": "Walk", "from": 18, "to": 29, "direction": "forward", "color": "#000000ff" },
+   { "name": "Walk Down", "from": 30, "to": 41, "direction": "forward", "color": "#000000ff" },
+   { "name": "Walk up", "from": 42, "to": 53, "direction": "forward", "color": "#000000ff" },
+   { "name": "attack", "from": 54, "to": 64, "direction": "forward", "color": "#000000ff" },
+   { "name": "attack down", "from": 65, "to": 75, "direction": "forward", "color": "#000000ff" },
+   { "name": "Attack Up", "from": 76, "to": 86, "direction": "forward", "color": "#000000ff" },
+   { "name": "death", "from": 87, "to": 102, "direction": "forward", "color": "#000000ff" }
+  ]
+ }
+}

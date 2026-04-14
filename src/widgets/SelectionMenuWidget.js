@@ -55,8 +55,7 @@ export class SelectionMenuWidget {
     this._rightPanelHitzone = null
 
     // UI overlay refs
-    this._headerLabel  = null
-    this._promptLabel  = null
+    this._hintLabel            = null
     this._backBtn              = null
     this._confirmBtn           = null
     this._keyHandler         = null
@@ -161,21 +160,11 @@ export class SelectionMenuWidget {
     const { width, height } = this.scene.cameras.main
     const labels            = this.config.text?.actionLabels ?? {}
 
-    this.scene.add.rectangle(width / 2, 22, 420, 28, 0x05070d, 0.84)
-      .setStrokeStyle(1, Theme.panelBorder, 0.75).setDepth(20)
+    console.log('[Widget] Removed legacy header chrome (headerLabel + controlsLabel + bg rect)')
 
-    const initHeader = this.config.text?.headerStatus ?? this.config.text?.headerTitle ?? 'SELECT'
-    this._headerLabel = new PixelLabel(this.scene, width / 2, 12, initHeader, { scale: 1, color: 'accent', align: 'center' })
-    this._headerLabel.setDepth(21)
-    LayoutEditor.register(this.scene, 'headerLabel', this._headerLabel, width / 2, 16)
-
-    this._promptLabel = new PixelLabel(this.scene, width / 2, height - 90, 'Initializing...', { scale: 1, color: 'primary', align: 'center' })
-    this._promptLabel.setDepth(21)
-    LayoutEditor.register(this.scene, 'promptLabel', this._promptLabel, width / 2, height - 86)
-
-    const controlsLabel = new PixelLabel(this.scene, 34, height - 42, 'CLICK panels to navigate   ESC / S to step back   E to select', { scale: 1, color: 'muted' })
-    controlsLabel.setDepth(21)
-    LayoutEditor.register(this.scene, 'controlsLabel', controlsLabel, 26, height - 54)
+    this._hintLabel = new PixelLabel(this.scene, width / 2, height - 18, '', { scale: 1, color: 'ambient', align: 'center' })
+    this._hintLabel.setDepth(21)
+    LayoutEditor.register(this.scene, 'hintLabel', this._hintLabel, width / 2, height - 18)
 
     this._backBtn = new PixelButton(this.scene, 66, height - 32, labels.back ?? 'BACK', () => {
       if (this.widgetBusy) return
@@ -416,8 +405,10 @@ export class SelectionMenuWidget {
     this._syncUiState(this._presenter.getViewpoint(this.currentView).prompt)
   }
 
-  _syncUiState(viewPrompt) {
-    this._promptLabel?.setText(`${viewPrompt}\n${this._getFocusPrompt()}`)
+  _syncUiState(_viewPrompt) {
+    const hint = this._getFocusPrompt()
+    this._hintLabel?.setText(hint)
+    console.log(`[Widget] Hint → ${hint}  (view=${this.currentView})`)
 
     const panelsInteractive = !this.widgetBusy && (this.currentView === 'center' || this.currentView === 'featuredClose')
     if (this._leftPanelHitzone?.input)  this._leftPanelHitzone.input.enabled  = panelsInteractive
@@ -444,10 +435,8 @@ export class SelectionMenuWidget {
 
   _getFocusPrompt() {
     if (this.currentView === 'center') {
-      if (this.centerFocus === 'preview') return 'FOCUS: PREVIEW   [W] open   [TAB] switch focus   [A/D] look'
-      const item = this._featuredDisplays[this.featuredFocusIndex]?.item
-      const name = item ? this.config.visuals.labelForItem(item) : 'ITEM'
-      return `FOCUS: ${name}   [W] inspect   [TAB] preview   [A/D] look`
+      if (this.centerFocus === 'preview') return '[W] open   [TAB] switch focus   [A/D] look'
+      return '[W] inspect   [TAB] preview   [A/D] look'
     }
     if (this.currentView === 'featuredClose') return '[A/D] browse   [E] select   [S] back'
     if (this.currentView === 'previewClose')  return '[E] pulse   [S] back'
@@ -521,9 +510,6 @@ export class SelectionMenuWidget {
 
   setText(nextText) {
     Object.assign(this.config.text, nextText)
-    if (nextText.headerStatus !== undefined || nextText.headerTitle !== undefined) {
-      this._headerLabel?.setText(this.config.text.headerStatus ?? this.config.text.headerTitle ?? '')
-    }
     if (nextText.actionLabels) {
       this._syncUiState(this._presenter.getViewpoint(this.currentView).prompt)
     }

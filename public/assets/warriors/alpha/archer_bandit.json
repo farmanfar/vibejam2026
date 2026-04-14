@@ -1,0 +1,886 @@
+{ "frames": [
+   {
+    "filename": "Archer Bandit 0.aseprite",
+    "frame": { "x": 0, "y": 0, "w": 192, "h": 192 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 192, "h": 192 },
+    "sourceSize": { "w": 192, "h": 192 },
+    "duration": 75
+   },
+   {
+    "filename": "Archer Bandit 1.aseprite",
+    "frame": { "x": 0, "y": 0, "w": 192, "h": 192 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 192, "h": 192 },
+    "sourceSize": { "w": 192, "h": 192 },
+    "duration": 75
+   },
+   {
+    "filename": "Archer Bandit 2.aseprite",
+    "frame": { "x": 192, "y": 0, "w": 192, "h": 192 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 192, "h": 192 },
+    "sourceSize": { "w": 192, "h": 192 },
+    "duration": 75
+   },
+   {
+    "filename": "Archer Bandit 3.aseprite",
+    "frame": { "x": 384, "y": 0, "w": 192, "h": 192 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 192, "h": 192 },
+    "sourceSize": { "w": 192, "h": 192 },
+    "duration": 75
+   },
+   {
+    "filename": "Archer Bandit 4.aseprite",
+    "frame": { "x": 576, "y": 0, "w": 192, "h": 192 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 192, "h": 192 },
+    "sourceSize": { "w": 192, "h": 192 },
+    "duration": 75
+   },
+   {
+    "filename": "Archer Bandit 5.aseprite",
+    "frame": { "x": 768, "y": 0, "w": 192, "h": 192 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 192, "h": 192 },
+    "sourceSize": { "w": 192, "h": 192 },
+    "duration": 75
+   },
+   {
+    "filename": "Archer Bandit 6.aseprite",
+    "frame": { "x": 960, "y": 0, "w": 192, "h": 192 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 192, "h": 192 },
+    "sourceSize": { "w": 192, "h": 192 },
+    "duration": 75
+   },
+   {
+    "filename": "Archer Bandit 7.aseprite",
+    "frame": { "x": 1152, "y": 0, "w": 192, "h": 192 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 192, "h": 192 },
+    "sourceSize": { "w": 192, "h": 192 },
+    "duration": 75
+   },
+   {
+    "filename": "Archer Bandit 8.aseprite",
+    "frame": { "x": 1344, "y": 0, "w": 192, "h": 192 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 192, "h": 192 },
+    "sourceSize": { "w": 192, "h": 192 },
+    "duration": 75
+   },
+   {
+    "filename": "Archer Bandit 9.aseprite",
+    "frame": { "x": 0, "y": 0, "w": 192, "h": 192 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 192, "h": 192 },
+    "sourceSize": { "w": 192, "h": 192 },
+    "duration": 75
+   },
+   {
+    "filename": "Archer Bandit 10.aseprite",
+    "frame": { "x": 1536, "y": 0, "w": 192, "h": 192 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 192, "h": 192 },
+    "sourceSize": { "w": 192, "h": 192 },
+    "duration": 75
+   },
+   {
+    "filename": "Archer Bandit 11.aseprite",
+    "frame": { "x": 1728, "y": 0, "w": 192, "h": 192 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 192, "h": 192 },
+    "sourceSize": { "w": 192, "h": 192 },
+    "duration": 75
+   },
+   {
+    "filename": "Archer Bandit 12.aseprite",
+    "frame": { "x": 0, "y": 192, "w": 192, "h": 192 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 192, "h": 192 },
+    "sourceSize": { "w": 192, "h": 192 },
+    "duration": 75
+   },
+   {
+    "filename": "Archer Bandit 13.aseprite",
+    "frame": { "x": 192, "y": 192, "w": 192, "h": 192 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 192, "h": 192 },
+    "sourceSize": { "w": 192, "h": 192 },
+    "duration": 75
+   },
+   {
+    "filename": "Archer Bandit 14.aseprite",
+    "frame": { "x": 384, "y": 192, "w": 192, "h": 192 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 192, "h": 192 },
+    "sourceSize": { "w": 192, "h": 192 },
+    "duration": 75
+   },
+   {
+    "filename": "Archer Bandit 15.aseprite",
+    "frame": { "x": 576, "y": 192, "w": 192, "h": 192 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 192, "h": 192 },
+    "sourceSize": { "w": 192, "h": 192 },
+    "duration": 75
+   },
+   {
+    "filename": "Archer Bandit 16.aseprite",
+    "frame": { "x": 768, "y": 192, "w": 192, "h": 192 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 192, "h": 192 },
+    "sourceSize": { "w": 192, "h": 192 },
+    "duration": 75
+   },
+   {
+    "filename": "Archer Bandit 17.aseprite",
+    "frame": { "x": 960, "y": 192, "w": 192, "h": 192 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 192, "h": 192 },
+    "sourceSize": { "w": 192, "h": 192 },
+    "duration": 75
+   },
+   {
+    "filename": "Archer Bandit 18.aseprite",
+    "frame": { "x": 1152, "y": 192, "w": 192, "h": 192 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 192, "h": 192 },
+    "sourceSize": { "w": 192, "h": 192 },
+    "duration": 75
+   },
+   {
+    "filename": "Archer Bandit 19.aseprite",
+    "frame": { "x": 1344, "y": 192, "w": 192, "h": 192 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 192, "h": 192 },
+    "sourceSize": { "w": 192, "h": 192 },
+    "duration": 75
+   },
+   {
+    "filename": "Archer Bandit 20.aseprite",
+    "frame": { "x": 1536, "y": 192, "w": 192, "h": 192 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 192, "h": 192 },
+    "sourceSize": { "w": 192, "h": 192 },
+    "duration": 75
+   },
+   {
+    "filename": "Archer Bandit 21.aseprite",
+    "frame": { "x": 1728, "y": 192, "w": 192, "h": 192 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 192, "h": 192 },
+    "sourceSize": { "w": 192, "h": 192 },
+    "duration": 75
+   },
+   {
+    "filename": "Archer Bandit 22.aseprite",
+    "frame": { "x": 0, "y": 384, "w": 192, "h": 192 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 192, "h": 192 },
+    "sourceSize": { "w": 192, "h": 192 },
+    "duration": 75
+   },
+   {
+    "filename": "Archer Bandit 23.aseprite",
+    "frame": { "x": 192, "y": 384, "w": 192, "h": 192 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 192, "h": 192 },
+    "sourceSize": { "w": 192, "h": 192 },
+    "duration": 75
+   },
+   {
+    "filename": "Archer Bandit 24.aseprite",
+    "frame": { "x": 384, "y": 384, "w": 192, "h": 192 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 192, "h": 192 },
+    "sourceSize": { "w": 192, "h": 192 },
+    "duration": 75
+   },
+   {
+    "filename": "Archer Bandit 25.aseprite",
+    "frame": { "x": 576, "y": 384, "w": 192, "h": 192 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 192, "h": 192 },
+    "sourceSize": { "w": 192, "h": 192 },
+    "duration": 75
+   },
+   {
+    "filename": "Archer Bandit 26.aseprite",
+    "frame": { "x": 768, "y": 384, "w": 192, "h": 192 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 192, "h": 192 },
+    "sourceSize": { "w": 192, "h": 192 },
+    "duration": 75
+   },
+   {
+    "filename": "Archer Bandit 27.aseprite",
+    "frame": { "x": 960, "y": 384, "w": 192, "h": 192 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 192, "h": 192 },
+    "sourceSize": { "w": 192, "h": 192 },
+    "duration": 75
+   },
+   {
+    "filename": "Archer Bandit 28.aseprite",
+    "frame": { "x": 1152, "y": 384, "w": 192, "h": 192 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 192, "h": 192 },
+    "sourceSize": { "w": 192, "h": 192 },
+    "duration": 75
+   },
+   {
+    "filename": "Archer Bandit 29.aseprite",
+    "frame": { "x": 1344, "y": 384, "w": 192, "h": 192 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 192, "h": 192 },
+    "sourceSize": { "w": 192, "h": 192 },
+    "duration": 75
+   },
+   {
+    "filename": "Archer Bandit 30.aseprite",
+    "frame": { "x": 1536, "y": 384, "w": 192, "h": 192 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 192, "h": 192 },
+    "sourceSize": { "w": 192, "h": 192 },
+    "duration": 75
+   },
+   {
+    "filename": "Archer Bandit 31.aseprite",
+    "frame": { "x": 1728, "y": 384, "w": 192, "h": 192 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 192, "h": 192 },
+    "sourceSize": { "w": 192, "h": 192 },
+    "duration": 75
+   },
+   {
+    "filename": "Archer Bandit 32.aseprite",
+    "frame": { "x": 0, "y": 576, "w": 192, "h": 192 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 192, "h": 192 },
+    "sourceSize": { "w": 192, "h": 192 },
+    "duration": 75
+   },
+   {
+    "filename": "Archer Bandit 33.aseprite",
+    "frame": { "x": 192, "y": 576, "w": 192, "h": 192 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 192, "h": 192 },
+    "sourceSize": { "w": 192, "h": 192 },
+    "duration": 75
+   },
+   {
+    "filename": "Archer Bandit 34.aseprite",
+    "frame": { "x": 384, "y": 576, "w": 192, "h": 192 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 192, "h": 192 },
+    "sourceSize": { "w": 192, "h": 192 },
+    "duration": 75
+   },
+   {
+    "filename": "Archer Bandit 35.aseprite",
+    "frame": { "x": 576, "y": 576, "w": 192, "h": 192 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 192, "h": 192 },
+    "sourceSize": { "w": 192, "h": 192 },
+    "duration": 75
+   },
+   {
+    "filename": "Archer Bandit 36.aseprite",
+    "frame": { "x": 768, "y": 576, "w": 192, "h": 192 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 192, "h": 192 },
+    "sourceSize": { "w": 192, "h": 192 },
+    "duration": 75
+   },
+   {
+    "filename": "Archer Bandit 37.aseprite",
+    "frame": { "x": 960, "y": 576, "w": 192, "h": 192 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 192, "h": 192 },
+    "sourceSize": { "w": 192, "h": 192 },
+    "duration": 75
+   },
+   {
+    "filename": "Archer Bandit 38.aseprite",
+    "frame": { "x": 1152, "y": 576, "w": 192, "h": 192 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 192, "h": 192 },
+    "sourceSize": { "w": 192, "h": 192 },
+    "duration": 75
+   },
+   {
+    "filename": "Archer Bandit 39.aseprite",
+    "frame": { "x": 1344, "y": 576, "w": 192, "h": 192 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 192, "h": 192 },
+    "sourceSize": { "w": 192, "h": 192 },
+    "duration": 75
+   },
+   {
+    "filename": "Archer Bandit 40.aseprite",
+    "frame": { "x": 1536, "y": 576, "w": 192, "h": 192 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 192, "h": 192 },
+    "sourceSize": { "w": 192, "h": 192 },
+    "duration": 75
+   },
+   {
+    "filename": "Archer Bandit 41.aseprite",
+    "frame": { "x": 1728, "y": 576, "w": 192, "h": 192 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 192, "h": 192 },
+    "sourceSize": { "w": 192, "h": 192 },
+    "duration": 75
+   },
+   {
+    "filename": "Archer Bandit 42.aseprite",
+    "frame": { "x": 0, "y": 768, "w": 192, "h": 192 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 192, "h": 192 },
+    "sourceSize": { "w": 192, "h": 192 },
+    "duration": 75
+   },
+   {
+    "filename": "Archer Bandit 43.aseprite",
+    "frame": { "x": 192, "y": 768, "w": 192, "h": 192 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 192, "h": 192 },
+    "sourceSize": { "w": 192, "h": 192 },
+    "duration": 75
+   },
+   {
+    "filename": "Archer Bandit 44.aseprite",
+    "frame": { "x": 384, "y": 768, "w": 192, "h": 192 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 192, "h": 192 },
+    "sourceSize": { "w": 192, "h": 192 },
+    "duration": 75
+   },
+   {
+    "filename": "Archer Bandit 45.aseprite",
+    "frame": { "x": 576, "y": 768, "w": 192, "h": 192 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 192, "h": 192 },
+    "sourceSize": { "w": 192, "h": 192 },
+    "duration": 75
+   },
+   {
+    "filename": "Archer Bandit 46.aseprite",
+    "frame": { "x": 1344, "y": 0, "w": 192, "h": 192 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 192, "h": 192 },
+    "sourceSize": { "w": 192, "h": 192 },
+    "duration": 75
+   },
+   {
+    "filename": "Archer Bandit 47.aseprite",
+    "frame": { "x": 768, "y": 768, "w": 192, "h": 192 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 192, "h": 192 },
+    "sourceSize": { "w": 192, "h": 192 },
+    "duration": 75
+   },
+   {
+    "filename": "Archer Bandit 48.aseprite",
+    "frame": { "x": 960, "y": 768, "w": 192, "h": 192 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 192, "h": 192 },
+    "sourceSize": { "w": 192, "h": 192 },
+    "duration": 75
+   },
+   {
+    "filename": "Archer Bandit 49.aseprite",
+    "frame": { "x": 1152, "y": 768, "w": 192, "h": 192 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 192, "h": 192 },
+    "sourceSize": { "w": 192, "h": 192 },
+    "duration": 75
+   },
+   {
+    "filename": "Archer Bandit 50.aseprite",
+    "frame": { "x": 1344, "y": 768, "w": 192, "h": 192 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 192, "h": 192 },
+    "sourceSize": { "w": 192, "h": 192 },
+    "duration": 75
+   },
+   {
+    "filename": "Archer Bandit 51.aseprite",
+    "frame": { "x": 1536, "y": 768, "w": 192, "h": 192 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 192, "h": 192 },
+    "sourceSize": { "w": 192, "h": 192 },
+    "duration": 75
+   },
+   {
+    "filename": "Archer Bandit 52.aseprite",
+    "frame": { "x": 1728, "y": 768, "w": 192, "h": 192 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 192, "h": 192 },
+    "sourceSize": { "w": 192, "h": 192 },
+    "duration": 75
+   },
+   {
+    "filename": "Archer Bandit 53.aseprite",
+    "frame": { "x": 0, "y": 960, "w": 192, "h": 192 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 192, "h": 192 },
+    "sourceSize": { "w": 192, "h": 192 },
+    "duration": 75
+   },
+   {
+    "filename": "Archer Bandit 54.aseprite",
+    "frame": { "x": 192, "y": 960, "w": 192, "h": 192 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 192, "h": 192 },
+    "sourceSize": { "w": 192, "h": 192 },
+    "duration": 75
+   },
+   {
+    "filename": "Archer Bandit 55.aseprite",
+    "frame": { "x": 384, "y": 960, "w": 192, "h": 192 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 192, "h": 192 },
+    "sourceSize": { "w": 192, "h": 192 },
+    "duration": 75
+   },
+   {
+    "filename": "Archer Bandit 56.aseprite",
+    "frame": { "x": 576, "y": 960, "w": 192, "h": 192 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 192, "h": 192 },
+    "sourceSize": { "w": 192, "h": 192 },
+    "duration": 75
+   },
+   {
+    "filename": "Archer Bandit 57.aseprite",
+    "frame": { "x": 768, "y": 960, "w": 192, "h": 192 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 192, "h": 192 },
+    "sourceSize": { "w": 192, "h": 192 },
+    "duration": 75
+   },
+   {
+    "filename": "Archer Bandit 58.aseprite",
+    "frame": { "x": 960, "y": 960, "w": 192, "h": 192 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 192, "h": 192 },
+    "sourceSize": { "w": 192, "h": 192 },
+    "duration": 75
+   },
+   {
+    "filename": "Archer Bandit 59.aseprite",
+    "frame": { "x": 1152, "y": 960, "w": 192, "h": 192 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 192, "h": 192 },
+    "sourceSize": { "w": 192, "h": 192 },
+    "duration": 75
+   },
+   {
+    "filename": "Archer Bandit 60.aseprite",
+    "frame": { "x": 1152, "y": 960, "w": 192, "h": 192 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 192, "h": 192 },
+    "sourceSize": { "w": 192, "h": 192 },
+    "duration": 75
+   },
+   {
+    "filename": "Archer Bandit 61.aseprite",
+    "frame": { "x": 1152, "y": 960, "w": 192, "h": 192 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 192, "h": 192 },
+    "sourceSize": { "w": 192, "h": 192 },
+    "duration": 75
+   },
+   {
+    "filename": "Archer Bandit 62.aseprite",
+    "frame": { "x": 1152, "y": 960, "w": 192, "h": 192 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 192, "h": 192 },
+    "sourceSize": { "w": 192, "h": 192 },
+    "duration": 75
+   },
+   {
+    "filename": "Archer Bandit 63.aseprite",
+    "frame": { "x": 1152, "y": 960, "w": 192, "h": 192 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 192, "h": 192 },
+    "sourceSize": { "w": 192, "h": 192 },
+    "duration": 75
+   },
+   {
+    "filename": "Archer Bandit 64.aseprite",
+    "frame": { "x": 1344, "y": 960, "w": 192, "h": 192 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 192, "h": 192 },
+    "sourceSize": { "w": 192, "h": 192 },
+    "duration": 75
+   },
+   {
+    "filename": "Archer Bandit 65.aseprite",
+    "frame": { "x": 1536, "y": 960, "w": 192, "h": 192 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 192, "h": 192 },
+    "sourceSize": { "w": 192, "h": 192 },
+    "duration": 75
+   },
+   {
+    "filename": "Archer Bandit 66.aseprite",
+    "frame": { "x": 1728, "y": 960, "w": 192, "h": 192 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 192, "h": 192 },
+    "sourceSize": { "w": 192, "h": 192 },
+    "duration": 75
+   },
+   {
+    "filename": "Archer Bandit 67.aseprite",
+    "frame": { "x": 0, "y": 1152, "w": 192, "h": 192 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 192, "h": 192 },
+    "sourceSize": { "w": 192, "h": 192 },
+    "duration": 75
+   },
+   {
+    "filename": "Archer Bandit 68.aseprite",
+    "frame": { "x": 192, "y": 1152, "w": 192, "h": 192 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 192, "h": 192 },
+    "sourceSize": { "w": 192, "h": 192 },
+    "duration": 75
+   },
+   {
+    "filename": "Archer Bandit 69.aseprite",
+    "frame": { "x": 384, "y": 1152, "w": 192, "h": 192 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 192, "h": 192 },
+    "sourceSize": { "w": 192, "h": 192 },
+    "duration": 75
+   },
+   {
+    "filename": "Archer Bandit 70.aseprite",
+    "frame": { "x": 576, "y": 1152, "w": 192, "h": 192 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 192, "h": 192 },
+    "sourceSize": { "w": 192, "h": 192 },
+    "duration": 75
+   },
+   {
+    "filename": "Archer Bandit 71.aseprite",
+    "frame": { "x": 768, "y": 1152, "w": 192, "h": 192 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 192, "h": 192 },
+    "sourceSize": { "w": 192, "h": 192 },
+    "duration": 75
+   },
+   {
+    "filename": "Archer Bandit 72.aseprite",
+    "frame": { "x": 960, "y": 1152, "w": 192, "h": 192 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 192, "h": 192 },
+    "sourceSize": { "w": 192, "h": 192 },
+    "duration": 75
+   },
+   {
+    "filename": "Archer Bandit 73.aseprite",
+    "frame": { "x": 1152, "y": 1152, "w": 192, "h": 192 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 192, "h": 192 },
+    "sourceSize": { "w": 192, "h": 192 },
+    "duration": 75
+   },
+   {
+    "filename": "Archer Bandit 74.aseprite",
+    "frame": { "x": 1344, "y": 1152, "w": 192, "h": 192 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 192, "h": 192 },
+    "sourceSize": { "w": 192, "h": 192 },
+    "duration": 75
+   },
+   {
+    "filename": "Archer Bandit 75.aseprite",
+    "frame": { "x": 1536, "y": 1152, "w": 192, "h": 192 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 192, "h": 192 },
+    "sourceSize": { "w": 192, "h": 192 },
+    "duration": 75
+   },
+   {
+    "filename": "Archer Bandit 76.aseprite",
+    "frame": { "x": 1728, "y": 1152, "w": 192, "h": 192 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 192, "h": 192 },
+    "sourceSize": { "w": 192, "h": 192 },
+    "duration": 75
+   },
+   {
+    "filename": "Archer Bandit 77.aseprite",
+    "frame": { "x": 0, "y": 1344, "w": 192, "h": 192 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 192, "h": 192 },
+    "sourceSize": { "w": 192, "h": 192 },
+    "duration": 75
+   },
+   {
+    "filename": "Archer Bandit 78.aseprite",
+    "frame": { "x": 192, "y": 1344, "w": 192, "h": 192 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 192, "h": 192 },
+    "sourceSize": { "w": 192, "h": 192 },
+    "duration": 75
+   },
+   {
+    "filename": "Archer Bandit 79.aseprite",
+    "frame": { "x": 384, "y": 1344, "w": 192, "h": 192 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 192, "h": 192 },
+    "sourceSize": { "w": 192, "h": 192 },
+    "duration": 75
+   },
+   {
+    "filename": "Archer Bandit 80.aseprite",
+    "frame": { "x": 576, "y": 1344, "w": 192, "h": 192 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 192, "h": 192 },
+    "sourceSize": { "w": 192, "h": 192 },
+    "duration": 75
+   },
+   {
+    "filename": "Archer Bandit 81.aseprite",
+    "frame": { "x": 768, "y": 1344, "w": 192, "h": 192 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 192, "h": 192 },
+    "sourceSize": { "w": 192, "h": 192 },
+    "duration": 75
+   },
+   {
+    "filename": "Archer Bandit 82.aseprite",
+    "frame": { "x": 960, "y": 1344, "w": 192, "h": 192 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 192, "h": 192 },
+    "sourceSize": { "w": 192, "h": 192 },
+    "duration": 75
+   },
+   {
+    "filename": "Archer Bandit 83.aseprite",
+    "frame": { "x": 1152, "y": 1344, "w": 192, "h": 192 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 192, "h": 192 },
+    "sourceSize": { "w": 192, "h": 192 },
+    "duration": 75
+   },
+   {
+    "filename": "Archer Bandit 84.aseprite",
+    "frame": { "x": 1344, "y": 1344, "w": 192, "h": 192 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 192, "h": 192 },
+    "sourceSize": { "w": 192, "h": 192 },
+    "duration": 75
+   },
+   {
+    "filename": "Archer Bandit 85.aseprite",
+    "frame": { "x": 1536, "y": 1344, "w": 192, "h": 192 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 192, "h": 192 },
+    "sourceSize": { "w": 192, "h": 192 },
+    "duration": 75
+   },
+   {
+    "filename": "Archer Bandit 86.aseprite",
+    "frame": { "x": 1728, "y": 1344, "w": 192, "h": 192 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 192, "h": 192 },
+    "sourceSize": { "w": 192, "h": 192 },
+    "duration": 75
+   },
+   {
+    "filename": "Archer Bandit 87.aseprite",
+    "frame": { "x": 0, "y": 1536, "w": 192, "h": 192 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 192, "h": 192 },
+    "sourceSize": { "w": 192, "h": 192 },
+    "duration": 75
+   },
+   {
+    "filename": "Archer Bandit 88.aseprite",
+    "frame": { "x": 192, "y": 1536, "w": 192, "h": 192 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 192, "h": 192 },
+    "sourceSize": { "w": 192, "h": 192 },
+    "duration": 75
+   },
+   {
+    "filename": "Archer Bandit 89.aseprite",
+    "frame": { "x": 384, "y": 1536, "w": 192, "h": 192 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 192, "h": 192 },
+    "sourceSize": { "w": 192, "h": 192 },
+    "duration": 75
+   },
+   {
+    "filename": "Archer Bandit 90.aseprite",
+    "frame": { "x": 576, "y": 1536, "w": 192, "h": 192 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 192, "h": 192 },
+    "sourceSize": { "w": 192, "h": 192 },
+    "duration": 75
+   },
+   {
+    "filename": "Archer Bandit 91.aseprite",
+    "frame": { "x": 768, "y": 1536, "w": 192, "h": 192 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 192, "h": 192 },
+    "sourceSize": { "w": 192, "h": 192 },
+    "duration": 75
+   },
+   {
+    "filename": "Archer Bandit 92.aseprite",
+    "frame": { "x": 960, "y": 1536, "w": 192, "h": 192 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 192, "h": 192 },
+    "sourceSize": { "w": 192, "h": 192 },
+    "duration": 75
+   },
+   {
+    "filename": "Archer Bandit 93.aseprite",
+    "frame": { "x": 1152, "y": 1536, "w": 192, "h": 192 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 192, "h": 192 },
+    "sourceSize": { "w": 192, "h": 192 },
+    "duration": 75
+   },
+   {
+    "filename": "Archer Bandit 94.aseprite",
+    "frame": { "x": 1344, "y": 1536, "w": 192, "h": 192 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 192, "h": 192 },
+    "sourceSize": { "w": 192, "h": 192 },
+    "duration": 75
+   },
+   {
+    "filename": "Archer Bandit 95.aseprite",
+    "frame": { "x": 1536, "y": 1536, "w": 192, "h": 192 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 192, "h": 192 },
+    "sourceSize": { "w": 192, "h": 192 },
+    "duration": 75
+   }
+ ],
+ "meta": {
+  "app": "https://www.aseprite.org/",
+  "version": "1.3.16.1-x64",
+  "image": "archer_bandit.png",
+  "format": "RGBA8888",
+  "size": { "w": 1920, "h": 1728 },
+  "scale": "1",
+  "frameTags": [
+   { "name": "Idle", "from": 1, "to": 8, "direction": "forward", "color": "#000000ff" },
+   { "name": "Attack 1", "from": 9, "to": 27, "direction": "forward", "color": "#000000ff" },
+   { "name": "Attack Hit", "from": 28, "to": 35, "direction": "forward", "color": "#000000ff" },
+   { "name": "Run", "from": 36, "to": 43, "direction": "forward", "color": "#000000ff" },
+   { "name": "Jump", "from": 44, "to": 44, "direction": "forward", "color": "#000000ff" },
+   { "name": "Fall", "from": 45, "to": 45, "direction": "forward", "color": "#000000ff" },
+   { "name": "Vanish", "from": 46, "to": 63, "direction": "forward", "color": "#000000ff" },
+   { "name": "Appear", "from": 64, "to": 79, "direction": "forward", "color": "#000000ff" },
+   { "name": "Death", "from": 80, "to": 95, "direction": "forward", "color": "#000000ff" }
+  ]
+ }
+}

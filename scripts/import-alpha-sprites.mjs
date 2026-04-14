@@ -64,7 +64,7 @@ function resolveAseprite() {
   return null;
 }
 
-function runAseprite(cli, absSource, pngOut, jsonOut) {
+function runAseprite(cli, absSource, pngOut, jsonOut, { ignoreLayers = [], trim = false } = {}) {
   const args = [
     '--batch',
     '--sheet', pngOut,
@@ -72,8 +72,14 @@ function runAseprite(cli, absSource, pngOut, jsonOut) {
     '--format', 'json-array',
     '--list-tags',
     '--sheet-pack',
-    absSource,
   ];
+  for (const layer of ignoreLayers) {
+    args.push('--ignore-layer', layer);
+  }
+  if (trim) {
+    args.push('--trim');
+  }
+  args.push(absSource);
   try {
     const stdout = execFileSync(cli, args, { encoding: 'utf8', stdio: ['ignore', 'pipe', 'pipe'] });
     return stdout ?? '';
@@ -138,7 +144,10 @@ function main() {
     const jsonOut = join(OUT_DIR, `${unitId}.json`);
 
     try {
-      runAseprite(cli, absSource, pngOut, jsonOut);
+      runAseprite(cli, absSource, pngOut, jsonOut, {
+        ignoreLayers: entry.ignoreLayers ?? [],
+        trim: entry.trim ?? false,
+      });
     } catch (e) {
       console.error(`[AlphaSprites] ${unitId}: CLI error`, e);
       summary.push({ unitId, status: 'cli_error', error: String(e.message) });
@@ -171,6 +180,9 @@ function main() {
       frameCount: meta.frameCount,
       atlasWidth: meta.atlasWidth,
       atlasHeight: meta.atlasHeight,
+      ...(entry.animTagOverrides ? { animTagOverrides: entry.animTagOverrides } : {}),
+      ...(entry.trim ? { trim: true } : {}),
+      ...(entry.ignoreLayers?.length ? { ignoreLayers: entry.ignoreLayers } : {}),
     };
     entries[unitId] = manifestEntry;
 

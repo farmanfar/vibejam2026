@@ -150,12 +150,6 @@ export class MenuScene extends Scene {
     }, { style: 'text', scale: 3 });
     LayoutEditor.register(this, 'settingsBtn', settingsBtn, menuX, menuStartY + menuSpacing * 2);
 
-    const unitLabBtn = new PixelButton(this, menuX, menuStartY + menuSpacing * 3, 'UNIT LAB', () => {
-      console.log('[Menu] Opening Unit Lab');
-      this.scene.start('UnitLab');
-    }, { style: 'text', scale: 3 });
-    LayoutEditor.register(this, 'unitLabBtn', unitLabBtn, menuX, menuStartY + menuSpacing * 3);
-
     const rosterStatus = new PixelLabel(this, leftX, menuStartY + menuSpacing * 4 + 12, `ART READY: ${readyArtCount}/${totalUnits}`, {
       scale: 2,
       color: readyArtCount > 0 ? 'accent' : 'warning',

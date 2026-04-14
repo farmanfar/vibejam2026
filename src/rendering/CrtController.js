@@ -17,7 +17,7 @@ const PhaserController = Filters.Controller;
 export const CRT_PRESETS = {
   /**
    * Subtle CRT for interactive gameplay scenes where pointer accuracy matters.
-   * CommanderSelect, Shop, Battle, UnitLab.
+   * CommanderSelect, Shop, Battle.
    */
   softGameplay: {
     scanlineIntensity: 0.05,

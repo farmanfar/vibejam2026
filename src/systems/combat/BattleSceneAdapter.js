@@ -179,6 +179,8 @@ function translateLog(rawEntries, playerTeamStamped, enemyTeamStamped) {
           message: `${atkName} -> ${tgtName} (${dmgTxt})`,
           actorInstanceId: entry.attackerInstanceId ?? null,
           targetInstanceId: entry.targetInstanceId ?? null,
+          damage: entry.damage ?? 0,
+          blocked: !!entry.blocked,
           animTag: 'attack',
           ...snapshotHp(),
         });

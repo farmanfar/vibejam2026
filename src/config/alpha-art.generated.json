@@ -1,4 +1,556 @@
 {
-  "generatedAt": null,
-  "entries": {}
+  "generatedAt": "2026-04-14T01:29:44.852Z",
+  "entries": {
+    "archer": {
+      "spriteKey": "alpha-archer",
+      "pngPath": "assets/warriors/alpha/archer.png",
+      "dataPath": "assets/warriors/alpha/archer.json",
+      "displayScale": 2.5,
+      "defaultTag": "IDle",
+      "portraitFrame": 0,
+      "tags": [
+        "IDle",
+        "Run",
+        "attack",
+        "Special Attack",
+        "Hit/Damage",
+        "Death"
+      ],
+      "frameCount": 77,
+      "atlasWidth": 1728,
+      "atlasHeight": 1536,
+      "animTagOverrides": {
+        "idle": "IDle",
+        "death": "Death"
+      }
+    },
+    "blood_king": {
+      "spriteKey": "alpha-blood_king",
+      "pngPath": "assets/warriors/alpha/blood_king.png",
+      "dataPath": "assets/warriors/alpha/blood_king.json",
+      "displayScale": 2.5,
+      "defaultTag": "idle",
+      "portraitFrame": 0,
+      "tags": [
+        "idle",
+        "transition to charge",
+        "charge",
+        "transition down",
+        "run",
+        "jump",
+        "jump to fall trans",
+        "fall",
+        "double slash",
+        "attack 3",
+        "attack 1",
+        "attack",
+        "jump slam",
+        "hit",
+        "blood gif",
+        "death/blood teleport",
+        "heart slam",
+        "blood teleport 2"
+      ],
+      "frameCount": 159,
+      "atlasWidth": 2184,
+      "atlasHeight": 948,
+      "animTagOverrides": {
+        "death": "death/blood teleport"
+      }
+    },
+    "dagger_mush": {
+      "spriteKey": "alpha-dagger_mush",
+      "pngPath": "assets/warriors/alpha/dagger_mush.png",
+      "dataPath": "assets/warriors/alpha/dagger_mush.json",
+      "displayScale": 2.5,
+      "defaultTag": "Idle",
+      "portraitFrame": 0,
+      "tags": [
+        "Idle",
+        "Air attack",
+        "Attacks ",
+        "RUN",
+        "RUN fast",
+        "throw",
+        "damaged",
+        "Death"
+      ],
+      "frameCount": 63,
+      "atlasWidth": 1536,
+      "atlasHeight": 1344,
+      "animTagOverrides": {
+        "idle": "Idle",
+        "attack": "throw",
+        "death": "Death"
+      }
+    },
+    "ancient_guardian": {
+      "spriteKey": "alpha-ancient_guardian",
+      "pngPath": "assets/warriors/alpha/ancient_guardian.png",
+      "dataPath": "assets/warriors/alpha/ancient_guardian.json",
+      "displayScale": 2.5,
+      "defaultTag": "Idle",
+      "portraitFrame": 0,
+      "tags": [
+        "Idle",
+        "Shield",
+        "Blast",
+        "Laser",
+        "AOE",
+        "tele",
+        "Appear",
+        "death"
+      ],
+      "frameCount": 153,
+      "atlasWidth": 2304,
+      "atlasHeight": 2304,
+      "animTagOverrides": {
+        "idle": "Idle",
+        "attack": "Laser"
+      }
+    },
+    "assassin": {
+      "spriteKey": "alpha-assassin",
+      "pngPath": "assets/warriors/alpha/assassin.png",
+      "dataPath": "assets/warriors/alpha/assassin.json",
+      "displayScale": 2.5,
+      "defaultTag": "idle",
+      "portraitFrame": 0,
+      "tags": [
+        "idle",
+        "run",
+        "jump",
+        "fall",
+        "land",
+        "attack 1",
+        "attack 2",
+        "Slice attack",
+        "cross slice",
+        "hit",
+        "death"
+      ],
+      "frameCount": 64,
+      "atlasWidth": 728,
+      "atlasHeight": 152,
+      "animTagOverrides": {
+        "attack": "attack 1"
+      }
+    },
+    "bloat_flyer": {
+      "spriteKey": "alpha-bloat_flyer",
+      "pngPath": "assets/warriors/alpha/bloat_flyer.png",
+      "dataPath": "assets/warriors/alpha/bloat_flyer.json",
+      "displayScale": 2.5,
+      "defaultTag": "moveidle",
+      "portraitFrame": 0,
+      "tags": [
+        "moveidle",
+        "Attack",
+        "Death"
+      ],
+      "frameCount": 35,
+      "atlasWidth": 360,
+      "atlasHeight": 220,
+      "animTagOverrides": {
+        "idle": "moveidle",
+        "attack": "Attack",
+        "death": "Death"
+      }
+    },
+    "gnat": {
+      "spriteKey": "alpha-gnat",
+      "pngPath": "assets/warriors/alpha/gnat.png",
+      "dataPath": "assets/warriors/alpha/gnat.json",
+      "displayScale": 2.5,
+      "defaultTag": "Move/Idle",
+      "portraitFrame": 0,
+      "tags": [
+        "Move/Idle",
+        "Attack",
+        "Death"
+      ],
+      "frameCount": 21,
+      "atlasWidth": 100,
+      "atlasHeight": 112,
+      "animTagOverrides": {
+        "idle": "Move/Idle",
+        "attack": "Attack",
+        "death": "Death"
+      }
+    },
+    "slopper": {
+      "spriteKey": "alpha-slopper",
+      "pngPath": "assets/warriors/alpha/slopper.png",
+      "dataPath": "assets/warriors/alpha/slopper.json",
+      "displayScale": 2.5,
+      "defaultTag": "Idle Move",
+      "portraitFrame": 0,
+      "tags": [
+        "Idle Move",
+        "Attack",
+        "Death"
+      ],
+      "frameCount": 27,
+      "atlasWidth": 528,
+      "atlasHeight": 185,
+      "animTagOverrides": {
+        "idle": "Idle Move",
+        "attack": "Attack",
+        "death": "Death"
+      }
+    },
+    "snipper": {
+      "spriteKey": "alpha-snipper",
+      "pngPath": "assets/warriors/alpha/snipper.png",
+      "dataPath": "assets/warriors/alpha/snipper.json",
+      "displayScale": 2.5,
+      "defaultTag": "idleMove",
+      "portraitFrame": 0,
+      "tags": [
+        "idleMove",
+        "Attack",
+        "Death"
+      ],
+      "frameCount": 29,
+      "atlasWidth": 204,
+      "atlasHeight": 185,
+      "animTagOverrides": {
+        "idle": "idleMove",
+        "attack": "Attack",
+        "death": "Death"
+      }
+    },
+    "ghoul": {
+      "spriteKey": "alpha-ghoul",
+      "pngPath": "assets/warriors/alpha/ghoul.png",
+      "dataPath": "assets/warriors/alpha/ghoul.json",
+      "displayScale": 2.5,
+      "defaultTag": "Walk",
+      "portraitFrame": 0,
+      "tags": [
+        "Wake",
+        "Walk",
+        "Attack",
+        "Hit",
+        "death",
+        "Spawn"
+      ],
+      "frameCount": 44,
+      "atlasWidth": 434,
+      "atlasHeight": 198,
+      "animTagOverrides": {
+        "idle": "Walk",
+        "attack": "Attack"
+      }
+    },
+    "minion_001": {
+      "spriteKey": "alpha-minion_001",
+      "pngPath": "assets/warriors/alpha/minion_001.png",
+      "dataPath": "assets/warriors/alpha/minion_001.json",
+      "displayScale": 2.5,
+      "defaultTag": "idle",
+      "portraitFrame": 0,
+      "tags": [
+        "idle",
+        "Run",
+        "Attack",
+        "Death"
+      ],
+      "frameCount": 35,
+      "atlasWidth": 1152,
+      "atlasHeight": 1152,
+      "animTagOverrides": {
+        "attack": "Attack",
+        "death": "Death"
+      }
+    },
+    "minion_002": {
+      "spriteKey": "alpha-minion_002",
+      "pngPath": "assets/warriors/alpha/minion_002.png",
+      "dataPath": "assets/warriors/alpha/minion_002.json",
+      "displayScale": 4,
+      "defaultTag": "Idle",
+      "portraitFrame": 1,
+      "tags": [
+        "Idle",
+        "Run",
+        "Prep Explode",
+        "Explode "
+      ],
+      "frameCount": 36,
+      "atlasWidth": 488,
+      "atlasHeight": 202,
+      "animTagOverrides": {
+        "idle": "Idle",
+        "attack": "Prep Explode",
+        "death": "Explode "
+      },
+      "trim": true
+    },
+    "minion_003": {
+      "spriteKey": "alpha-minion_003",
+      "pngPath": "assets/warriors/alpha/minion_003.png",
+      "dataPath": "assets/warriors/alpha/minion_003.json",
+      "displayScale": 2.5,
+      "defaultTag": "Idle",
+      "portraitFrame": 0,
+      "tags": [
+        "Idle",
+        "Run",
+        "Range Attack",
+        "Death"
+      ],
+      "frameCount": 39,
+      "atlasWidth": 1344,
+      "atlasHeight": 1152,
+      "animTagOverrides": {
+        "idle": "Idle",
+        "attack": "Range Attack",
+        "death": "Death"
+      }
+    },
+    "relic_guardian_3": {
+      "spriteKey": "alpha-relic_guardian_3",
+      "pngPath": "assets/warriors/alpha/relic_guardian_3.png",
+      "dataPath": "assets/warriors/alpha/relic_guardian_3.json",
+      "displayScale": 2.5,
+      "defaultTag": "Idle",
+      "portraitFrame": 0,
+      "tags": [
+        "Idle",
+        "Move",
+        "Buff",
+        "Cast Sword",
+        "Summon Daggers",
+        "Death"
+      ],
+      "frameCount": 81,
+      "atlasWidth": 855,
+      "atlasHeight": 520,
+      "animTagOverrides": {
+        "idle": "Idle",
+        "attack": "Cast Sword",
+        "death": "Death"
+      }
+    },
+    "dark_mec": {
+      "spriteKey": "alpha-dark_mec",
+      "pngPath": "assets/warriors/alpha/dark_mec.png",
+      "dataPath": "assets/warriors/alpha/dark_mec.json",
+      "displayScale": 2.5,
+      "defaultTag": "walk",
+      "portraitFrame": 0,
+      "tags": [
+        "walk",
+        "att high",
+        "down",
+        "attack low",
+        "up",
+        "hit",
+        "death"
+      ],
+      "frameCount": 38,
+      "atlasWidth": 160,
+      "atlasHeight": 195,
+      "animTagOverrides": {
+        "idle": "walk",
+        "attack": "attack low"
+      }
+    },
+    "electrocutioner": {
+      "spriteKey": "alpha-electrocutioner",
+      "pngPath": "assets/warriors/alpha/electrocutioner.png",
+      "dataPath": "assets/warriors/alpha/electrocutioner.json",
+      "displayScale": 2.5,
+      "defaultTag": "Idle",
+      "portraitFrame": 0,
+      "tags": [
+        "Idle",
+        "Teleport",
+        "Appear",
+        "Attack",
+        "Range Attack",
+        "Death"
+      ],
+      "frameCount": 102,
+      "atlasWidth": 1728,
+      "atlasHeight": 1728,
+      "animTagOverrides": {
+        "idle": "Idle",
+        "attack": "Attack",
+        "death": "Death"
+      },
+      "ignoreLayers": [
+        "Flattened"
+      ]
+    },
+    "glitch_samurai": {
+      "spriteKey": "alpha-glitch_samurai",
+      "pngPath": "assets/warriors/alpha/glitch_samurai.png",
+      "dataPath": "assets/warriors/alpha/glitch_samurai.json",
+      "displayScale": 2.5,
+      "defaultTag": "Idle",
+      "portraitFrame": 0,
+      "tags": [
+        "Idle",
+        "Idle Gltich",
+        "Run",
+        "Wall SIt",
+        "Wall Slide",
+        "Jump",
+        "Jump Glitch",
+        "Fall",
+        "Land",
+        "Slash 1",
+        "Slash 2",
+        "Glitch Out",
+        "Gltich Attack",
+        "Death Frame"
+      ],
+      "frameCount": 106,
+      "atlasWidth": 1920,
+      "atlasHeight": 1920,
+      "animTagOverrides": {
+        "idle": "Idle",
+        "attack": "Gltich Attack",
+        "death": "Death Frame"
+      }
+    },
+    "colossal_boss": {
+      "spriteKey": "alpha-colossal_boss",
+      "pngPath": "assets/warriors/alpha/colossal_boss.png",
+      "dataPath": "assets/warriors/alpha/colossal_boss.json",
+      "displayScale": 2.5,
+      "defaultTag": "Idle",
+      "portraitFrame": 0,
+      "tags": [
+        "Wake",
+        "Idle",
+        "Move",
+        "turnaround",
+        "turnaround 2",
+        "Buff",
+        "Spin Attack",
+        "Spin End",
+        "Attack",
+        "Range Attack",
+        "Burst",
+        "Death"
+      ],
+      "frameCount": 182,
+      "atlasWidth": 2613,
+      "atlasHeight": 1128,
+      "animTagOverrides": {
+        "idle": "Idle",
+        "attack": "Burst",
+        "death": "Death"
+      }
+    },
+    "archer_bandit": {
+      "spriteKey": "alpha-archer_bandit",
+      "pngPath": "assets/warriors/alpha/archer_bandit.png",
+      "dataPath": "assets/warriors/alpha/archer_bandit.json",
+      "displayScale": 2.5,
+      "defaultTag": "Idle",
+      "portraitFrame": 0,
+      "tags": [
+        "Idle",
+        "Attack 1",
+        "Attack Hit",
+        "Run",
+        "Jump",
+        "Fall",
+        "Vanish",
+        "Appear",
+        "Death"
+      ],
+      "frameCount": 96,
+      "atlasWidth": 1920,
+      "atlasHeight": 1728,
+      "animTagOverrides": {
+        "idle": "Idle",
+        "attack": "Attack 1",
+        "death": "Death"
+      }
+    },
+    "dagger_bandit": {
+      "spriteKey": "alpha-dagger_bandit",
+      "pngPath": "assets/warriors/alpha/dagger_bandit.png",
+      "dataPath": "assets/warriors/alpha/dagger_bandit.json",
+      "displayScale": 2.5,
+      "defaultTag": "Idle",
+      "portraitFrame": 0,
+      "tags": [
+        "Idle",
+        "Run",
+        "Jump",
+        "Fall",
+        "Attack",
+        "Bat Fang Attack",
+        "Vanish",
+        "Appear",
+        "Death"
+      ],
+      "frameCount": 96,
+      "atlasWidth": 1920,
+      "atlasHeight": 1728,
+      "animTagOverrides": {
+        "idle": "Idle",
+        "attack": "Attack",
+        "death": "Death"
+      }
+    },
+    "hog_knight": {
+      "spriteKey": "alpha-hog_knight",
+      "pngPath": "assets/warriors/alpha/hog_knight.png",
+      "dataPath": "assets/warriors/alpha/hog_knight.json",
+      "displayScale": 2.5,
+      "defaultTag": "idle",
+      "portraitFrame": 0,
+      "tags": [
+        "idle",
+        "Idle Down",
+        "Idle Up",
+        "walk",
+        "Walk Down",
+        "Walk Up",
+        "Shoot",
+        "Shoot down",
+        "Shoot Up",
+        "death"
+      ],
+      "frameCount": 87,
+      "atlasWidth": 576,
+      "atlasHeight": 576,
+      "animTagOverrides": {
+        "attack": "Shoot"
+      }
+    },
+    "tribal_chopper": {
+      "spriteKey": "alpha-tribal_chopper",
+      "pngPath": "assets/warriors/alpha/tribal_chopper.png",
+      "dataPath": "assets/warriors/alpha/tribal_chopper.json",
+      "displayScale": 2.5,
+      "defaultTag": "Idle",
+      "portraitFrame": 0,
+      "tags": [
+        "Idle",
+        "idle down",
+        "idle up",
+        "Walk",
+        "Walk Down",
+        "Walk up",
+        "attack",
+        "attack down",
+        "Attack Up",
+        "death"
+      ],
+      "frameCount": 104,
+      "atlasWidth": 800,
+      "atlasHeight": 700,
+      "animTagOverrides": {
+        "idle": "Idle"
+      }
+    }
+  }
 }

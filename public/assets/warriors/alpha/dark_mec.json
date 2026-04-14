@@ -1,0 +1,362 @@
+{ "frames": [
+   {
+    "filename": "Dark Mec 0.aseprite",
+    "frame": { "x": 0, "y": 0, "w": 32, "h": 39 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 32, "h": 39 },
+    "sourceSize": { "w": 32, "h": 39 },
+    "duration": 100
+   },
+   {
+    "filename": "Dark Mec 1.aseprite",
+    "frame": { "x": 32, "y": 0, "w": 32, "h": 39 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 32, "h": 39 },
+    "sourceSize": { "w": 32, "h": 39 },
+    "duration": 100
+   },
+   {
+    "filename": "Dark Mec 2.aseprite",
+    "frame": { "x": 64, "y": 0, "w": 32, "h": 39 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 32, "h": 39 },
+    "sourceSize": { "w": 32, "h": 39 },
+    "duration": 100
+   },
+   {
+    "filename": "Dark Mec 3.aseprite",
+    "frame": { "x": 96, "y": 0, "w": 32, "h": 39 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 32, "h": 39 },
+    "sourceSize": { "w": 32, "h": 39 },
+    "duration": 100
+   },
+   {
+    "filename": "Dark Mec 4.aseprite",
+    "frame": { "x": 128, "y": 0, "w": 32, "h": 39 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 32, "h": 39 },
+    "sourceSize": { "w": 32, "h": 39 },
+    "duration": 100
+   },
+   {
+    "filename": "Dark Mec 5.aseprite",
+    "frame": { "x": 0, "y": 39, "w": 32, "h": 39 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 32, "h": 39 },
+    "sourceSize": { "w": 32, "h": 39 },
+    "duration": 100
+   },
+   {
+    "filename": "Dark Mec 6.aseprite",
+    "frame": { "x": 32, "y": 39, "w": 32, "h": 39 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 32, "h": 39 },
+    "sourceSize": { "w": 32, "h": 39 },
+    "duration": 100
+   },
+   {
+    "filename": "Dark Mec 7.aseprite",
+    "frame": { "x": 64, "y": 39, "w": 32, "h": 39 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 32, "h": 39 },
+    "sourceSize": { "w": 32, "h": 39 },
+    "duration": 100
+   },
+   {
+    "filename": "Dark Mec 8.aseprite",
+    "frame": { "x": 64, "y": 39, "w": 32, "h": 39 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 32, "h": 39 },
+    "sourceSize": { "w": 32, "h": 39 },
+    "duration": 100
+   },
+   {
+    "filename": "Dark Mec 9.aseprite",
+    "frame": { "x": 96, "y": 39, "w": 32, "h": 39 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 32, "h": 39 },
+    "sourceSize": { "w": 32, "h": 39 },
+    "duration": 100
+   },
+   {
+    "filename": "Dark Mec 10.aseprite",
+    "frame": { "x": 128, "y": 39, "w": 32, "h": 39 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 32, "h": 39 },
+    "sourceSize": { "w": 32, "h": 39 },
+    "duration": 100
+   },
+   {
+    "filename": "Dark Mec 11.aseprite",
+    "frame": { "x": 64, "y": 39, "w": 32, "h": 39 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 32, "h": 39 },
+    "sourceSize": { "w": 32, "h": 39 },
+    "duration": 100
+   },
+   {
+    "filename": "Dark Mec 12.aseprite",
+    "frame": { "x": 0, "y": 78, "w": 32, "h": 39 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 32, "h": 39 },
+    "sourceSize": { "w": 32, "h": 39 },
+    "duration": 100
+   },
+   {
+    "filename": "Dark Mec 13.aseprite",
+    "frame": { "x": 32, "y": 78, "w": 32, "h": 39 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 32, "h": 39 },
+    "sourceSize": { "w": 32, "h": 39 },
+    "duration": 100
+   },
+   {
+    "filename": "Dark Mec 14.aseprite",
+    "frame": { "x": 64, "y": 78, "w": 32, "h": 39 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 32, "h": 39 },
+    "sourceSize": { "w": 32, "h": 39 },
+    "duration": 100
+   },
+   {
+    "filename": "Dark Mec 15.aseprite",
+    "frame": { "x": 96, "y": 78, "w": 32, "h": 39 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 32, "h": 39 },
+    "sourceSize": { "w": 32, "h": 39 },
+    "duration": 100
+   },
+   {
+    "filename": "Dark Mec 16.aseprite",
+    "frame": { "x": 128, "y": 78, "w": 32, "h": 39 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 32, "h": 39 },
+    "sourceSize": { "w": 32, "h": 39 },
+    "duration": 100
+   },
+   {
+    "filename": "Dark Mec 17.aseprite",
+    "frame": { "x": 0, "y": 117, "w": 32, "h": 39 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 32, "h": 39 },
+    "sourceSize": { "w": 32, "h": 39 },
+    "duration": 100
+   },
+   {
+    "filename": "Dark Mec 18.aseprite",
+    "frame": { "x": 32, "y": 117, "w": 32, "h": 39 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 32, "h": 39 },
+    "sourceSize": { "w": 32, "h": 39 },
+    "duration": 100
+   },
+   {
+    "filename": "Dark Mec 19.aseprite",
+    "frame": { "x": 64, "y": 117, "w": 32, "h": 39 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 32, "h": 39 },
+    "sourceSize": { "w": 32, "h": 39 },
+    "duration": 100
+   },
+   {
+    "filename": "Dark Mec 20.aseprite",
+    "frame": { "x": 96, "y": 117, "w": 32, "h": 39 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 32, "h": 39 },
+    "sourceSize": { "w": 32, "h": 39 },
+    "duration": 100
+   },
+   {
+    "filename": "Dark Mec 21.aseprite",
+    "frame": { "x": 128, "y": 117, "w": 32, "h": 39 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 32, "h": 39 },
+    "sourceSize": { "w": 32, "h": 39 },
+    "duration": 100
+   },
+   {
+    "filename": "Dark Mec 22.aseprite",
+    "frame": { "x": 128, "y": 117, "w": 32, "h": 39 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 32, "h": 39 },
+    "sourceSize": { "w": 32, "h": 39 },
+    "duration": 100
+   },
+   {
+    "filename": "Dark Mec 23.aseprite",
+    "frame": { "x": 128, "y": 117, "w": 32, "h": 39 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 32, "h": 39 },
+    "sourceSize": { "w": 32, "h": 39 },
+    "duration": 100
+   },
+   {
+    "filename": "Dark Mec 24.aseprite",
+    "frame": { "x": 96, "y": 78, "w": 32, "h": 39 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 32, "h": 39 },
+    "sourceSize": { "w": 32, "h": 39 },
+    "duration": 100
+   },
+   {
+    "filename": "Dark Mec 25.aseprite",
+    "frame": { "x": 64, "y": 78, "w": 32, "h": 39 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 32, "h": 39 },
+    "sourceSize": { "w": 32, "h": 39 },
+    "duration": 100
+   },
+   {
+    "filename": "Dark Mec 26.aseprite",
+    "frame": { "x": 32, "y": 78, "w": 32, "h": 39 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 32, "h": 39 },
+    "sourceSize": { "w": 32, "h": 39 },
+    "duration": 100
+   },
+   {
+    "filename": "Dark Mec 27.aseprite",
+    "frame": { "x": 0, "y": 78, "w": 32, "h": 39 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 32, "h": 39 },
+    "sourceSize": { "w": 32, "h": 39 },
+    "duration": 100
+   },
+   {
+    "filename": "Dark Mec 28.aseprite",
+    "frame": { "x": 64, "y": 39, "w": 32, "h": 39 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 32, "h": 39 },
+    "sourceSize": { "w": 32, "h": 39 },
+    "duration": 100
+   },
+   {
+    "filename": "Dark Mec 29.aseprite",
+    "frame": { "x": 0, "y": 156, "w": 32, "h": 39 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 32, "h": 39 },
+    "sourceSize": { "w": 32, "h": 39 },
+    "duration": 100
+   },
+   {
+    "filename": "Dark Mec 30.aseprite",
+    "frame": { "x": 0, "y": 78, "w": 32, "h": 39 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 32, "h": 39 },
+    "sourceSize": { "w": 32, "h": 39 },
+    "duration": 100
+   },
+   {
+    "filename": "Dark Mec 31.aseprite",
+    "frame": { "x": 32, "y": 78, "w": 32, "h": 39 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 32, "h": 39 },
+    "sourceSize": { "w": 32, "h": 39 },
+    "duration": 100
+   },
+   {
+    "filename": "Dark Mec 32.aseprite",
+    "frame": { "x": 64, "y": 78, "w": 32, "h": 39 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 32, "h": 39 },
+    "sourceSize": { "w": 32, "h": 39 },
+    "duration": 100
+   },
+   {
+    "filename": "Dark Mec 33.aseprite",
+    "frame": { "x": 32, "y": 156, "w": 32, "h": 39 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 32, "h": 39 },
+    "sourceSize": { "w": 32, "h": 39 },
+    "duration": 100
+   },
+   {
+    "filename": "Dark Mec 34.aseprite",
+    "frame": { "x": 64, "y": 156, "w": 32, "h": 39 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 32, "h": 39 },
+    "sourceSize": { "w": 32, "h": 39 },
+    "duration": 100
+   },
+   {
+    "filename": "Dark Mec 35.aseprite",
+    "frame": { "x": 64, "y": 156, "w": 32, "h": 39 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 32, "h": 39 },
+    "sourceSize": { "w": 32, "h": 39 },
+    "duration": 100
+   },
+   {
+    "filename": "Dark Mec 36.aseprite",
+    "frame": { "x": 96, "y": 156, "w": 32, "h": 39 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 32, "h": 39 },
+    "sourceSize": { "w": 32, "h": 39 },
+    "duration": 100
+   },
+   {
+    "filename": "Dark Mec 37.aseprite",
+    "frame": { "x": 64, "y": 156, "w": 32, "h": 39 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 32, "h": 39 },
+    "sourceSize": { "w": 32, "h": 39 },
+    "duration": 100
+   }
+ ],
+ "meta": {
+  "app": "https://www.aseprite.org/",
+  "version": "1.3.16.1-x64",
+  "image": "dark_mec.png",
+  "format": "RGBA8888",
+  "size": { "w": 160, "h": 195 },
+  "scale": "1",
+  "frameTags": [
+   { "name": "walk", "from": 1, "to": 6, "direction": "forward", "color": "#000000ff" },
+   { "name": "att high", "from": 7, "to": 11, "direction": "forward", "color": "#000000ff" },
+   { "name": "down", "from": 12, "to": 17, "direction": "forward", "color": "#000000ff" },
+   { "name": "attack low", "from": 18, "to": 23, "direction": "forward", "color": "#000000ff" },
+   { "name": "up", "from": 24, "to": 27, "direction": "forward", "color": "#000000ff" },
+   { "name": "hit", "from": 28, "to": 29, "direction": "forward", "color": "#000000ff" },
+   { "name": "death", "from": 30, "to": 37, "direction": "forward", "color": "#000000ff" }
+  ]
+ }
+}

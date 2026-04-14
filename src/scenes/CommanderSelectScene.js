@@ -68,12 +68,8 @@ export class CommanderSelectScene extends Scene {
         subtitleForItem:   (item) => `#${item.spriteIndex}`,
       },
       actions: {
-        onSelectionChange: (item) => {
-          this._widget.setText({
-            headerStatus: item
-              ? `SELECTED: ${item.name.toUpperCase()}`
-              : 'SELECT A COMMANDER',
-          })
+        onSelectionChange: (_item) => {
+          // Selection state is reflected by panel gold border + EMBARK button enablement
         },
         onConfirm: (item) => {
           console.log(`[Commander] Embarking with ${item.name} (${item.id})`)

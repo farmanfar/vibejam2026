@@ -71,7 +71,7 @@ export class BattleScene extends Scene {
     const useLights = !!this.sys.renderer.gl
 
     this.playerSprites = this.team.map((w, i) => {
-      const x = 100 + i * 80
+      const x = 100 + (this.team.length - 1 - i) * 80
       const y = 320
       const ref = getUnitPortraitRef(this, w, 'battle player')
       const scale = w.art?.displayScale ?? 2.5
@@ -98,7 +98,7 @@ export class BattleScene extends Scene {
     })
 
     this.enemySprites = this.enemyTeam.map((w, i) => {
-      const x = width - 100 - i * 80
+      const x = width - 100 - (this.enemyTeam.length - 1 - i) * 80
       const y = 320
       const ref = getUnitPortraitRef(this, w, 'battle enemy')
       const scale = w.art?.displayScale ?? 2.5
@@ -132,6 +132,7 @@ export class BattleScene extends Scene {
     this.spriteByInstance = new Map()
     this.playerSprites.forEach((s) => this.spriteByInstance.set(s.instanceId, s))
     this.enemySprites.forEach((s) => this.spriteByInstance.set(s.instanceId, s))
+    this._activePopupsByTarget = new Map()
 
     const yourTeamLabel = new PixelLabel(this, 100, 240, 'YOUR TEAM', {
       scale: 2, color: 'accent', align: 'center',
@@ -205,10 +206,14 @@ export class BattleScene extends Scene {
     if (!warrior?.hasPortrait) return
     if (warrior.currentHp <= 0 && tag !== 'death') return
     const defaultTag = warrior.art?.defaultTag ?? 'idle'
-    const targetTag = entry.sprite.anims.exists(tag)
-      ? tag
-      : (tag === 'special attack' && entry.sprite.anims.exists('attack'))
-        ? 'attack'
+    // Resolve semantic tag → actual Aseprite tag name via per-unit overrides.
+    const overrides = warrior.art?.animTagOverrides ?? {}
+    const resolvedTag = overrides[tag] ?? tag
+    const resolvedAttack = overrides['attack'] ?? 'attack'
+    const targetTag = entry.sprite.anims.exists(resolvedTag)
+      ? resolvedTag
+      : (tag === 'special attack' && entry.sprite.anims.exists(resolvedAttack))
+        ? resolvedAttack
         : null
     if (!targetTag) return
     entry.sprite.anims.play({ key: targetTag, repeat: 0 })
@@ -219,6 +224,57 @@ export class BattleScene extends Scene {
         }
       })
     }
+  }
+
+  _showDamagePopup(targetInstanceId, damage, blocked) {
+    const entry = this.spriteByInstance?.get(targetInstanceId)
+    if (!entry?.sprite) {
+      console.warn(`[Battle] Damage popup: no sprite for instanceId=${targetInstanceId}`)
+      return
+    }
+
+    console.log(`[Battle] Damage popup: instanceId=${targetInstanceId} dmg=${damage} blocked=${blocked}`)
+
+    const slot = this._activePopupsByTarget.get(targetInstanceId) ?? 0
+    this._activePopupsByTarget.set(targetInstanceId, slot + 1)
+
+    const jitterX = ((slot % 3) - 1) * 10
+    const startX = entry.sprite.x + jitterX
+    const startY = entry.sprite.y - 30
+
+    const text = blocked ? 'BLOCK' : `${damage}`
+    const tint = blocked ? Theme.mutedText : Theme.warning
+    const fontSize = 16
+
+    const label = this.add.bitmapText(startX, startY, FONT_KEY, text, fontSize)
+      .setOrigin(0.5, 1)
+      .setTint(tint)
+      .setDepth(1000)
+      .setAlpha(0)
+
+    this.tweens.add({
+      targets: label,
+      alpha: 1,
+      duration: 80,
+      ease: 'Linear',
+    })
+    this.tweens.add({
+      targets: label,
+      y: startY - 24,
+      alpha: 0,
+      duration: 370,
+      delay: 80,
+      ease: 'Cubic.Out',
+      onComplete: () => {
+        label.destroy()
+        const remaining = (this._activePopupsByTarget.get(targetInstanceId) ?? 1) - 1
+        if (remaining <= 0) {
+          this._activePopupsByTarget.delete(targetInstanceId)
+        } else {
+          this._activePopupsByTarget.set(targetInstanceId, remaining)
+        }
+      },
+    })
   }
 
   _runBattle() {
@@ -248,6 +304,10 @@ export class BattleScene extends Scene {
           this._playActorAnim(step.actorInstanceId, 'attack')
         } else if (step.animTag === 'death' && step.targetInstanceId) {
           this._playActorAnim(step.targetInstanceId, 'death')
+        }
+
+        if (step.animTag === 'attack' && step.targetInstanceId && typeof step.damage === 'number') {
+          this._showDamagePopup(step.targetInstanceId, step.damage, step.blocked === true)
         }
 
         // HP bars follow shadow HP directly. Sprite dimming is decoupled
