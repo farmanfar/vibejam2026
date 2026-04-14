@@ -1,5 +1,6 @@
 import { AUTO, Scale, Game } from 'phaser';
 import { FilterCRT } from './rendering/FilterCRT.js';
+import { FilterOutline } from './rendering/FilterOutline.js';
 import { BootScene } from './scenes/BootScene.js';
 import { MenuScene } from './scenes/MenuScene.js';
 import { CommanderSelectScene } from './scenes/CommanderSelectScene.js';
@@ -24,8 +25,8 @@ const config = {
     autoCenter: Scale.CENTER_BOTH,
   },
   render: {
-    // Register custom CRT filter render node (WebGL only; silently ignored in Canvas mode)
-    renderNodes: { FilterCRT },
+    // Custom filter render nodes (WebGL only; silently ignored in Canvas mode).
+    renderNodes: { FilterCRT, FilterOutline },
     // Reserve up to 12 simultaneous point lights for BattleScene unit lighting
     maxLights: 12,
   },

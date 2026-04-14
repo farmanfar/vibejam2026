@@ -20,6 +20,7 @@
       "displayScale": 2.5,
       "defaultTag": "Idle",
       "portraitFrame": 0,
+      "ignoreLayers": ["Layer 1", "Layer 2"],
       "animTagOverrides": { "idle": "Idle", "attack": "throw", "death": "Death" }
     },
     "ancient_guardian": {
@@ -82,8 +83,6 @@
       "source": "STRANDED PAID ASSETS/STRANDED - Relic Minions/Minion 2/Minion 2.aseprite",
       "displayScale": 4.0,
       "defaultTag": "Idle",
-      "portraitFrame": 0,
-      "trim": true,
       "portraitFrame": 1,
       "animTagOverrides": { "idle": "Idle", "attack": "Prep Explode", "death": "Explode " }
     },
@@ -156,6 +155,7 @@
       "displayScale": 2.5,
       "defaultTag": "Idle",
       "portraitFrame": 0,
+      "ignoreLayers": ["bg"],
       "animTagOverrides": { "idle": "Idle" }
     }
   }

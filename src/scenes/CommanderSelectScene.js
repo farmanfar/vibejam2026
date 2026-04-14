@@ -4,6 +4,7 @@ import { finalizeCaptureScene } from '../systems/CaptureSupport.js';
 import { getCommanders, pickRandomCommanders } from '../config/commanders.js';
 import { SelectionMenuWidget } from '../widgets/SelectionMenuWidget.js';
 import { SceneCrt, startSceneWithCrtPolicy } from '../rendering/SceneCrt.js';
+import { attachOutlineToSprite } from '../rendering/OutlineController.js';
 
 // Translate legacy capture --view names to current widget view IDs
 const LEGACY_VIEW_MAP = {
@@ -39,6 +40,7 @@ export class CommanderSelectScene extends Scene {
 
     console.log(`[Commander] Featured: ${choices.map(c => c.name).join(', ')}`)
     console.log(`[Commander] Trophy walls: left=${Math.min(remaining.length, 11)}, right=${Math.min(Math.max(remaining.length - 11, 0), 11)}`)
+    console.log(`[Commander] Sprite scale multiplier: 2x`)
 
     this._widget = new SelectionMenuWidget(this, {
       items: {
@@ -66,6 +68,8 @@ export class CommanderSelectScene extends Scene {
         textureKeyForItem: (item) => `commander-sprite-${item.spriteIndex}`,
         labelForItem:      (item) => item.name.toUpperCase(),
         subtitleForItem:   (item) => `#${item.spriteIndex}`,
+        spriteScale:       2,
+        onSpriteCreated:   (sprite) => attachOutlineToSprite(sprite),
       },
       actions: {
         onSelectionChange: (_item) => {

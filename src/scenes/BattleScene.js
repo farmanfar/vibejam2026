@@ -9,6 +9,7 @@ import { pickRandomSets } from '../rendering/FactionPalettes.js'
 import { LayoutEditor } from '../systems/LayoutEditor.js'
 import { getUnitPortraitRef } from '../rendering/UnitArt.js'
 import { SceneCrt, startSceneWithCrtPolicy } from '../rendering/SceneCrt.js'
+import { attachOutlineToSprite } from '../rendering/OutlineController.js'
 
 export class BattleScene extends Scene {
   constructor() {
@@ -80,6 +81,7 @@ export class BattleScene extends Scene {
         .setDepth(battleDepth)
       // Enable normal-map lighting on unit sprites only (not labels/health bars)
       if (useLights) sprite.setLighting(true)
+      attachOutlineToSprite(sprite)
       this._wireAlphaAnimations(sprite, w, 'player')
       const light = useLights
         ? this.lights.addPointLight(x, y - 16, 0xffddaa, 90, 0.7)
@@ -107,6 +109,7 @@ export class BattleScene extends Scene {
         .setFlipX(true)
         .setDepth(battleDepth)
       if (useLights) sprite.setLighting(true)
+      attachOutlineToSprite(sprite)
       this._wireAlphaAnimations(sprite, w, 'enemy')
       const light = useLights
         ? this.lights.addPointLight(x, y - 16, 0xffddaa, 90, 0.7)
@@ -199,12 +202,12 @@ export class BattleScene extends Scene {
   }
 
   _playActorAnim(instanceId, tag) {
-    if (!instanceId) return
+    if (!instanceId) return null
     const entry = this.spriteByInstance?.get(instanceId)
-    if (!entry || !entry.sprite?.anims) return
+    if (!entry || !entry.sprite?.anims) return null
     const warrior = entry.warrior
-    if (!warrior?.hasPortrait) return
-    if (warrior.currentHp <= 0 && tag !== 'death') return
+    if (!warrior?.hasPortrait) return null
+    if (warrior.currentHp <= 0 && tag !== 'death') return null
     const defaultTag = warrior.art?.defaultTag ?? 'idle'
     // Resolve semantic tag → actual Aseprite tag name via per-unit overrides.
     const overrides = warrior.art?.animTagOverrides ?? {}
@@ -215,15 +218,38 @@ export class BattleScene extends Scene {
       : (tag === 'special attack' && entry.sprite.anims.exists(resolvedAttack))
         ? resolvedAttack
         : null
-    if (!targetTag) return
+    if (!targetTag) return null
     entry.sprite.anims.play({ key: targetTag, repeat: 0 })
-    if (targetTag !== 'death') {
+    if (tag !== 'death') {
       entry.sprite.once('animationcomplete', () => {
         if (entry.warrior.currentHp > 0 && entry.sprite.anims.exists(defaultTag)) {
           entry.sprite.anims.play({ key: defaultTag, repeat: -1 })
         }
       })
     }
+    return targetTag
+  }
+
+  _reflowTeam(side) {
+    const all = side === 'player' ? this.playerSprites : this.enemySprites
+    const survivors = all.filter(s => !s.died)
+    const width = this.scale.width
+    const positions = []
+    survivors.forEach((s, i) => {
+      const newX = side === 'player'
+        ? 100 + (survivors.length - 1 - i) * 80
+        : width - 100 - (survivors.length - 1 - i) * 80
+      positions.push(newX)
+      const targets = [s.sprite, s.hpBar, s.name, s.light].filter(Boolean)
+      if (targets.length === 0) return
+      this.tweens.add({
+        targets,
+        x: newX,
+        duration: 400,
+        ease: 'Cubic.Out',
+      })
+    })
+    console.log(`[Battle] Reflowed ${side} team: ${survivors.length} survivors at [${positions.join(', ')}]`)
   }
 
   _showDamagePopup(targetInstanceId, damage, blocked) {
@@ -299,11 +325,12 @@ export class BattleScene extends Scene {
         console.log(`[Battle] step ${stepIndex}: ${step.message ?? ''}${step.actorInstanceId ? ` actor=${step.actorInstanceId}` : ''}${step.targetInstanceId ? ` target=${step.targetInstanceId}` : ''}${step.animTag ? ` anim=${step.animTag}` : ''}`)
 
         // Per-step actor/target animations — only plays on sprites with a
-        // real aseprite atlas; placeholders silently skip.
+        // real aseprite atlas; placeholders silently skip. Death anims are
+        // played by the diedInstanceId handler below, not here, to avoid
+        // double-play on faint_final (which sets both animTag='death' and
+        // diedInstanceId).
         if (step.animTag === 'attack' && step.actorInstanceId) {
           this._playActorAnim(step.actorInstanceId, 'attack')
-        } else if (step.animTag === 'death' && step.targetInstanceId) {
-          this._playActorAnim(step.targetInstanceId, 'death')
         }
 
         if (step.animTag === 'attack' && step.targetInstanceId && typeof step.damage === 'number') {
@@ -316,6 +343,7 @@ export class BattleScene extends Scene {
         // commits when the adapter emits `diedInstanceId`.
         if (step.playerHp) {
           this.playerSprites.forEach((s, i) => {
+            if (s.died) return
             if (step.playerHp[i] !== undefined) {
               s.warrior.currentHp = step.playerHp[i]
               s.hpBar.setHp(s.warrior.currentHp)
@@ -325,6 +353,7 @@ export class BattleScene extends Scene {
 
         if (step.enemyHp) {
           this.enemySprites.forEach((s, i) => {
+            if (s.died) return
             if (step.enemyHp[i] !== undefined) {
               s.warrior.currentHp = step.enemyHp[i]
               s.hpBar.setHp(s.warrior.currentHp)
@@ -332,39 +361,50 @@ export class BattleScene extends Scene {
           })
         }
 
+        // Death is visually permanent — sprite, hp bar, name, and light are
+        // destroyed on commit, then surviving teammates tween forward to close
+        // the gap. Any future revive mechanic must fire BEFORE faint_final
+        // (i.e. before diedInstanceId is emitted) or rebuild the entry from
+        // scratch — there is no resurrection path once cleanup runs.
         if (step.diedInstanceId) {
-          const died = this.spriteByInstance?.get(step.diedInstanceId)
-          if (died) {
-            died.sprite.setAlpha(0.2)
-            died.name.setAlpha(0.3)
-            if (died.light) {
-              died.light.setActive(false)
-              died.light.setVisible(false)
-            }
-            console.log(`[Battle] committed death: ${step.diedInstanceId}`)
-          }
-        }
+          const diedId = step.diedInstanceId
+          const entry = this.spriteByInstance?.get(diedId)
+          if (entry && !entry.died) {
+            entry.died = true
+            const side = diedId.startsWith('p') ? 'player' : 'enemy'
+            const playedTag = this._playActorAnim(diedId, 'death')
+            this.spriteByInstance.delete(diedId)
+            console.log(`[Battle] Unit ${diedId} fainted — playing death anim (tag=${playedTag ?? 'NONE'})`)
 
-        // Defensive revive path. In the current model the adapter never
-        // dims a sprite before a revive (death only commits at faint_final),
-        // so this branch is a no-op for Death-Defy / Monster reanimate.
-        // It exists so any future post-commit resurrection or mid-battle
-        // revive mechanic doesn't leave the sprite stuck at 20% alpha.
-        if (step.revivedInstanceId) {
-          const revived = this.spriteByInstance?.get(step.revivedInstanceId)
-          if (revived) {
-            revived.sprite.setAlpha(1)
-            revived.name.setAlpha(1)
-            if (revived.light) {
-              revived.light.setActive(true)
-              revived.light.setVisible(true)
+            let cleanedUp = false
+            const cleanup = () => {
+              if (cleanedUp) return
+              cleanedUp = true
+              if (entry.sprite) entry.sprite.destroy()
+              if (entry.hpBar) entry.hpBar.destroy()
+              if (entry.name) entry.name.destroy()
+              if (entry.light) {
+                entry.light.setActive(false)
+                entry.light.setVisible(false)
+              }
+              entry.sprite = null
+              entry.hpBar = null
+              entry.name = null
+              entry.light = null
+              console.log(`[Battle] Unit ${diedId} destroyed and team reflowed`)
+              this._reflowTeam(side)
             }
-            const defaultTag = revived.warrior.art?.defaultTag ?? 'idle'
-            if (revived.warrior.hasPortrait
-              && revived.sprite.anims?.exists?.(defaultTag)) {
-              revived.sprite.anims.play({ key: defaultTag, repeat: -1 })
+
+            if (playedTag) {
+              // Generic animationcomplete is what the rest of this scene
+              // uses (Phaser 4) — the cleanup guard makes the fallback
+              // a no-op if this fires first, and vice versa.
+              entry.sprite.once('animationcomplete', cleanup)
+              this.time.delayedCall(1200, cleanup)
+            } else {
+              console.log(`[Battle] Unit ${diedId} death anim missing — fallback cleanup only`)
+              this.time.delayedCall(400, cleanup)
             }
-            console.log(`[Battle] revived: ${step.revivedInstanceId}`)
           }
         }
 

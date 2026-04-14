@@ -12,6 +12,10 @@ function filterToAlphaRoster(roster) {
       console.warn(`[Ghost] Dropping legacy-id ghost ${entry.id} — no alpha unit match`)
       continue
     }
+    if (alpha.enabled === false) {
+      console.warn(`[Ghost] Dropping blocked-art ghost ${entry.id} — art_status blocked, not playable`)
+      continue
+    }
     // Merge legacy hp/atk overrides onto the alpha base.
     kept.push({
       ...alpha,

@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-04-14T01:29:44.852Z",
+  "generatedAt": "2026-04-14T02:32:32.335Z",
   "entries": {
     "archer": {
       "spriteKey": "alpha-archer",
@@ -82,7 +82,11 @@
         "idle": "Idle",
         "attack": "throw",
         "death": "Death"
-      }
+      },
+      "ignoreLayers": [
+        "Layer 1",
+        "Layer 2"
+      ]
     },
     "ancient_guardian": {
       "spriteKey": "alpha-ancient_guardian",
@@ -278,14 +282,13 @@
         "Explode "
       ],
       "frameCount": 36,
-      "atlasWidth": 488,
-      "atlasHeight": 202,
+      "atlasWidth": 1152,
+      "atlasHeight": 1152,
       "animTagOverrides": {
         "idle": "Idle",
         "attack": "Prep Explode",
         "death": "Explode "
-      },
-      "trim": true
+      }
     },
     "minion_003": {
       "spriteKey": "alpha-minion_003",
@@ -550,7 +553,10 @@
       "atlasHeight": 700,
       "animTagOverrides": {
         "idle": "Idle"
-      }
+      },
+      "ignoreLayers": [
+        "bg"
+      ]
     }
   }
 }

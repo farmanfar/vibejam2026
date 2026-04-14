@@ -29,7 +29,7 @@ function toGameShape(alpha) {
     hp: alpha.hp,
     atk: alpha.atk,
     range: alpha.range ?? 1,
-    cost: alpha.tier,
+    cost: 3,
     ability_id: alpha.ability_id ?? null,
     rules_text: alpha.rules_text ?? null,
     skipBasicAttack: !!alpha.skipBasicAttack,

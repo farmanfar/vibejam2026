@@ -2,6 +2,7 @@ import { GameObjects } from 'phaser';
 import { Theme } from './Theme.js';
 import { FONT_KEY } from './PixelFont.js';
 import { getUnitPortraitRef } from '../rendering/UnitArt.js';
+import { attachOutlineToSprite } from '../rendering/OutlineController.js';
 
 // Faction → blank card frame texture key. Robot/Folk/Monster are the only
 // factions in the live alpha roster; the others are mapped for future use.
@@ -15,20 +16,30 @@ const FACTION_FRAME = {
   Tribal:  'card-blank-3', // parchment
 };
 
-const FACTION_TAG_COLOR = {
-  Robot:   Theme.accent,
-  Folk:    0x66cc66,
-  Monster: Theme.error,
-  Undead:  Theme.mutedText,
-  Beast:   Theme.warning,
-  Fantasy: 0xcc66ff,
-  Tribal:  0xffcc78,
+// Bubble positions in card-local space (frame centered at origin, 124x160).
+// All blank card variants share the same upper-left bubble cluster, so one
+// set works. ATK/DEF use fontSize 7 (1x m5x7) so 2-digit values fit inside
+// the small ~14-16px bubbles. TIER stays at 14 (single digit, big circle).
+const TIER_BUBBLE  = { x: -44, y: -60, fontSize: 14 }; // big upper-left circle
+const ATK_BUBBLE   = { x: -28, y: -56, fontSize: 7  }; // small bubble #1 (upper)
+const DEF_BUBBLE   = { x: -32, y: -44, fontSize: 7  }; // small bubble #2 (lower)
+const TITLE_BANNER = {
+  x: 12,    // anchored right of the bubble cluster (avoids TIER overlap)
+  y: -68,   // top strip of the card
+  w: 88,    // narrow enough that the left edge clears the big TIER bubble
+  h: 14,
+  textY: -69,
+  fontSize: 7,
 };
+const TITLE_MAX_CHARS = 14; // m5x7 advances ~6px/char at 1x; 14 chars fits w=84
 
 /**
  * Warrior card for the shop. Native PENUSBMIC blank card frame (106x138)
- * displayed at 124x160 with portrait, name, ATK/HP, cost, class, tier,
- * and a hover-revealed rules text in the bottom half.
+ * displayed at 124x160. Text is positioned to land inside the bubbles
+ * baked into the artwork: TIER in the big upper-left circle, ATK and DEF
+ * in the two smaller bubbles next to it. Unit name renders in a drawn
+ * title banner across the top. Class/tier/rules live in the hover-reveal
+ * bottom half.
  *
  * Rest state: card depth=1, only top half visible (bottom hidden by
  * ShopScene's cardShelf at y=230). Hover: card rises 80px, depth=10.
@@ -45,7 +56,6 @@ export class WarriorCard extends GameObjects.Container {
    * @param {object} warrior
    * @param {object} [opts]
    * @param {Function} [opts.onClick]
-   * @param {boolean} [opts.showCost=true]
    */
   constructor(scene, x, y, warrior, opts = {}) {
     super(scene, x, y);
@@ -70,51 +80,44 @@ export class WarriorCard extends GameObjects.Container {
     }
     this.add(this.frame);
 
-    // ── Faction tag (top of card) ────────────────────────────
-    const tagColor = FACTION_TAG_COLOR[warrior.faction] ?? Theme.accentDim;
-    this.factionTag = scene.add.bitmapText(
-      0, -70, FONT_KEY, (warrior.faction ?? '?').toUpperCase(), 7,
-    ).setOrigin(0.5, 0.5).setTint(tagColor);
-    this.add(this.factionTag);
-
     // ── Portrait sprite (centered top half) ──────────────────
     const portraitRef = getUnitPortraitRef(scene, warrior, 'warrior card');
     if (scene.textures.exists(portraitRef.key)) {
       this.sprite = scene.add.image(0, -45, portraitRef.key, portraitRef.frame).setScale(1.5);
+      attachOutlineToSprite(this.sprite);
     } else {
       const tierColors = [0xe74c3c, 0x3498db, 0x2ecc71, 0xf39c12, 0x9b59b6];
       this.sprite = scene.add.rectangle(0, -45, 28, 28, tierColors[warrior.tier ?? 0]);
     }
     this.add(this.sprite);
 
-    // ── Name (just above shelf line) ─────────────────────────
-    // Size 7 (1x native) ensures even long names like "Ancient Guardian" fit.
+    // ── Title banner (drawn dark strip at top of card) ───────
+    this.titleBanner = scene.add.graphics();
+    const bx = TITLE_BANNER.x - TITLE_BANNER.w / 2;
+    const by = TITLE_BANNER.y - TITLE_BANNER.h / 2;
+    this.titleBanner.fillStyle(Theme.screenBg, 0.85);
+    this.titleBanner.fillRoundedRect(bx, by, TITLE_BANNER.w, TITLE_BANNER.h, 4);
+    this.titleBanner.lineStyle(1, Theme.fantasyBorderGold, 1);
+    this.titleBanner.strokeRoundedRect(bx, by, TITLE_BANNER.w, TITLE_BANNER.h, 4);
+    this.add(this.titleBanner);
+
+    // Truncate to fit the banner. Wrapping is not viable in a 14px-tall strip.
+    const rawName = (warrior.name ?? 'Unknown').toUpperCase();
+    const displayName = rawName.length > TITLE_MAX_CHARS
+      ? rawName.slice(0, TITLE_MAX_CHARS - 1) + '…'
+      : rawName;
     this.nameLabel = scene.add.bitmapText(
-      0, -16, FONT_KEY, warrior.name ?? 'Unknown', 7,
-    ).setOrigin(0.5, 0.5).setTint(Theme.criticalText);
+      TITLE_BANNER.x, TITLE_BANNER.textY, FONT_KEY, displayName, TITLE_BANNER.fontSize,
+    ).setOrigin(0.5, 0.5).setTint(Theme.fantasyGoldBright);
     this.add(this.nameLabel);
 
-    // ── Stats (bottom of visible top half) ───────────────────
-    const statsStr = `ATK:${warrior.atk ?? 0}  HP:${warrior.hp ?? 0}`;
-    this.statsLabel = scene.add.bitmapText(0, -2, FONT_KEY, statsStr, 14)
-      .setOrigin(0.5, 0.5).setTint(Theme.criticalText);
-    this.add(this.statsLabel);
-
-    // ── Cost badge (top-right corner, always in top half) ────
-    if (opts.showCost !== false && warrior.cost != null) {
-      const cx = this.cardW / 2 - 12;
-      const cy = -this.cardH / 2 + 12;
-      this.costBadge = scene.add.graphics();
-      this.costBadge.fillStyle(Theme.warning, 1);
-      this.costBadge.fillCircle(cx, cy, 9);
-      this.costBadge.lineStyle(1, Theme.fantasyBorderGold, 1);
-      this.costBadge.strokeCircle(cx, cy, 9);
-      this.add(this.costBadge);
-
-      this.costText = scene.add.bitmapText(cx, cy - 1, FONT_KEY, `${warrior.cost}`, 14)
-        .setOrigin(0.5, 0.5).setTint(Theme.screenBg);
-      this.add(this.costText);
-    }
+    // ── TIER / ATK / DEF text inside the artwork bubbles ─────
+    // DEF reads warrior.hp because the alpha combat engine has no separate
+    // def stat — hp IS the defense pool. If a real def field is added later,
+    // update this single call site.
+    this.tierText = this._addBadgeText(TIER_BUBBLE, warrior.tier ?? 1, Theme.fantasyGoldBright);
+    this.atkText  = this._addBadgeText(ATK_BUBBLE,  warrior.atk  ?? 0, Theme.criticalText);
+    this.defText  = this._addBadgeText(DEF_BUBBLE,  warrior.hp   ?? 0, Theme.criticalText);
 
     // ── BOTTOM HALF (revealed on hover) ──────────────────────
     // Class · Tier line
@@ -156,6 +159,14 @@ export class WarriorCard extends GameObjects.Container {
     }
 
     scene.add.existing(this);
+  }
+
+  _addBadgeText(pos, value, color) {
+    const label = this.scene.add.bitmapText(
+      pos.x, pos.y, FONT_KEY, String(value), pos.fontSize,
+    ).setOrigin(0.5, 0.5).setTint(color);
+    this.add(label);
+    return label;
   }
 
   /**

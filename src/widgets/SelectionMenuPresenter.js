@@ -125,9 +125,9 @@ export class SelectionMenuPresenter {
 
   getFeaturedSlots() {
     return [
-      { x: -142, y: 0  },
+      { x: -180, y: 0   },
       { x:    0, y: -16 },
-      { x:  142, y: 0  },
+      { x:  180, y: 0   },
     ]
   }
 }

@@ -24,6 +24,7 @@ export function buildBackgroundLayer(scene, container) {
 export function buildPanelLayer(scene, container, side, items, slots, config, callbacks = null) {
   const regionTitles = config.text?.regionTitles ?? {}
   const titleText    = (side === 'left' ? regionTitles.leftPanel : regionTitles.rightPanel) ?? (side === 'left' ? 'LEFT PANEL' : 'RIGHT PANEL')
+  const spriteScale  = config.visuals.spriteScale ?? 1
 
   const panel  = scene.add.rectangle(0, 0, 184, 414, 0x16141d, 0.78).setStrokeStyle(2, Theme.panelBorder, 0.9)
   const header = scene.add.rectangle(0, -210, 144, 24, Theme.fantasyPurpleDark, 0.88).setStrokeStyle(1, Theme.fantasyBorderGold, 0.9)
@@ -39,7 +40,7 @@ export function buildPanelLayer(scene, container, side, items, slots, config, ca
     const subText  = config.visuals.subtitleForItem ? config.visuals.subtitleForItem(item) : ''
     const idLabel  = scene.add.bitmapText(slot.x, slot.y + 28, FONT_KEY, subText, 8).setOrigin(0.5).setTint(Theme.ambientText)
     container.add([frame, trim, idLabel])
-    buildItemSprite(scene, container, item, slot.x, slot.y - 8, 0.24, config.visuals)
+    buildItemSprite(scene, container, item, slot.x, slot.y - 8, 0.24 * spriteScale, config.visuals)
   })
 
   // Hover highlight + click-to-focus — added on top of all content
@@ -83,7 +84,8 @@ export function buildPanelLayer(scene, container, side, items, slots, config, ca
  *   selectFeaturedItem(index, reason)
  */
 export function buildFeaturedLayer(scene, container, items, slots, config, callbacks) {
-  const displays = []
+  const displays    = []
+  const spriteScale = config.visuals.spriteScale ?? 1
 
   slots.forEach((slot, index) => {
     const item = items[index]
@@ -96,14 +98,16 @@ export function buildFeaturedLayer(scene, container, items, slots, config, callb
     const shadow     = scene.add.ellipse(0, 82, 110, 26, 0x000000, 0.34)
     const glow       = scene.add.ellipse(0, 78, 130, 30, Theme.accent, 0.08)
     const frame      = scene.add.rectangle(0, -46, 110, 152, 0x13151c, 0.94).setStrokeStyle(2, Theme.panelBorder, 0.88)
-    const namePlate  = scene.add.rectangle(0, 22, 118, 18, Theme.fantasyPurpleDark, 1.0).setStrokeStyle(1, Theme.fantasyBorderGold, 0.72)
-    const nameText   = scene.add.bitmapText(0, 15, FONT_KEY, config.visuals.labelForItem(item), 8).setOrigin(0.5).setTint(Theme.primaryText)
-    const hint       = scene.add.bitmapText(0, 38, FONT_KEY, 'SELECT', 8).setOrigin(0.5).setTint(Theme.ambientText)
+    display.add([shadow, glow, frame])
+
+    const art = buildItemSprite(scene, display, item, 0, -72, 0.9 * spriteScale, config.visuals)
+
+    const namePlate  = scene.add.rectangle(0, 26, 118, 18, Theme.fantasyPurpleDark, 1.0).setStrokeStyle(1, Theme.fantasyBorderGold, 0.72)
+    const nameText   = scene.add.bitmapText(0, 19, FONT_KEY, config.visuals.labelForItem(item), 8).setOrigin(0.5).setTint(Theme.primaryText)
+    const hint       = scene.add.bitmapText(0, 42, FONT_KEY, 'SELECT', 8).setOrigin(0.5).setTint(Theme.ambientText)
     const hitZone    = scene.add.zone(0, 20, 160, 252).setInteractive({ useHandCursor: true })
 
-    display.add([shadow, glow, frame, namePlate, nameText, hint])
-    const art = buildItemSprite(scene, display, item, 0, -72, 0.9, config.visuals)
-    display.add(hitZone)
+    display.add([namePlate, nameText, hint, hitZone])
 
     display.shadow  = shadow
     display.glow    = glow
@@ -168,6 +172,7 @@ export function buildFeaturedLayer(scene, container, items, slots, config, callb
  */
 export function buildPreviewLayer(scene, container, config, callbacks) {
   const regionTitle = config.text?.regionTitles?.preview ?? 'PREVIEW'
+  const spriteScale = config.visuals.spriteScale ?? 1
 
   const casing     = scene.add.rectangle(0, 0, 288, 176, 0x11141b, 1).setStrokeStyle(3, Theme.panelBorder, 1)
   const bezel      = scene.add.rectangle(0, 16, 226, 126, 0x07080d, 1).setStrokeStyle(2, Theme.fantasyBorderGold, 0.7)
@@ -191,7 +196,7 @@ export function buildPreviewLayer(scene, container, config, callbacks) {
   const rightItem = previewItems[1]
 
   if (leftItem) {
-    previewLeft = buildItemSprite(scene, container, leftItem, -46, 20, 0.28, config.visuals)
+    previewLeft = buildItemSprite(scene, container, leftItem, -46, 20, 0.28 * spriteScale, config.visuals)
     if (previewLeft) {
       previewLeft.setAlpha(0.9)
       scene.tweens.add({ targets: previewLeft,  x: -62, duration: 800, ease: 'Sine.easeInOut', yoyo: true, repeat: -1 })
@@ -199,7 +204,7 @@ export function buildPreviewLayer(scene, container, config, callbacks) {
   }
 
   if (rightItem) {
-    previewRight = buildItemSprite(scene, container, rightItem, 48, 24, 0.28, config.visuals)
+    previewRight = buildItemSprite(scene, container, rightItem, 48, 24, 0.28 * spriteScale, config.visuals)
     if (previewRight) {
       previewRight.setAlpha(0.82)
       scene.tweens.add({ targets: previewRight, x: 62,  duration: 860, ease: 'Sine.easeInOut', yoyo: true, repeat: -1 })
@@ -261,6 +266,9 @@ export function buildItemSprite(scene, parent, item, x, y, scale, visuals) {
     const sprite       = scene.add.image(x, y, textureKey).setScale(scale)
     sprite.baseScale   = scale
     parent.add(sprite)
+    if (typeof visuals.onSpriteCreated === 'function') {
+      visuals.onSpriteCreated(sprite, item)
+    }
     return sprite
   }
 
