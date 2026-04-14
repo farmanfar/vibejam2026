@@ -167,7 +167,7 @@ export class UnitLabScene extends Scene {
 
     this.backBtn = new PixelButton(this, width - 86, 18, 'BACK', () => {
       this.scene.start('Menu');
-    }, { style: 'filled', scale: 2, width: 72, height: 26, bg: Theme.panelBorder });
+    }, { style: 'filled', scale: 2, bg: Theme.error, pill: true });
 
     this.exportBtn = new PixelButton(this, width - 192, 18, 'EXPORT', () => {
       this._exportDefinitions();

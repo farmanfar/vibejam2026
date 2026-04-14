@@ -213,6 +213,91 @@ export class PixelFont {
     };
   }
 
+  /**
+   * Return the occupied glyph bounds inside a font cell.
+   * Horizontal bounds are measured in CELL_W units because BitmapText advances
+   * include the inter-character gap column. Vertical bounds are measured in
+   * GLYPH_H units because the bitmap font height does not include the extra
+   * cell gap row.
+   */
+  static getGlyphInkBounds(ch) {
+    const glyph = GLYPHS[ch] ?? GLYPHS['?'] ?? GLYPHS[' '];
+
+    let left = GLYPH_W;
+    let right = -1;
+    let top = GLYPH_H;
+    let bottom = -1;
+
+    for (let y = 0; y < GLYPH_H; y++) {
+      const bits = glyph[y] ?? 0;
+      if (bits === 0) continue;
+
+      top = Math.min(top, y);
+      bottom = Math.max(bottom, y);
+
+      for (let x = 0; x < GLYPH_W; x++) {
+        if (bits & (1 << (GLYPH_W - 1 - x))) {
+          left = Math.min(left, x);
+          right = Math.max(right, x);
+        }
+      }
+    }
+
+    if (right < left || bottom < top) {
+      return null;
+    }
+
+    return { left, right, top, bottom };
+  }
+
+  /**
+   * Calculate the visible ink bounds for a rendered BitmapText using the
+   * character layout from Phaser plus the bitmap font's per-glyph occupied
+   * pixels. This excludes trailing cell padding, which is what makes short
+   * labels like BACK look visually off-center when centered from width alone.
+   */
+  static getTextInkBounds(text, characters) {
+    if (!text || !Array.isArray(characters) || characters.length === 0) {
+      return null;
+    }
+
+    let left = Infinity;
+    let right = -Infinity;
+    let top = Infinity;
+    let bottom = -Infinity;
+
+    for (const char of characters) {
+      const ch = text[char.i] ?? ' ';
+      const ink = this.getGlyphInkBounds(ch);
+      if (!ink) continue;
+
+      const charW = char.r - char.x;
+      const charH = char.b - char.t;
+      const inkLeft = char.x + (ink.left / CELL_W) * charW;
+      const inkRight = char.x + ((ink.right + 1) / CELL_W) * charW;
+      const inkTop = char.t + (ink.top / GLYPH_H) * charH;
+      const inkBottom = char.t + ((ink.bottom + 1) / GLYPH_H) * charH;
+
+      left = Math.min(left, inkLeft);
+      right = Math.max(right, inkRight);
+      top = Math.min(top, inkTop);
+      bottom = Math.max(bottom, inkBottom);
+    }
+
+    if (!Number.isFinite(left) || !Number.isFinite(right) || !Number.isFinite(top) || !Number.isFinite(bottom)) {
+      return null;
+    }
+
+    return {
+      left,
+      right,
+      top,
+      bottom,
+      width: right - left,
+      height: bottom - top,
+    };
+  }
+
   /** Native glyph dimensions */
   static get GLYPH_W() { return GLYPH_W; }
   static get GLYPH_H() { return GLYPH_H; }

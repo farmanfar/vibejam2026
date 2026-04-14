@@ -181,7 +181,7 @@ export class SelectionMenuWidget {
       if (this.widgetBusy) return
       console.log(`[Widget] Back → main menu`)
       this.config.actions?.onBack?.()
-    }, { style: 'text', scale: 2 })
+    }, { style: 'filled', scale: 2, bg: Theme.error, pill: true })
     this._backBtn.setDepth(21)
     LayoutEditor.register(this.scene, 'backBtn', this._backBtn, 66, height - 32)
 

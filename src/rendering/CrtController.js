@@ -21,9 +21,9 @@ export const CRT_PRESETS = {
    */
   softGameplay: {
     scanlineIntensity: 0.05,
-    chromaOffset:      0.5,
+    chromaOffset:      0.35,
     curvatureAmount:   0.04,
-    flickerAmount:     0.005,
+    flickerAmount:     0.004,
     vignetteAmount:    0.30,
   },
   /**
@@ -32,9 +32,9 @@ export const CRT_PRESETS = {
    */
   strongUi: {
     scanlineIntensity: 0.30,
-    chromaOffset:      2.5,
-    curvatureAmount:   0.09,
-    flickerAmount:     0.06,
+    chromaOffset:      1.1,
+    curvatureAmount:   0.08,
+    flickerAmount:     0.04,
     vignetteAmount:    0.30,
   },
 };

@@ -65,7 +65,7 @@ export class HallOfFameScene extends Scene {
       // Leaderboard viewer — no power-off on exit (just a browser)
       const backBtn = new PixelButton(this, width / 2, height * 0.82, 'BACK', () => {
         this.scene.start('Menu')
-      }, { style: 'filled', scale: 3, bg: Theme.accent, width: 140, height: 40 })
+      }, { style: 'filled', scale: 3, bg: Theme.error, pill: true, width: 90, height: 32 })
       LayoutEditor.register(this, 'backBtn', backBtn, width / 2, height * 0.82)
     } else {
       // Champion end-of-run — power-off plays on exit

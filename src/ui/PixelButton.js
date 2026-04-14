@@ -81,34 +81,73 @@ export class PixelButton extends GameObjects.Container {
   }
 
   _buildFilled(scene, label, fontSize, measured, opts) {
-    const padX = 16;
-    const padY = 8;
-    const w = opts.width ?? (measured.width + padX * 2);
-    const h = opts.height ?? (measured.height + padY * 2);
+    const isPill = !!(opts.pill || opts.cornerRadius);
+    const padX = isPill ? 10 : 16;
+    const padY = isPill ? 5 : 8;
+
+    this.text = scene.add.bitmapText(0, 0, FONT_KEY, label, fontSize)
+      .setTint(Theme.criticalText)
+      .setOrigin(0, 0);
+
+    const textMetrics = this._getFilledTextMetrics();
+    const minW = Math.ceil(textMetrics.width + padX * 2);
+    const minH = Math.ceil(textMetrics.height + padY * 2);
+    const w = Math.max(opts.width ?? 0, minW, isPill ? minH : 0);
+    const h = Math.max(opts.height ?? 0, minH);
     this.btnBg = opts.bg ?? Theme.accent;
     this.btnW = w;
     this.btnH = h;
+    this.cornerRadius = opts.cornerRadius ?? (opts.pill ? Math.floor(h / 2) : 0);
 
-    // Background rect
-    this.bgRect = scene.add.rectangle(0, 0, w, h, this.btnBg).setOrigin(0.5);
-    this.add(this.bgRect);
+    if (this.cornerRadius > 0) {
+      // Pill / rounded mode — Graphics for visual, transparent rect for hit zone
+      this.bgGfx = scene.add.graphics();
+      this._redrawBg(this.btnBg);
+      this.add(this.bgGfx);
 
-    // Border
-    this.borderGfx = scene.add.graphics();
-    this.borderGfx.lineStyle(1, Theme.panelBorder, 1);
-    this.borderGfx.strokeRect(-w / 2, -h / 2, w, h);
-    this.add(this.borderGfx);
+      this.bgRect = scene.add.rectangle(0, 0, w, h, 0, 0).setOrigin(0.5)
+        .setInteractive({ useHandCursor: true });
+      this.add(this.bgRect);
+    } else {
+      // Sharp mode — existing Rectangle approach
+      this.bgRect = scene.add.rectangle(0, 0, w, h, this.btnBg).setOrigin(0.5);
+      this.add(this.bgRect);
 
-    // Text (centered)
-    this.text = scene.add.bitmapText(0, 0, FONT_KEY, label, fontSize)
-      .setOrigin(0.5)
-      .setTint(Theme.criticalText);
+      this.borderGfx = scene.add.graphics();
+      this.borderGfx.lineStyle(1, Theme.panelBorder, 1);
+      this.borderGfx.strokeRect(-w / 2, -h / 2, w, h);
+      this.add(this.borderGfx);
+
+      this.bgRect.setInteractive({ useHandCursor: true });
+    }
+
     this.add(this.text);
-
-    // Hit area
-    this.bgRect.setInteractive({ useHandCursor: true });
+    this._layoutFilledText();
 
     this._setupFilledInteraction();
+  }
+
+  _layoutFilledText() {
+    if (!this.isFilled || !this.text) return;
+
+    const metrics = this._getFilledTextMetrics();
+    const centeredX = -(metrics.left + metrics.width / 2);
+    const centeredY = -(metrics.top + metrics.height / 2) + 1;
+
+    this.text.setPosition(Math.round(centeredX), Math.round(centeredY));
+  }
+
+  _getFilledTextMetrics() {
+    const bounds = this.text.getTextBounds(false);
+    const local = bounds.local;
+    const ink = PixelFont.getTextInkBounds(this.text.text, bounds.characters);
+
+    return ink ?? {
+      left: local.x,
+      top: local.y,
+      width: local.width,
+      height: local.height,
+    };
   }
 
   _setupTextInteraction() {
@@ -156,24 +195,36 @@ export class PixelButton extends GameObjects.Container {
     });
   }
 
+  _redrawBg(color) {
+    if (this.bgGfx) {
+      this.bgGfx.clear();
+      this.bgGfx.fillStyle(color, 1);
+      this.bgGfx.fillRoundedRect(-this.btnW / 2, -this.btnH / 2, this.btnW, this.btnH, this.cornerRadius);
+      this.bgGfx.lineStyle(1, Theme.panelBorder, 1);
+      this.bgGfx.strokeRoundedRect(-this.btnW / 2, -this.btnH / 2, this.btnW, this.btnH, this.cornerRadius);
+    } else {
+      this.bgRect.setFillStyle(color);
+    }
+  }
+
   _setupFilledInteraction() {
     const bg = this.bgRect;
 
     bg.on('pointerover', () => {
       if (!this.enabled) return;
-      bg.setFillStyle(brighten(this.btnBg));
+      this._redrawBg(brighten(this.btnBg));
     });
 
     bg.on('pointerout', () => {
-      bg.setFillStyle(this.enabled ? this.btnBg : Theme.disabled);
+      this._redrawBg(this.enabled ? this.btnBg : Theme.disabled);
     });
 
     bg.on('pointerdown', () => {
       if (!this.enabled) return;
       // White flash
-      bg.setFillStyle(0xffffff);
+      this._redrawBg(0xffffff);
       this.scene.time.delayedCall(80, () => {
-        bg.setFillStyle(brighten(this.btnBg));
+        this._redrawBg(brighten(this.btnBg));
       });
       this.onClick?.();
     });
@@ -182,7 +233,7 @@ export class PixelButton extends GameObjects.Container {
   setEnabled(enabled) {
     this.enabled = enabled;
     if (this.isFilled) {
-      this.bgRect.setFillStyle(enabled ? this.btnBg : Theme.disabled);
+      this._redrawBg(enabled ? this.btnBg : Theme.disabled);
       this.text.setTint(enabled ? Theme.criticalText : Theme.mutedText);
     } else {
       this.text.setTint(enabled ? Theme.primaryText : Theme.disabled);
@@ -192,5 +243,6 @@ export class PixelButton extends GameObjects.Container {
   setLabel(newLabel) {
     this.label = newLabel;
     this.text.setText(newLabel);
+    this._layoutFilledText();
   }
 }

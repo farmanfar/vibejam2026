@@ -24,6 +24,8 @@ export class PixelLabel extends GameObjects.BitmapText {
 
     super(scene, x, y, FONT_KEY, text, fontSize);
 
+    this._align = opts.align ?? 'left';
+
     // Color
     const colorMap = {
       critical: Theme.criticalText,
@@ -37,12 +39,10 @@ export class PixelLabel extends GameObjects.BitmapText {
     const tint = opts.tint ?? colorMap[opts.color ?? 'primary'] ?? Theme.primaryText;
     this.setTint(tint);
 
-    // Alignment / origin
-    const align = opts.align ?? 'left';
-    if (align === 'center') this.setOrigin(0.5, 0);
-    else if (align === 'right') this.setOrigin(1, 0);
-    else this.setOrigin(0, 0);
-
+    // Use Phaser's origin system for alignment — manual x offset breaks when
+    // width is 0 at construction time (Phaser 4 BitmapText deferred sizing).
+    const originX = this._align === 'center' ? 0.5 : this._align === 'right' ? 1 : 0;
+    this.setOrigin(originX, 0);
     scene.add.existing(this);
   }
 }
