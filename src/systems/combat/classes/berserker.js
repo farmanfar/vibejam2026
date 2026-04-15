@@ -13,6 +13,7 @@ export const berserkerClass = {
     unit.atk = unit.baseAtk + (unit.resonanceStacks || 0);
     ctx.log.push('berserker_synergy_init', {
       unit: unit.unitId,
+      instanceId: unit.instanceId,
       slot: unit.slot,
       team: unit.team,
       berserkerCount,

@@ -112,7 +112,7 @@
       "displayScale": 2.5,
       "defaultTag": "Idle",
       "portraitFrame": 0,
-      "ignoreLayers": ["Flattened"],
+      "ignoreLayers": ["Flattened", "bg"],
       "animTagOverrides": { "idle": "Idle", "attack": "Attack", "death": "Death" }
     },
     "glitch_samurai": {
@@ -120,6 +120,7 @@
       "displayScale": 2.5,
       "defaultTag": "Idle",
       "portraitFrame": 0,
+      "ignoreLayers": ["Layer 1"],
       "animTagOverrides": { "idle": "Idle", "attack": "Gltich Attack", "death": "Death Frame" }
     },
     "colossal_boss": {

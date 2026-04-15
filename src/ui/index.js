@@ -8,3 +8,4 @@ export { FloatingBanner } from './FloatingBanner.js';
 export { WarriorCard } from './WarriorCard.js';
 export { PixelTypewriter } from './PixelTypewriter.js';
 export { PixelTextInput } from './PixelTextInput.js';
+export { UnitStatBadge } from './UnitStatBadge.js';

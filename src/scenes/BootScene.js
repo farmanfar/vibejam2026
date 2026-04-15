@@ -6,6 +6,7 @@ import { getAllParallaxAssets } from '../rendering/FactionPalettes.js';
 import { getWarriors } from '../config/warriors.js';
 import { getAlphaWarriors } from '../config/alpha-units.js';
 import { getCommanders } from '../config/commanders.js';
+import { getMerchants } from '../config/merchants.js';
 import { resetCaptureReady, resolveCaptureRoute } from '../systems/CaptureSupport.js';
 import { attachGeneratedNormalMap } from '../rendering/NormalMapGenerator.js';
 
@@ -64,6 +65,20 @@ export class BootScene extends Scene {
     }
     console.log(`[Boot] Queued ${commanders.length} commander card textures and ${commanders.length} commander sprites for preload`);
 
+    // Merchant spritesheets — pre-exported horizontal (and one vertical) PNG
+    // strips from public/assets/merchants/npcs/. Merchants have a single
+    // looping idle each, so no atlas JSON, tag data, or createFromAseprite is
+    // needed. One global `<spriteKey>-idle` anim per merchant is registered
+    // below in `create()` after loads complete.
+    const merchants = getMerchants();
+    for (const m of merchants) {
+      this.load.spritesheet(m.spriteKey, m.asset, {
+        frameWidth:  m.frameWidth,
+        frameHeight: m.frameHeight,
+      });
+    }
+    console.log(`[Boot] Queued ${merchants.length} merchant spritesheets`);
+
     // Preload blank fantasy card frames (PENUSBMIC Fantasy Cards pack) used by
     // WarriorCard. NOTE: file #11 has an extra space in its filename.
     const blankCardFiles = [
@@ -119,10 +134,31 @@ export class BootScene extends Scene {
     PixelFont.init(this);
     initAuth();
 
+    // Register one global looping idle animation per merchant. Keys are
+    // unique (`merchant-<id>-idle`) so every consumer (MenuScene, ShopScene,
+    // MerchantSelectScene) can just call sprite.play(getMerchantIdleAnimKey(m))
+    // without per-sprite createFromAseprite setup.
+    for (const merchant of getMerchants()) {
+      if (!this.textures.exists(merchant.spriteKey)) {
+        console.warn(`[Boot] Merchant texture missing: ${merchant.spriteKey}`);
+        continue;
+      }
+      const key = `${merchant.spriteKey}-idle`;
+      if (this.anims.exists(key)) continue;
+      this.anims.create({
+        key,
+        frames: this.anims.generateFrameNumbers(merchant.spriteKey, { start: 0, end: merchant.frameCount - 1 }),
+        frameRate: 8,
+        repeat: -1,
+      });
+      console.log(`[Boot] Registered anim '${key}' (${merchant.frameCount} frames)`);
+    }
+
     // Generate normal maps for battle unit sprites (WebGL only).
     // Runs synchronously; 32×32 placeholders are ~1 ms total.
     if (this.sys.renderer.gl) {
       _generateBattleNormalMaps(this);
+      _generateCommanderNormalMaps(this);
     }
 
     // Show a quick loading flash then proceed
@@ -204,4 +240,27 @@ function _generateBattleNormalMaps(scene) {
   }
 
   console.log(`[Boot] Normal maps: ${generated} generated, ${skipped} skipped (missing art)`);
+}
+
+/**
+ * Generate and attach normal maps for commander sprite textures so they can
+ * participate in Phaser's Lights2D system in CommanderSelectScene (hover light).
+ * Sprites are loaded in preload as `commander-sprite-<spriteIndex>`.
+ */
+function _generateCommanderNormalMaps(scene) {
+  const commanders = getCommanders();
+  let generated = 0;
+  let skipped   = 0;
+  // Commander-specific bumpStrength: 3.5 vs the 2.0 default used for
+  // battle units. Commanders are big, hero-framed sprites where per-pixel
+  // crunch is a feature; battle units are small and would look noisy.
+  for (const cmd of commanders) {
+    const key = `commander-sprite-${cmd.spriteIndex}`;
+    if (attachGeneratedNormalMap(scene, key, { bumpStrength: 3.5 })) {
+      generated++;
+    } else {
+      skipped++;
+    }
+  }
+  console.log(`[Boot] Commander normal maps: ${generated} generated, ${skipped} skipped (bumpStrength 3.5)`);
 }

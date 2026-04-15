@@ -14,6 +14,7 @@ export const robotFaction = {
     unit.hp += otherRobots;
     ctx.log.push('robot_hp_init', {
       unit: unit.unitId,
+      instanceId: unit.instanceId,
       slot: unit.slot,
       team: unit.team,
       otherRobots,

@@ -20,6 +20,7 @@ export const gruntClass = {
     unit.atk = unit.baseAtk + (unit.resonanceStacks || 0);
     ctx.log.push('grunt_synergy_init', {
       unit: unit.unitId,
+      instanceId: unit.instanceId,
       slot: unit.slot,
       team: unit.team,
       gruntCount,

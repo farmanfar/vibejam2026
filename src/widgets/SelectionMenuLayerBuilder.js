@@ -101,6 +101,12 @@ export function buildFeaturedLayer(scene, container, items, slots, config, callb
     display.add([shadow, glow, frame])
 
     const art = buildItemSprite(scene, display, item, 0, -72, 0.9 * spriteScale, config.visuals)
+    // Featured-only hook: scenes that need per-featured-sprite setup (e.g.
+    // enabling Light2D shading only on the three featured commanders, not the
+    // 22 trophy-wall sprites or 2 preview sprites) opt in via this callback.
+    if (typeof config.visuals.onFeaturedSpriteCreated === 'function' && art) {
+      config.visuals.onFeaturedSpriteCreated(art, item)
+    }
 
     const namePlate  = scene.add.rectangle(0, 26, 118, 18, Theme.fantasyPurpleDark, 1.0).setStrokeStyle(1, Theme.fantasyBorderGold, 0.72)
     const nameText   = scene.add.bitmapText(0, 19, FONT_KEY, config.visuals.labelForItem(item), 8).setOrigin(0.5).setTint(Theme.primaryText)
@@ -126,6 +132,11 @@ export function buildFeaturedLayer(scene, container, items, slots, config, callb
       } else if (view === 'featuredClose') {
         callbacks.setFeaturedFocus(index, `hovered ${item.name}`)
       }
+      callbacks.onFeaturedHoverEnter?.(index, item, display.art)
+    })
+
+    hitZone.on('pointerout', () => {
+      callbacks.onFeaturedHoverLeave?.(index)
     })
 
     hitZone.on('pointerdown', () => {
@@ -135,6 +146,7 @@ export function buildFeaturedLayer(scene, container, items, slots, config, callb
       if (view === 'center') {
         callbacks.setCenterFocus('featured', `clicked ${item.name}`)
         callbacks.setFeaturedFocus(index, `clicked ${item.name}`)
+        callbacks.selectFeaturedItem(index, `clicked ${item.name} (auto-select on focus)`)
         callbacks.changeView('featuredClose', { reason: `clicked featured item ${item.name}` })
       } else if (view === 'featuredClose') {
         callbacks.setFeaturedFocus(index, `clicked ${item.name}`)
@@ -263,7 +275,21 @@ export function buildItemSprite(scene, parent, item, x, y, scale, visuals) {
   const textureKey = visuals.textureKeyForItem(item)
 
   if (textureKey && scene.textures.exists(textureKey)) {
-    const sprite       = scene.add.image(x, y, textureKey).setScale(scale)
+    // Resolve the frame via visuals.frameForItem (optional). For multi-frame
+    // atlases (Phaser aseprite-loaded), omitting the frame makes Phaser render
+    // the full source PNG — a screen-covering artifact on large atlases. See
+    // getUnitPortraitRef() in src/rendering/UnitArt.js for the same fix on the
+    // WarriorCard code path.
+    const frame = typeof visuals.frameForItem === 'function'
+      ? visuals.frameForItem(item, scene.textures.get(textureKey))
+      : undefined
+    // Callers that need frame-playback animations (e.g. MerchantSelectScene)
+    // opt in via visuals.animated — the factory returns a Sprite, which
+    // extends Image with an AnimationState. CommanderSelectScene leaves the
+    // flag unset so its art stays on plain Images (zero regression risk).
+    const sprite = visuals.animated
+      ? scene.add.sprite(x, y, textureKey, frame).setScale(scale)
+      : scene.add.image(x, y, textureKey, frame).setScale(scale)
     sprite.baseScale   = scale
     parent.add(sprite)
     if (typeof visuals.onSpriteCreated === 'function') {

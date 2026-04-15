@@ -26,9 +26,11 @@ export const folkFaction = {
     recipient.atk = recipient.baseAtk + (recipient.resonanceStacks || 0);
     ctx.log.push('folk_death_buff', {
       source: unit.unitId,
+      sourceInstanceId: unit.instanceId,
       sourceSlot: unit.slot,
       team: unit.team,
       recipient: recipient.unitId,
+      recipientInstanceId: recipient.instanceId,
       recipientSlot: recipient.slot,
       newAtk: recipient.atk,
     });

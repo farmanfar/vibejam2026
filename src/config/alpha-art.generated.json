@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-04-14T02:32:32.335Z",
+  "generatedAt": "2026-04-15T22:07:34.126Z",
   "entries": {
     "archer": {
       "spriteKey": "alpha-archer",
@@ -22,7 +22,10 @@
       "animTagOverrides": {
         "idle": "IDle",
         "death": "Death"
-      }
+      },
+      "ignoreLayers": [
+        "Shadow"
+      ]
     },
     "blood_king": {
       "spriteKey": "alpha-blood_king",
@@ -201,7 +204,10 @@
         "idle": "Idle Move",
         "attack": "Attack",
         "death": "Death"
-      }
+      },
+      "ignoreLayers": [
+        "Shadow"
+      ]
     },
     "snipper": {
       "spriteKey": "alpha-snipper",
@@ -266,7 +272,10 @@
       "animTagOverrides": {
         "attack": "Attack",
         "death": "Death"
-      }
+      },
+      "ignoreLayers": [
+        "Shadow"
+      ]
     },
     "minion_002": {
       "spriteKey": "alpha-minion_002",
@@ -334,7 +343,11 @@
         "idle": "Idle",
         "attack": "Cast Sword",
         "death": "Death"
-      }
+      },
+      "ignoreLayers": [
+        "Relic Guardian 3/Shadow",
+        "Shadow"
+      ]
     },
     "dark_mec": {
       "spriteKey": "alpha-dark_mec",
@@ -384,7 +397,9 @@
         "death": "Death"
       },
       "ignoreLayers": [
-        "Flattened"
+        "Flattened",
+        "bg",
+        "shadow"
       ]
     },
     "glitch_samurai": {
@@ -411,13 +426,17 @@
         "Death Frame"
       ],
       "frameCount": 106,
-      "atlasWidth": 1920,
-      "atlasHeight": 1920,
+      "atlasWidth": 1728,
+      "atlasHeight": 1728,
       "animTagOverrides": {
         "idle": "Idle",
         "attack": "Gltich Attack",
         "death": "Death Frame"
-      }
+      },
+      "ignoreLayers": [
+        "Layer 1",
+        "Glitch Shadow"
+      ]
     },
     "colossal_boss": {
       "spriteKey": "alpha-colossal_boss",
@@ -555,7 +574,8 @@
         "idle": "Idle"
       },
       "ignoreLayers": [
-        "bg"
+        "bg",
+        "Shadow"
       ]
     }
   }

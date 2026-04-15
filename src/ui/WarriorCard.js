@@ -3,6 +3,7 @@ import { Theme } from './Theme.js';
 import { FONT_KEY } from './PixelFont.js';
 import { getUnitPortraitRef } from '../rendering/UnitArt.js';
 import { attachOutlineToSprite } from '../rendering/OutlineController.js';
+import { getTightFrameBounds } from '../rendering/spriteBounds.js';
 
 // Faction → blank card frame texture key. Robot/Folk/Monster are the only
 // factions in the live alpha roster; the others are mapped for future use.
@@ -32,6 +33,28 @@ const TITLE_BANNER = {
   fontSize: 7,
 };
 const TITLE_MAX_CHARS = 14; // m5x7 advances ~6px/char at 1x; 14 chars fits w=84
+
+// Portrait art window in card-local coords. Spans almost the full top half
+// (y∈[-80, 0]); the fit logic uses tight-pixel bounds so transparent frame
+// padding doesn't eat the art area. Top edge clears the title banner bottom
+// (y=-61), bottom edge stays above the hover-reveal class label at y=22.
+// x-centered at 0 — tight-pixel centering keeps the character clear of the
+// bubble cluster baked into the left side of the frame art for typical
+// character widths, and cards use the frame art's transparent areas anyway.
+const ART_WINDOW = {
+  cx: 0,
+  cy: -30,
+  w: 112,
+  h: 62,
+};
+// Generous cap so small characters (e.g. 15x20 tight bounds) can fill the
+// window. 5x on a 15px-wide character = 75 display px, still inside w=112.
+const ART_MAX_SCALE = 5.0;
+
+function fitToArtWindow(natW, natH) {
+  if (!natW || !natH) return 1;
+  return Math.min(ART_WINDOW.w / natW, ART_WINDOW.h / natH, ART_MAX_SCALE);
+}
 
 /**
  * Warrior card for the shop. Native PENUSBMIC blank card frame (106x138)
@@ -80,14 +103,55 @@ export class WarriorCard extends GameObjects.Container {
     }
     this.add(this.frame);
 
-    // ── Portrait sprite (centered top half) ──────────────────
+    // ── Portrait sprite (fit into dedicated art window) ──────
+    // PENUSBMIC aseprite atlases are padded — the character occupies only a
+    // small region of each frame's canvas. We scan the frame's pixel data
+    // (once, cached) to find the tight non-transparent bounds, then:
+    //   1. fit-scale based on the tight bounds (not frame dims)
+    //   2. set the sprite's origin so the tight bounds' center lands on
+    //      (ART_WINDOW.cx, ART_WINDOW.cy) — this cancels the transparent
+    //      padding offset so the character is visually centered.
+    // getUnitPortraitRef already returns the boot-generated
+    // warrior_placeholder_* texture for units without a real portrait, so
+    // the `if` branch handles both real and placeholder sprites.
     const portraitRef = getUnitPortraitRef(scene, warrior, 'warrior card');
     if (scene.textures.exists(portraitRef.key)) {
-      this.sprite = scene.add.image(0, -45, portraitRef.key, portraitRef.frame).setScale(1.5);
+      this.sprite = scene.add.image(
+        ART_WINDOW.cx, ART_WINDOW.cy, portraitRef.key, portraitRef.frame,
+      );
+      const frameW = this.sprite.frame?.width ?? this.sprite.width;
+      const frameH = this.sprite.frame?.height ?? this.sprite.height;
+      const bounds = getTightFrameBounds(scene, portraitRef.key, portraitRef.frame);
+      if (bounds && bounds.w > 0 && bounds.h > 0 && !bounds.fullyTransparent) {
+        const ox = (bounds.x + bounds.w / 2) / frameW;
+        const oy = (bounds.y + bounds.h / 2) / frameH;
+        this.sprite.setOrigin(ox, oy);
+        const scale = fitToArtWindow(bounds.w, bounds.h);
+        this.sprite.setScale(scale);
+        console.log(
+          `[WarriorCard] ${warrior.name} frame ${frameW}x${frameH} `
+          + `tight ${bounds.w}x${bounds.h}@(${bounds.x},${bounds.y}) `
+          + `→ scale ${scale.toFixed(2)} origin (${ox.toFixed(3)},${oy.toFixed(3)})`,
+        );
+      } else {
+        const scale = fitToArtWindow(frameW, frameH);
+        this.sprite.setScale(scale);
+        console.warn(
+          `[WarriorCard] ${warrior.name} no tight bounds — `
+          + `fallback frame-fit ${frameW}x${frameH} → scale ${scale.toFixed(2)}`,
+        );
+      }
       attachOutlineToSprite(this.sprite);
     } else {
       const tierColors = [0xe74c3c, 0x3498db, 0x2ecc71, 0xf39c12, 0x9b59b6];
-      this.sprite = scene.add.rectangle(0, -45, 28, 28, tierColors[warrior.tier ?? 0]);
+      this.sprite = scene.add.rectangle(
+        ART_WINDOW.cx, ART_WINDOW.cy, ART_WINDOW.h, ART_WINDOW.h,
+        tierColors[warrior.tier ?? 0],
+      );
+      console.warn(
+        `[WarriorCard] Emergency rectangle fallback for ${warrior.name} — `
+        + `texture ${portraitRef.key} not found`,
+      );
     }
     this.add(this.sprite);
 

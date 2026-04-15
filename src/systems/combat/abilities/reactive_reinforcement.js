@@ -17,9 +17,11 @@ export const reactive_reinforcement = {
     observer.atk = observer.baseAtk + (observer.resonanceStacks || 0);
     ctx.log.push('reactive_reinforcement_proc', {
       unit: observer.unitId,
+      instanceId: observer.instanceId,
       slot: observer.slot,
       team: observer.team,
       trigger: victim.unitId,
+      triggerInstanceId: victim.instanceId,
       newAtk: observer.atk,
     });
   },

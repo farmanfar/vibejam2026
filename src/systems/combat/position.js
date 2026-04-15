@@ -36,22 +36,26 @@ export function frontmostAliveEnemy(attacker, ctx) {
 }
 
 // Returns up to `range` alive enemies starting from slot 0.
+// Filters dying — under the SAP tick model a unit can be alive && dying for
+// the duration of a whole front-vs-front exchange, and a dying unit is about
+// to be removed at end-of-tick.
 export function enemiesWithinRange(attacker, range, ctx) {
   const enemyTeam = ctx.enemyTeamOf(attacker);
-  return enemyTeam.slots.slice(0, range).filter((u) => u.alive);
+  return enemyTeam.slots.slice(0, range).filter((u) => u.alive && !u.dying);
 }
 
 // Returns the enemy at the highest (furthest-back) slot index currently alive.
+// Filters dying — same reasoning as enemiesWithinRange.
 export function highestSlotAliveEnemy(attacker, ctx) {
   const enemyTeam = ctx.enemyTeamOf(attacker);
   for (let i = enemyTeam.slots.length - 1; i >= 0; i--) {
-    if (enemyTeam.slots[i]?.alive) return enemyTeam.slots[i];
+    if (enemyTeam.slots[i]?.alive && !enemyTeam.slots[i]?.dying) return enemyTeam.slots[i];
   }
   return null;
 }
 
 // Used by Minion #002's backward blast: allies at slot-distance <= range
-// behind the source unit's current slot index.
+// behind the source unit's current slot index. Filters dying.
 export function alliesBehindWithinRange(source, range, ctx) {
   const ownTeam = ctx.ownTeamOf(source);
   const out = [];
@@ -59,7 +63,7 @@ export function alliesBehindWithinRange(source, range, ctx) {
   for (let i = srcSlot + 1; i < ownTeam.slots.length; i++) {
     if (i - srcSlot > range) break;
     const ally = ownTeam.slots[i];
-    if (ally && ally.alive && ally !== source) out.push(ally);
+    if (ally && ally.alive && !ally.dying && ally !== source) out.push(ally);
   }
   return out;
 }

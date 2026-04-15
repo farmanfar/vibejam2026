@@ -20,6 +20,7 @@ export const knightClass = {
     unit.hp += otherKnights;
     ctx.log.push('knight_honorbound_init', {
       unit: unit.unitId,
+      instanceId: unit.instanceId,
       slot: unit.slot,
       team: unit.team,
       otherKnights,

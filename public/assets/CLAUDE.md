@@ -1,4 +1,4 @@
-# CLAUDE.md — public/assets/
+# CLAUDE.md - public/assets/
 
 All art is from PENUSBMIC asset packs (STRANDED + THE DARK series). See `design/asset-catalog.md` for full pack inventory.
 
@@ -6,34 +6,35 @@ All art is from PENUSBMIC asset packs (STRANDED + THE DARK series). See `design/
 
 ```
 assets/
-├── commanders/          # PENUSBMIC Fantasy Cards pack — commander character art
-│   ├── cards/           # 25 card PNGs (character on bordered card frame)
-│   ├── sprites/         # 27 detailed character PNGs (transparent bg, ~100x100)
-│   └── source/          # Aseprite originals (Card BORDER, Card MEGA, Cards SPRITE)
-├── cards/               # Generic card UI elements
-│   ├── blanks/          # 11 blank card frame templates (match commander card borders)
-│   └── icons/           # 27 small skill/item icons (Icon1-27, ~16x16)
-├── merchants/           # Shop NPC art
-│   ├── npcs/            # 43 merchant sprites — horizontal animation strips (multi-frame)
-│   ├── decor/           # 9 decorative NPCs (statues, guards, etc.)
-│   ├── shops/           # 3 shop background variants (blood, herb, tech)
-│   └── portals/         # 4 portal animations
-├── parallax/            # 29 PENUSBMIC parallax background sets (~180 PNGs total)
-│   └── {set-name}/      # Each set: 3-11 layer PNGs (sky → foreground)
-├── warriors/            # Unit art (managed by unit-catalog pipeline)
-│   ├── runtime/         # Exported portraits/sheets for game use
-│   └── source/          # Aseprite source files
-├── fonts/               # m5x7.ttf bitmap font
-├── backgrounds/         # (empty — backgrounds use parallax sets)
-└── ui/                  # (empty — UI is procedural via PixelUI components)
+|-- commanders/          # PENUSBMIC Fantasy Cards pack - commander character art
+|   |-- cards/           # 25 card PNGs (character on bordered card frame)
+|   |-- sprites/         # 27 detailed character PNGs (transparent bg, ~100x100)
+|   `-- source/          # Aseprite originals (Card BORDER, Card MEGA, Cards SPRITE)
+|-- cards/               # Generic card UI elements
+|   |-- blanks/          # 11 blank card frame templates (match commander card borders)
+|   `-- icons/           # 27 small skill/item icons (Icon1-27, ~16x16)
+|-- merchants/           # Shop NPC art
+|   |-- npcs/            # 43 merchant sprites - horizontal animation strips (multi-frame)
+|   |-- decor/           # 9 decorative NPCs (statues, guards, etc.)
+|   |-- shops/           # 3 shop background variants (blood, herb, tech)
+|   `-- portals/         # 4 portal animations
+|-- parallax/            # 29 PENUSBMIC parallax background sets (~180 PNGs total)
+|   `-- {set-name}/      # Each set: 3-11 layer PNGs (sky -> foreground)
+|-- warriors/            # Unit art (legacy catalog + generated alpha atlases)
+|   |-- alpha/           # Generated alpha warrior Aseprite atlases (.png + .json)
+|   |-- runtime/         # Legacy exported portraits/sheets for game use
+|   `-- source/          # Legacy Aseprite source files
+|-- fonts/               # m5x7.ttf bitmap font
+|-- backgrounds/         # (empty - backgrounds use parallax sets)
+`-- ui/                  # (empty - UI is procedural via PixelUI components)
 ```
 
 ## Commander Art (Fantasy Cards Pack)
 
 Commanders use the detailed character sprites from the Fantasy Cards pack. 25 cards + 27 sprites of unique characters.
 
-- **For in-game display:** use `sprites/SpriteN.png` — detailed characters on transparent background, suitable for scaling
-- **For selection UI / card display:** use `cards/cardN.png` — same characters pre-composited onto bordered card frames
+- **For in-game display:** use `sprites/SpriteN.png` - detailed characters on transparent background, suitable for scaling
+- **For selection UI / card display:** use `cards/cardN.png` - same characters pre-composited onto bordered card frames
 - Card and sprite numbers correspond (card1 = Sprite1, etc.)
 - Source Aseprite files in `source/` if new exports are needed
 
@@ -54,6 +55,6 @@ All merchant sprites in `npcs/` are **horizontal animation strips** (multiple fr
 ## Rules
 
 - All art is PENUSBMIC exclusively. Do not import art from other sources.
-- Never hand-edit `*.generated.json` files in `config/` — those are produced by the import pipeline.
-- Warrior art is managed by the unit-catalog system (`tools/build_sprite_catalog.py`). Do not manually add files to `warriors/runtime/`.
+- Never hand-edit `*.generated.json` files in `config/` - those are produced by the import pipeline.
+- Warrior art has two tracks: legacy `warriors/runtime/` + `warriors/source/`, and generated alpha Aseprite atlases in `warriors/alpha/`. Alpha loader/animation rules live in `src/rendering/CLAUDE.md`; do not hand-edit generated `warriors/alpha` outputs.
 - Parallax sets are registered in `parallax-manifest.json`. Adding a new set requires updating the manifest.

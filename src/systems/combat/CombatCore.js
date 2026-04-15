@@ -51,6 +51,11 @@ export class CombatCore {
     this.log = new CombatLog();
     this.teams = null;
     this.round = 0;
+    // Tick context is active during _runTick. When non-null, performAttack
+    // queues ON_KILL events into pendingKillEvents instead of firing them
+    // inline, and does NOT call _resolveDeathBatch mid-swing. This gives the
+    // SAP "both fronts swing simultaneously, then resolve deaths" invariant.
+    this._tickContext = null;
     // Ctx helpers bound to this engine — handlers receive `this` as ctx.
     this.position = {
       frontmostAliveEnemy: (u) => frontmostAliveEnemy(u, this),
@@ -215,55 +220,128 @@ export class CombatCore {
   }
 
   _mainLoop() {
+    // SAP tick loop: each iteration is one front-vs-front exchange. Only the
+    // frontmost alive unit of each side swings. Both damages are committed
+    // before any ON_KILL / ON_FAINT handler fires, so chain attacks from
+    // things like Bloodlust happen after the simultaneous exchange lands.
     while (this.bothTeamsAlive() && this.round < MAX_ROUNDS) {
       this.round++;
       this.log.push('round_start', { round: this.round });
       this.fireEvent(EVT.ROUND_START, { round: this.round });
 
-      // Coin-flip seeded first-side
-      const playerFirst = this.rng.chance(0.5);
-      this.log.push('coin_flip', { round: this.round, playerFirst });
-
-      const order = playerFirst ? ['player', 'enemy'] : ['enemy', 'player'];
-      for (const teamKey of order) {
-        this._runSideActions(teamKey);
-        if (!this.bothTeamsAlive()) break;
+      this._runTick();
+      if (!this.bothTeamsAlive()) {
+        this.fireEvent(EVT.ROUND_END, { round: this.round });
+        this.log.push('round_end', { round: this.round });
+        break;
       }
 
-      if (this.bothTeamsAlive()) {
-        const batch = [];
-        tickPoison(this, batch);
-        if (batch.length) this._resolveDeathBatch(batch);
-      }
+      // Poison now ticks once per front-exchange (was once per multi-action
+      // round in the old engine). This is MATERIALLY less frequent, which
+      // rebalances poison-heavy units — known gameplay shift.
+      const batch = [];
+      tickPoison(this, batch);
+      if (batch.length) this._resolveDeathBatch(batch);
 
       this.fireEvent(EVT.ROUND_END, { round: this.round });
       this.log.push('round_end', { round: this.round });
     }
   }
 
-  _runSideActions(teamKey) {
-    const team = this.teams[teamKey];
-    // Snapshot the slot list at the top of the side's turn so new reanimates
-    // mid-turn don't get an extra action (they act starting next round).
-    const actingSnapshot = [...team.slots];
-    for (const unit of actingSnapshot) {
-      if (!this.bothTeamsAlive()) return;
-      if (!unit.alive) continue;
-      if (unit.dying) continue;
-      if (unit.skipBasicAttack) continue;
-      if (unit.flags.reanimatedThisBattle && unit.flags.justReanimated) {
-        // Skip the round she was reanimated in.
-        unit.flags.justReanimated = false;
-        continue;
+  _runTick() {
+    // Capture both fronts up front. If one side is empty, we fall through —
+    // the main loop's bothTeamsAlive check ends the battle next iteration.
+    // Slot 0 after compaction is always the frontmost alive unit; filter
+    // dying defensively in case of pre-tick state.
+    const pFront = this.teams.player.slots.find((u) => u.alive && !u.dying) ?? null;
+    const eFront = this.teams.enemy.slots.find((u) => u.alive && !u.dying) ?? null;
+    if (!pFront || !eFront) return;
+
+    console.log(
+      `[CombatCore] tick ${this.round} start — p_front=${pFront.unitId}(hp=${pFront.hp}/atk=${pFront.atk}) e_front=${eFront.unitId}(hp=${eFront.hp}/atk=${eFront.atk})`,
+    );
+
+    // Per-action resonance flags scoped to this tick.
+    pFront.flags._resonanceGrantedThisAction = false;
+    eFront.flags._resonanceGrantedThisAction = false;
+
+    // Consume justReanimated flag regardless of whether the unit acts —
+    // reanimated units skip their next tick, same as before.
+    const pJustReanimated = !!pFront.flags.justReanimated;
+    const eJustReanimated = !!eFront.flags.justReanimated;
+    pFront.flags.justReanimated = false;
+    eFront.flags.justReanimated = false;
+
+    const pActs = pFront.alive && !pFront.dying && !pFront.skipBasicAttack && !pJustReanimated;
+    const eActs = eFront.alive && !eFront.dying && !eFront.skipBasicAttack && !eJustReanimated;
+
+    // Open the tick context so performAttack queues ON_KILL events instead
+    // of firing them inline, and skips the mid-swing _resolveDeathBatch call.
+    this._tickContext = { pendingKillEvents: [] };
+
+    try {
+      // Dispatch both actions. _dispatchAction runs basicAttackOverride,
+      // on_action ability, class.onAction, or default basic attack — exactly
+      // like today's _takeBasicAction. All nested performAttack calls honor
+      // _tickContext automatically.
+      if (pActs) this._dispatchAction(pFront);
+      if (eActs) this._dispatchAction(eFront);
+
+      // Drain the queued ON_KILL events. Loop until empty so chain-kill
+      // abilities (Bloodlust → extra attack → new kill → new ON_KILL) resolve
+      // correctly. A dead killer skips its event. Bloodlust's re-entry guard
+      // flag ensures chains terminate.
+      let drainRounds = 0;
+      while (this._tickContext.pendingKillEvents.length > 0) {
+        drainRounds++;
+        if (drainRounds > 20) {
+          console.warn(`[CombatCore] tick ${this.round} kill queue drain exceeded 20 rounds, breaking`);
+          break;
+        }
+        const queue = this._tickContext.pendingKillEvents.splice(0);
+        for (const ev of queue) {
+          if (!ev.attacker.alive || ev.attacker.dying) continue;
+          this.fireEvent(EVT.ON_KILL, ev);
+        }
       }
-      this._takeBasicAction(unit);
-      if (!this.bothTeamsAlive()) return;
+
+      console.log(
+        `[CombatCore] tick ${this.round} kill queue drained after ${drainRounds} round(s)`,
+      );
+    } finally {
+      // Critical: always clear the context, even if a handler threw.
+      this._tickContext = null;
     }
+
+    // Resolve all dying units in one batch. _resolveDeathBatch handles
+    // ON_FAINT firing (Death-Defy INTERRUPT priority runs first), observer
+    // death events, Toxic Cascade, and final removal + compaction.
+    const dying = this._collectDying();
+    if (dying.length) {
+      console.log(
+        `[CombatCore] tick ${this.round} resolving ${dying.length} dying: [${dying.map((u) => u.instanceId ?? u.unitId).join(', ')}]`,
+      );
+      this._resolveDeathBatch(dying);
+    }
+
+    console.log(
+      `[CombatCore] tick ${this.round} end — p alive=${aliveCount(this.teams.player)} e alive=${aliveCount(this.teams.enemy)}`,
+    );
+  }
+
+  _collectDying() {
+    const out = [];
+    for (const u of this.allUnits()) {
+      if (u.alive && u.dying) out.push(u);
+    }
+    return out;
   }
 
   // ---------- basic action dispatch ----------
 
-  _takeBasicAction(unit) {
+  // Renamed from _takeBasicAction — semantics unchanged. Called once per tick
+  // per front by _runTick, or standalone in legacy code paths (none currently).
+  _dispatchAction(unit) {
     // Per-action resonance flag: grants once per action regardless of how
     // many damage instances the action produces (plan grill rule).
     unit.flags._resonanceGrantedThisAction = false;
@@ -384,13 +462,19 @@ export class CombatCore {
       attacker.flags._resonanceGrantedThisAction = true;
     }
 
-    const batch = [];
     if (killed && !target.dying) {
       target.dying = true;
-      batch.push(target);
-      this.fireEvent(EVT.ON_KILL, { attacker, victim: target });
+      if (this._tickContext) {
+        // SAP tick: queue ON_KILL for post-swing drain. The kill does NOT
+        // resolve deaths mid-tick; _runTick handles both at end-of-tick.
+        this._tickContext.pendingKillEvents.push({ attacker, victim: target });
+      } else {
+        // Legacy path (battle-start kills, poison ticks via death batch).
+        // Fire inline and resolve immediately, same as before.
+        this.fireEvent(EVT.ON_KILL, { attacker, victim: target });
+        this._resolveDeathBatch([target]);
+      }
     }
-    if (batch.length) this._resolveDeathBatch(batch);
   }
 
   // Used by ability handlers (Blood King Heart Slam) or other non-basic
@@ -437,8 +521,10 @@ export class CombatCore {
 
   _rollReactiveArmor(target, attacker) {
     if (target.class !== 'Tank') return false;
+    // Filter dying: a Tank marked dying mid-SAP-tick is about to be removed
+    // and shouldn't contribute to the armor-chance pool.
     const tankCount = this.ownTeamOf(target).slots.filter(
-      (u) => u.class === 'Tank' && u.alive,
+      (u) => u.class === 'Tank' && u.alive && !u.dying,
     ).length;
     const chance = Math.min(0.5, 0.1 * tankCount);
     const proc = this.rng.chance(chance);
@@ -458,10 +544,11 @@ export class CombatCore {
 
   _grantAncientResonance(source) {
     // Everyone with class=Ancient on source's team EXCEPT source gains +1.
+    // Dying Ancients (mid-tick) are about to be removed — skip them.
     const team = this.ownTeamOf(source);
     for (const u of team.slots) {
       if (u === source) continue;
-      if (!u.alive) continue;
+      if (!u.alive || u.dying) continue;
       if (u.class !== 'Ancient') continue;
       if (u.resonanceStacks >= 5) continue;
       u.resonanceStacks++;

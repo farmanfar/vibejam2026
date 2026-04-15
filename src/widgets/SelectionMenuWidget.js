@@ -143,6 +143,10 @@ export class SelectionMenuWidget {
       changeView:         (v, o) => this._changeView(v, o),
       selectFeaturedItem: (i, r) => this._selectFeaturedItem(i, r),
       markHandled:        () => { this._pointerDownHandled = true },
+      onFeaturedHoverEnter: (i, item, sprite) =>
+        this.config.actions?.onFeaturedHoverEnter?.(i, item, sprite, this.getState()),
+      onFeaturedHoverLeave: (i) =>
+        this.config.actions?.onFeaturedHoverLeave?.(i, this.getState()),
     }
     this._featuredDisplays = buildFeaturedLayer(
       this.scene, this._layerGroups.featured,
@@ -166,13 +170,17 @@ export class SelectionMenuWidget {
     this._hintLabel.setDepth(21)
     LayoutEditor.register(this.scene, 'hintLabel', this._hintLabel, width / 2, height - 18)
 
-    this._backBtn = new PixelButton(this.scene, 66, height - 32, labels.back ?? 'BACK', () => {
-      if (this.widgetBusy) return
-      console.log(`[Widget] Back → main menu`)
-      this.config.actions?.onBack?.()
-    }, { style: 'filled', scale: 2, bg: Theme.error, pill: true })
-    this._backBtn.setDepth(21)
-    LayoutEditor.register(this.scene, 'backBtn', this._backBtn, 66, height - 32)
+    if (this.config.options?.showBack !== false) {
+      this._backBtn = new PixelButton(this.scene, 66, height - 32, labels.back ?? 'BACK', () => {
+        if (this.widgetBusy) return
+        console.log(`[Widget] Back → main menu`)
+        this.config.actions?.onBack?.()
+      }, { style: 'filled', scale: 2, bg: Theme.error, pill: true })
+      this._backBtn.setDepth(21)
+      LayoutEditor.register(this.scene, 'backBtn', this._backBtn, 66, height - 32)
+    } else {
+      console.log(`[Widget] Back button hidden (showBack: false)`)
+    }
 
     this._confirmBtn = new PixelButton(this.scene, width - 130, height - 34, labels.confirm ?? 'CONFIRM', () => {
       if (!this.selectedItem || this.widgetBusy) return
@@ -229,7 +237,10 @@ export class SelectionMenuWidget {
 
   _handleTurn(direction, reason) {
     if (this.widgetBusy) return
+    const opts = this.config.options ?? {}
     if (this.currentView === 'center') {
+      if (direction < 0 && opts.showLeftPanel  === false) { console.log(`[Widget] Turn left blocked (showLeftPanel: false)`); return }
+      if (direction > 0 && opts.showRightPanel === false) { console.log(`[Widget] Turn right blocked (showRightPanel: false)`); return }
       this._changeView(direction < 0 ? 'left' : 'right', { reason }); return
     }
     if (this.currentView === 'left'  && direction > 0) { this._changeView('center', { reason }); return }
@@ -242,8 +253,10 @@ export class SelectionMenuWidget {
 
   _handleAdvance(reason) {
     if (this.widgetBusy) return
+    const opts = this.config.options ?? {}
     if (this.currentView === 'center') {
-      this._changeView(this.centerFocus === 'preview' ? 'previewClose' : 'featuredClose', { reason }); return
+      const wantPreview = this.centerFocus === 'preview' && opts.showPreview !== false
+      this._changeView(wantPreview ? 'previewClose' : 'featuredClose', { reason }); return
     }
     if (this.currentView === 'left' || this.currentView === 'right') {
       this._changeView('center', { reason }); return
@@ -266,6 +279,7 @@ export class SelectionMenuWidget {
 
   _cycleCenterFocus(reason) {
     if (this.currentView !== 'center') return
+    if (this.config.options?.showPreview === false) return
     this._setCenterFocus(this.centerFocus === 'featured' ? 'preview' : 'featured', reason)
   }
 
@@ -434,9 +448,16 @@ export class SelectionMenuWidget {
   }
 
   _getFocusPrompt() {
+    const opts = this.config.options ?? {}
+    const canTurn  = opts.showLeftPanel !== false || opts.showRightPanel !== false
+    const canPrev  = opts.showPreview !== false
+    const turnHint = canTurn ? '   [A/D] look' : ''
     if (this.currentView === 'center') {
-      if (this.centerFocus === 'preview') return '[W] open   [TAB] switch focus   [A/D] look'
-      return '[W] inspect   [TAB] preview   [A/D] look'
+      if (canPrev && this.centerFocus === 'preview') return '[W] open   [TAB] switch focus' + turnHint
+      const parts = ['[W] inspect']
+      if (canPrev) parts.push('[TAB] preview')
+      if (canTurn) parts.push('[A/D] look')
+      return parts.join('   ')
     }
     if (this.currentView === 'featuredClose') return '[A/D] browse   [E] select   [S] back'
     if (this.currentView === 'previewClose')  return '[E] pulse   [S] back'
@@ -492,6 +513,10 @@ export class SelectionMenuWidget {
         setFeaturedFocus:   (i, r) => this._setFeaturedFocus(i, r),
         changeView:         (v, o) => this._changeView(v, o),
         selectFeaturedItem: (i, r) => this._selectFeaturedItem(i, r),
+        onFeaturedHoverEnter: (i, item, sprite) =>
+          this.config.actions?.onFeaturedHoverEnter?.(i, item, sprite, this.getState()),
+        onFeaturedHoverLeave: (i) =>
+          this.config.actions?.onFeaturedHoverLeave?.(i, this.getState()),
       }
       this._featuredDisplays = buildFeaturedLayer(
         this.scene, this._layerGroups.featured,

@@ -28,9 +28,11 @@ export const sacrifice_pass = {
     nextSlotUnit.atk = nextSlotUnit.baseAtk + (nextSlotUnit.resonanceStacks || 0);
     ctx.log.push('sacrifice_pass_proc', {
       unit: unit.unitId,
+      sourceInstanceId: unit.instanceId,
       slot: unit.slot,
       team: unit.team,
       recipient: nextSlotUnit.unitId,
+      recipientInstanceId: nextSlotUnit.instanceId,
       recipientSlot: nextSlotUnit.slot,
       newAtk: nextSlotUnit.atk,
     });

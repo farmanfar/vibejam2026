@@ -29,6 +29,7 @@ const OUT_DIR = join(REPO_ROOT, 'public', 'assets', 'warriors', 'alpha');
 const REPORTS_DIR = join(REPO_ROOT, 'reports');
 
 const DEFAULT_ASEPRITE_WIN = 'C:/Program Files/Aseprite/aseprite.exe';
+const SHADOW_LAYER_RE = /shadow/i;
 
 function log(msg) {
   console.log(`[AlphaSprites] ${msg}`);
@@ -62,6 +63,56 @@ function resolveAseprite() {
       DEFAULT_ASEPRITE_WIN,
   );
   return null;
+}
+
+function listShadowLayers(cli, absSource) {
+  let stdout = '';
+  try {
+    stdout = execFileSync(
+      cli,
+      ['--batch', '--list-layer-hierarchy', absSource],
+      { encoding: 'utf8', stdio: ['ignore', 'pipe', 'pipe'], windowsHide: true },
+    );
+  } catch (e) {
+    throw new Error(
+      `Failed to list layers for ${absSource} (exit ${e.status ?? '?'}): ${e.stderr?.toString?.() ?? e.message}`,
+    );
+  }
+
+  const matched = [];
+  const seen = new Set();
+  const groupStack = [];
+
+  for (const rawLine of stdout.split(/\r?\n/)) {
+    if (!rawLine.trim()) continue;
+
+    const indent = rawLine.match(/^\s*/)?.[0].length ?? 0;
+    const trimmed = rawLine.trim();
+    const isGroup = trimmed.endsWith('/');
+    const name = isGroup ? trimmed.slice(0, -1).trim() : trimmed;
+    if (!name) continue;
+
+    while (groupStack.length && indent <= groupStack[groupStack.length - 1].indent) {
+      groupStack.pop();
+    }
+
+    const parentPath = groupStack.length ? groupStack[groupStack.length - 1].fullPath : '';
+    const fullPath = parentPath ? `${parentPath}/${name}` : name;
+
+    if (SHADOW_LAYER_RE.test(name)) {
+      for (const candidate of [fullPath, name]) {
+        if (seen.has(candidate)) continue;
+        seen.add(candidate);
+        matched.push(candidate);
+      }
+    }
+
+    if (isGroup) {
+      groupStack.push({ indent, fullPath });
+    }
+  }
+
+  return matched;
 }
 
 function runAseprite(cli, absSource, pngOut, jsonOut, { ignoreLayers = [], trim = false } = {}) {
@@ -143,9 +194,13 @@ function main() {
     const pngOut = join(OUT_DIR, `${unitId}.png`);
     const jsonOut = join(OUT_DIR, `${unitId}.json`);
 
+    let mergedIgnore = [];
     try {
+      const shadowLayers = listShadowLayers(cli, absSource);
+      mergedIgnore = [...new Set([...(entry.ignoreLayers ?? []), ...shadowLayers])];
+      log(`${unitId} ignoring layers: ${mergedIgnore.join(', ') || '(none)'}`);
       runAseprite(cli, absSource, pngOut, jsonOut, {
-        ignoreLayers: entry.ignoreLayers ?? [],
+        ignoreLayers: mergedIgnore,
         trim: entry.trim ?? false,
       });
     } catch (e) {
@@ -182,7 +237,7 @@ function main() {
       atlasHeight: meta.atlasHeight,
       ...(entry.animTagOverrides ? { animTagOverrides: entry.animTagOverrides } : {}),
       ...(entry.trim ? { trim: true } : {}),
-      ...(entry.ignoreLayers?.length ? { ignoreLayers: entry.ignoreLayers } : {}),
+      ...(mergedIgnore.length ? { ignoreLayers: mergedIgnore } : {}),
     };
     entries[unitId] = manifestEntry;
 

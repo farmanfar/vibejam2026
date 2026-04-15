@@ -4,6 +4,7 @@ import { PlayerConfig } from '../systems/PlayerConfig.js';
 import { finalizeCaptureScene } from '../systems/CaptureSupport.js';
 import { LayoutEditor } from '../systems/LayoutEditor.js';
 import { getUnitValidation } from '../config/warriors.js';
+import { pickRandomMerchants, getMerchantIdleAnimKey } from '../config/merchants.js';
 import { SceneCrt } from '../rendering/SceneCrt.js';
 
 // --- Typewriter message pools ---
@@ -168,54 +169,52 @@ export class MenuScene extends Scene {
     LayoutEditor.register(this, 'credits', credits, leftX, height - 18);
 
     // --- Right column: Merchant ---
-    const merchantKey = this.textures.exists('merchant') ? 'merchant' : 'merchant_placeholder';
-    console.log(`[Menu] Using merchant texture: ${merchantKey}`);
-
+    // Pick a random animated merchant from the catalog each menu visit.
+    // Composition mirrors TorchWars MainMenuScreen: single idle-looping NPC
+    // with a vertical-flip reflection at 7.5% alpha underneath. Motion comes
+    // entirely from the Aseprite idle frames — no bob/breathing tweens.
     const merchantX = 710;
     const merchantY = 292;
     const merchantScale = 3;
 
-    this._merchant = this.add.image(merchantX, merchantY, merchantKey)
-      .setScale(merchantScale);
+    const merchant = pickRandomMerchants(1)[0];
+    const hasAnimatedMerchant = merchant && this.textures.exists(merchant.spriteKey);
+
+    if (hasAnimatedMerchant) {
+      this._merchant = this.add.sprite(merchantX, merchantY, merchant.spriteKey).setScale(merchantScale);
+      const animKey = getMerchantIdleAnimKey(merchant);
+      try {
+        this._merchant.play(animKey);
+        console.log(`[Menu] Merchant: ${merchant.name} playing '${animKey}'`);
+      } catch (e) {
+        console.error(`[Menu] sprite.play('${animKey}') failed for ${merchant.id}:`, e);
+      }
+    } else {
+      const fallbackKey = this.textures.exists('merchant') ? 'merchant' : 'merchant_placeholder';
+      this._merchant = this.add.image(merchantX, merchantY, fallbackKey).setScale(merchantScale);
+      console.log(`[Menu] Merchant: no catalog pick available, using placeholder '${fallbackKey}'`);
+    }
     LayoutEditor.register(this, 'merchant', this._merchant, merchantX, merchantY);
 
-    // Idle breathing bob
-    this.tweens.add({
-      targets: this._merchant,
-      y: merchantY - 2,
-      duration: 2000,
-      ease: 'Sine.easeInOut',
-      yoyo: true,
-      repeat: -1,
-    });
-
-    // Subtle scale pulse (breathing)
-    this.tweens.add({
-      targets: this._merchant,
-      scaleX: merchantScale * 1.015,
-      scaleY: merchantScale * 1.015,
-      duration: 3000,
-      ease: 'Sine.easeInOut',
-      yoyo: true,
-      repeat: -1,
-    });
-
-    // Merchant reflection (flipped, low alpha)
+    // Merchant reflection (flipped, low alpha). A second sprite playing the
+    // same animation stays frame-synced automatically — no tween needed.
     const reflectionY = merchantY + this._merchant.displayHeight * 0.5 + 4;
-    this._reflection = this.add.image(merchantX, reflectionY, merchantKey)
-      .setScale(merchantScale)
-      .setFlipY(true)
-      .setAlpha(0.075);
-
-    // Keep reflection synced with merchant bob
-    this.tweens.add({
-      targets: this._reflection,
-      y: reflectionY - 2,
-      duration: 2000,
-      ease: 'Sine.easeInOut',
-      yoyo: true,
-      repeat: -1,
-    });
+    if (hasAnimatedMerchant) {
+      this._reflection = this.add.sprite(merchantX, reflectionY, merchant.spriteKey)
+        .setScale(merchantScale)
+        .setFlipY(true)
+        .setAlpha(0.075);
+      try {
+        this._reflection.play(getMerchantIdleAnimKey(merchant));
+      } catch (e) {
+        console.error(`[Menu] reflection play failed for ${merchant.id}:`, e);
+      }
+    } else {
+      this._reflection = this.add.image(merchantX, reflectionY, this._merchant.texture.key)
+        .setScale(merchantScale)
+        .setFlipY(true)
+        .setAlpha(0.075);
+    }
 
     // --- Cleanup on scene shutdown (once, not on) ---
     this.events.once('shutdown', () => {

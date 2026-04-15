@@ -49,12 +49,15 @@ describe('Ancient class', () => {
     });
     const stacks = result.log.ofKind('resonance_stack');
     expect(stacks.length).toBeGreaterThan(0);
-    // Source is never equal to target.
+    // Source is never equal to target — core invariant.
     for (const s of stacks) expect(s.source).not.toBe(s.target);
-    // Both Ancients should receive stacks (since both act).
+    // Under SAP front-only ticks, only the frontmost Ancient (ancient_a in
+    // slot 0) acts per tick, so ancient_b is the only stack recipient.
+    // ancient_a never receives because it's always the actor and fillers
+    // with 0 atk can't kill it to promote ancient_b to front.
     const recipients = new Set(stacks.map((s) => s.target));
-    expect(recipients.has('ancient_a')).toBe(true);
     expect(recipients.has('ancient_b')).toBe(true);
+    expect(recipients.has('ancient_a')).toBe(false);
   });
 
   test('Resonance caps at 5 stacks per Ancient', () => {

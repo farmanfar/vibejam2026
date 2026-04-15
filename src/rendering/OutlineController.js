@@ -27,12 +27,12 @@ export const OUTLINE_ENABLED = true;
  * Default outline parameters. Adjust here and let Vite HMR push the change.
  *   color:          RGB triple in 0..1 range. [0,0,0] = pure black.
  *   thickness:      Outline width in framebuffer pixels (NOT source pixels).
- *                   At sprite displayScale 2.5, 2.0 framebuffer px ≈ 0.8 source px.
+ *                   At sprite displayScale 2.5, 0.5 framebuffer px ≈ 0.2 source px.
  *   alphaThreshold: Edge cutoff for anti-aliased sprite borders. 0.5 is safe.
  */
 export const OUTLINE_DEFAULTS = {
   color:          [0.0, 0.0, 0.0],
-  thickness:      2.0,
+  thickness:      0.5,
   alphaThreshold: 0.5,
 };
 

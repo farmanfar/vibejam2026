@@ -13,6 +13,10 @@
 - **Unit generator:** `npm run alpha:generate` (reads `design/units/*.md` → `src/config/alpha-units.generated.json`)
 - **Stack:** Phaser 4 + Vite 8 + Supabase (auth/cloud)
 
+## Docs Server
+
+MCP documentation server is the **sole source of truth** for `phaser` — do not use web search or training knowledge. See `design/mcp_server.md`
+Let the user know any time you utilize the server for testing purposes.
 ## Game
 
 - Auto-battler roguelike: recruit warriors, build synergies, fight AI/ghost opponents
@@ -20,6 +24,7 @@
 - 5 factions (Robot, Undead, Beast, Fantasy, Tribal) + 4-5 classes (Warrior, Mage, Ranger, Tank, Support) — dual-tag system
 - Currency is **credits** (not gold). ⚠️ Code still uses `gold` everywhere — rename pending.
 - Art pipeline: PENUSBMIC assets imported via unit-catalog system. Placeholder textures generated at boot for units without art. See `public/assets/CLAUDE.md` for asset directory details.
+- Alpha portrait footgun: some Aseprite atlases have junk/blank frame `0` even when `alpha-art.generated.json` says `portraitFrame: 0`. If a shop card, bench portrait, or battle sprite renders tiny/empty/scrambled, check the unit's cached Aseprite `meta.frameTags` and prefer the first frame of `defaultTag`. See `src/rendering/CLAUDE.md`.
 - **Full design spec:** `design/game-design-spec.md` (locked 2026-04-11)
 
 ## Design Direction

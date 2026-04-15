@@ -25,6 +25,13 @@ export class CommanderSelectScene extends Scene {
     this._fixedCommanders  = data.commanders ?? null
     this._captureView      = data.captureView ?? null
     this._widget           = null
+    // Hover-light state (Light2D port of HammerTime grandma lighting).
+    // _lightState is a plain object used as a Phaser tween target — scenes
+    // themselves are NOT reliable tween targets (verified: tween on `this`
+    // with numeric property never animated).
+    this._hoverLight     = null
+    this._litSprite      = null
+    this._lightState     = { baseIntensity: 0, flickerTime: 0 }
     console.log(`[Commander] Init - runId: ${this._runId}, fixed: ${!!this._fixedCommanders}`)
   }
 
@@ -33,6 +40,67 @@ export class CommanderSelectScene extends Scene {
 
     // CRT post-process (softGameplay — interactive scene, lighter curvature)
     SceneCrt.attach(this, 'softGameplay')
+
+    // Phaser 4 Light2D — moderate ambient so resting commanders remain
+    // readable while leaving ~60% dynamic range for the hover point light
+    // to sculpt individual pixels on hover. Only objects with
+    // setLighting(true) are affected — non-lit UI renders at full
+    // brightness unchanged.
+    if (this.sys.renderer.gl) {
+      // Ambient ~28% brightness (pass-two value after pass-one read as
+      // "real subtle"): leaves ~72% headroom so the warm hover light lifts
+      // per-pixel normals into clearly distinct shading rather than a flat
+      // wash. Resting commanders are visibly dim but still legible.
+      this.lights.enable().setAmbientColor(0x5a5862)
+      console.log('[Commander] Lighting enabled — ambient 0x5a5862')
+
+      // Floor receiver: tall enough to cover feet in BOTH views:
+      //   - center view: feet at y~378
+      //   - featuredClose view: feet at y~505
+      // y=445 center, height 220 → spans y=335..555 (covers both).
+      // Without this, the light center lands below the plane in featuredClose
+      // and almost none of the halo renders.
+    }
+
+    // Per-frame shimmer: two-sine torch flicker on the hover light intensity.
+    // Reads _lightState.baseIntensity (tween-animated) and writes the live
+    // light intensity. Keeps the tween and render side independent.
+    this._frameCounter = 0
+    this.events.on('update', (_t, delta) => {
+      if (!this._hoverLight) return
+      this._lightState.flickerTime += delta * 0.001
+      const t       = this._lightState.flickerTime
+      const shimmer = 1 + 0.04 * (Math.sin(t * 6.7) * 0.55 + Math.sin(t * 11.3) * 0.45)
+      this._hoverLight.intensity = this._lightState.baseIntensity * shimmer
+      // DEBUG (keep until visually dialed-in): log once per second while light is active
+      this._frameCounter++
+      if (this._frameCounter % 60 === 0) {
+        console.log(`[Commander] light tick base=${this._lightState.baseIntensity.toFixed(2)} ` +
+                    `rendered=${this._hoverLight.intensity.toFixed(2)} ` +
+                    `xy=(${this._hoverLight.x.toFixed(0)}, ${this._hoverLight.y.toFixed(0)}) ` +
+                    `r=${this._hoverLight.radius} lightsActive=${this.lights.active} ` +
+                    `lightsCount=${this.lights.lights?.length ?? '?'}`)
+      }
+    })
+
+    // Scene teardown: cancel tweens, destroy the hover light and floor.
+    // `this.lights` is scene-scoped and torn down by Phaser automatically;
+    // the 'update' listener is cleaned up by the scene emitter lifecycle.
+    this.events.once('shutdown', () => {
+      this.tweens.killTweensOf(this._lightState)
+      if (this._hoverLight) {
+        // Light objects are removed via LightsManager.removeLight (not destroy).
+        try { this.lights?.removeLight?.(this._hoverLight) } catch (_) { /* scene tearing down */ }
+        this._hoverLight = null
+      }
+      if (this._litSprite) {
+        try { this._litSprite.setLighting(false) } catch (_) { /* sprite already gone */ }
+        this._litSprite = null
+      }
+      this._lightState.baseIntensity = 0
+      this._lightState.flickerTime   = 0
+      console.log('[Commander] Lighting teardown complete')
+    })
 
     const choices   = this._fixedCommanders ?? pickRandomCommanders(3)
     const remaining = getCommanders().filter(c => !choices.some(ch => ch.id === c.id))
@@ -70,10 +138,89 @@ export class CommanderSelectScene extends Scene {
         subtitleForItem:   (item) => `#${item.spriteIndex}`,
         spriteScale:       2,
         onSpriteCreated:   (sprite) => attachOutlineToSprite(sprite),
+        // Featured-only: enable Light2D shading on the three featured
+        // commanders so the hover point light can sculpt them dimensionally.
+        // Panel + preview sprites stay flat (no lighting) to avoid ambient
+        // affecting trophy-wall art that the user isn't interacting with.
+        onFeaturedSpriteCreated: (sprite, item) => {
+          if (!this.sys.renderer.gl) return
+          // Featured sprites switch into Light2D on hover. Their outline filter
+          // path fights that render path, so keep outlines on panel/preview art
+          // only and clear them on the featured trio.
+          sprite.filters?.internal?.clear?.()
+          const hasNormal = !!(sprite.texture?.dataSource && sprite.texture.dataSource[0])
+          console.log(`[Commander] featured sprite ${item?.name}: lighting=${sprite.lighting} ` +
+                      `hasNormalMap=${hasNormal} texKey=${sprite.texture?.key}`)
+        },
       },
       actions: {
         onSelectionChange: (_item) => {
           // Selection state is reflected by panel gold border + EMBARK button enablement
+        },
+        onFeaturedHoverEnter: (_i, item, sprite) => {
+          if (!sprite || !this.sys.renderer.gl) return
+          if (this._litSprite && this._litSprite !== sprite) {
+            this._litSprite.setLighting(false)
+          }
+          this._litSprite = sprite
+          sprite.setLighting(true)
+          // Transform the sprite's LOCAL torso point (40% down from top)
+          // through its full world matrix. Walks parent container scale,
+          // view tweens, and origin offsets automatically. Torso anchor
+          // puts the whole silhouette inside the hot spot instead of just
+          // the feet.
+          const m          = sprite.getWorldTransformMatrix()
+          const localTorsoX = (sprite.width  ?? 0) * (0.5 - (sprite.originX ?? 0.5))
+          const localTorsoY = (sprite.height ?? 0) * (0.4 - (sprite.originY ?? 0.5))
+          const torso       = m.transformPoint(localTorsoX, localTorsoY, { x: 0, y: 0 })
+
+          // TEMP debug: remove after visual calibration.
+          console.log(`[Commander] hover ${item?.name} torso=${torso.x.toFixed(0)},${torso.y.toFixed(0)} ` +
+                      `light=${this._hoverLight ? 'reposition' : 'create'}`)
+
+          if (!this._hoverLight) {
+            // lights.addLight(x, y, radius, rgbInt, intensity, z)
+            // Warm firelight (less saturated than pure orange), radius 270
+            // (covers full commander silhouette from torso anchor on
+            // normally-proportioned sprites). z=28 keeps a grazing angle
+            // so per-pixel normals cast distinct shading instead of a
+            // flat top-down wash.
+            this._hoverLight = this.lights.addLight(torso.x, torso.y, 270, 0xffb060, 0, 28)
+            console.log(`[Commander] addLight OK: obj=${!!this._hoverLight} ` +
+                        `color=${JSON.stringify(this._hoverLight?.color)} ` +
+                        `radius=${this._hoverLight?.radius}`)
+          } else {
+            this._hoverLight.x = torso.x
+            this._hoverLight.y = torso.y
+          }
+
+          // Tween the BASE intensity on the plain _lightState object.
+          // Target 1.7 — clearly sculpted warm accent against 0x606068
+          // ambient without clipping highlights to white.
+          this.tweens.killTweensOf(this._lightState)
+          this.tweens.add({
+            targets:       this._lightState,
+            baseIntensity: 1.9,
+            duration:      220,
+            ease:          'Sine.easeOut',
+          })
+        },
+        onFeaturedHoverLeave: () => {
+          if (!this._hoverLight) return
+          const spriteToDisable = this._litSprite
+          this.tweens.killTweensOf(this._lightState)
+          this.tweens.add({
+            targets:       this._lightState,
+            baseIntensity: 0,
+            duration:      220,
+            ease:          'Sine.easeIn',
+            onComplete:    () => {
+              if (this._litSprite === spriteToDisable) {
+                try { spriteToDisable?.setLighting(false) } catch (_) { /* sprite already gone */ }
+                this._litSprite = null
+              }
+            },
+          })
         },
         onConfirm: (item) => {
           console.log(`[Commander] Embarking with ${item.name} (${item.id})`)

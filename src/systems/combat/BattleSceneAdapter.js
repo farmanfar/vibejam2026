@@ -1,35 +1,29 @@
-// BattleSceneAdapter — bridges CombatCore (headless alpha engine) into the
+// BattleSceneAdapter bridges CombatCore (headless alpha engine) into the
 // BattleScene step playback loop.
 //
-//   import { runAlphaBattle } from '../systems/combat/BattleSceneAdapter.js'
-//   const result = runAlphaBattle(playerTeam, enemyTeam, seed)
-//
-// Output shape matches what BattleScene already consumes from BattleEngine:
+// Output shape matches what BattleScene consumes from the legacy engine:
 //
 //   {
-//     won:         boolean,
-//     log:         Array<{
-//                    message: string,
-//                    playerHp?: number[],  // indexed by ORIGINAL team position
-//                    enemyHp?:  number[],
-//                    actorInstanceId?: string,
-//                    targetInstanceId?: string,
-//                    animTag?: 'attack' | 'death' | 'special attack',
-//                  }>,
-//     playerTeam,  // pass-through
+//     won: boolean,
+//     log: Array<{
+//       message: string,
+//       playerHp?: number[],
+//       enemyHp?: number[],
+//       playerAtk?: number[],
+//       enemyAtk?: number[],
+//       actorInstanceId?: string,
+//       targetInstanceId?: string,
+//       animTag?: 'attack' | 'death' | 'special attack',
+//       flavorEvents?: Array<{ type, targetInstanceId, text }>
+//     }>,
+//     playerTeam,
 //     enemyTeam,
 //   }
 //
 // Stable identity: each team entry is stamped with a `_instanceId` before the
 // sim runs. CombatCore copies it onto the instantiated unit (instanceId field)
-// and emits it on all relevant log entries (`attackerInstanceId`,
-// `targetInstanceId`, `instanceId`). After compaction a sprite lookup by
-// instanceId still resolves correctly — the slot index is unreliable.
-//
-// `playerHp[]` / `enemyHp[]` are keyed by the unit's ORIGINAL position in the
-// input team array (the same index BattleScene used when laying out sprites).
-// A shadow HP map keyed by instanceId mirrors CombatCore's damage emissions
-// and is projected back into the original-order arrays at each emit point.
+// and emits it on all relevant log entries. After compaction a sprite lookup
+// by instanceId still resolves correctly; slot index is unreliable.
 
 import { CombatCore } from './CombatCore.js';
 import { buildRegistry } from './index.js';
@@ -61,7 +55,6 @@ function toCoreDef(w) {
 }
 
 function humanizeAbilityKind(kind) {
-  // 'heart_slam_start' -> 'heart slam'
   return String(kind)
     .replace(/_(start|trigger|repositioned|success|aoe|final)$/i, '')
     .replace(/_/g, ' ')
@@ -70,7 +63,7 @@ function humanizeAbilityKind(kind) {
 
 export function runAlphaBattle(playerTeam, enemyTeam, seed = (Date.now() & 0xffffffff)) {
   console.log(
-    `[AlphaAdapter] runAlphaBattle — ${playerTeam.length} vs ${enemyTeam.length}, seed=${seed}`,
+    `[AlphaAdapter] runAlphaBattle - ${playerTeam.length} vs ${enemyTeam.length}, seed=${seed}`,
   );
 
   const p = playerTeam.map((w, i) => ({ ...w, _instanceId: `p${i}` }));
@@ -84,10 +77,14 @@ export function runAlphaBattle(playerTeam, enemyTeam, seed = (Date.now() & 0xfff
       enemy: e.map(toCoreDef),
     });
   } catch (err) {
-    console.error('[AlphaAdapter] CombatCore.run threw — falling back to empty result:', err);
+    console.error('[AlphaAdapter] CombatCore.run threw - falling back to empty result:', err);
     return {
       won: false,
       log: [{ message: 'BATTLE ERROR' }],
+      rawLog: [],
+      seed: null,
+      winner: 'draw',
+      rounds: 0,
       playerTeam,
       enemyTeam,
     };
@@ -99,13 +96,19 @@ export function runAlphaBattle(playerTeam, enemyTeam, seed = (Date.now() & 0xfff
     `[AlphaAdapter] Translated ${result.log.entries.length} raw log entries -> ${translated.length} visual steps; winner=${result.winner}`,
   );
 
-  return { won, log: translated, playerTeam, enemyTeam };
+  return {
+    won,
+    log: translated,
+    rawLog: result.log.entries,
+    seed,
+    winner: result.winner,
+    rounds: result.rounds,
+    playerTeam,
+    enemyTeam,
+  };
 }
 
-// ---- log translation ------------------------------------------------------
-
 function translateLog(rawEntries, playerTeamStamped, enemyTeamStamped) {
-  // Lookup tables — instanceId -> { team, originalIndex, unitDef }.
   const byInstance = new Map();
   playerTeamStamped.forEach((w, i) => {
     byInstance.set(w._instanceId, { team: 'player', index: i, unit: w });
@@ -114,12 +117,10 @@ function translateLog(rawEntries, playerTeamStamped, enemyTeamStamped) {
     byInstance.set(w._instanceId, { team: 'enemy', index: i, unit: w });
   });
 
-  // Shadow HP arrays keyed by ORIGINAL position. HP is allowed to hit 0
-  // briefly (between lethal damage and faint_final) without committing a
-  // visual death — the adapter only commits on `faint_final`, which is
-  // AFTER Death-Defy / Monster reanimate have had a chance to restore HP.
   const playerHp = playerTeamStamped.map((w) => w.hp);
   const enemyHp = enemyTeamStamped.map((w) => w.hp);
+  const playerAtk = playerTeamStamped.map((w) => w.atk);
+  const enemyAtk = enemyTeamStamped.map((w) => w.atk);
 
   const applyHp = (instanceId, hpAfter) => {
     const lookup = byInstance.get(instanceId);
@@ -128,198 +129,340 @@ function translateLog(rawEntries, playerTeamStamped, enemyTeamStamped) {
     arr[lookup.index] = Math.max(0, hpAfter);
   };
 
-  const snapshotHp = () => ({
+  const applyAtk = (instanceId, atkAfter) => {
+    const lookup = byInstance.get(instanceId);
+    if (!lookup) return;
+    const arr = lookup.team === 'player' ? playerAtk : enemyAtk;
+    arr[lookup.index] = Math.max(0, atkAfter);
+  };
+
+  const snapshotStats = () => ({
     playerHp: playerHp.slice(),
     enemyHp: enemyHp.slice(),
+    playerAtk: playerAtk.slice(),
+    enemyAtk: enemyAtk.slice(),
   });
 
   const nameOf = (instanceId) => {
-    const l = byInstance.get(instanceId);
-    return l?.unit?.name ?? instanceId ?? '?';
+    const lookup = byInstance.get(instanceId);
+    return lookup?.unit?.name ?? instanceId ?? '?';
   };
 
   const steps = [];
   const unhandled = new Set();
+  let battleInitPending = false;
+  let tick = null;
 
-  // Some log kinds need coalescing — an `attack` entry is immediately followed
-  // by a `damage` entry for the same pair. We peek/merge to emit a single
-  // visual step with both the message and the HP snapshot.
+  const emitFlavor = (message, flavorEvent = null) => {
+    if (tick) {
+      tick.flavorMessages.push(message);
+      if (flavorEvent) tick.flavorEvents.push(flavorEvent);
+      return;
+    }
+    const step = { message, ...snapshotStats() };
+    if (flavorEvent) step.flavorEvents = [flavorEvent];
+    steps.push(step);
+  };
+
+  const emitBattleInit = () => {
+    if (!battleInitPending) return;
+    steps.push({
+      message: 'BATTLE START',
+      flavorEvents: [],
+      ...snapshotStats(),
+    });
+    battleInitPending = false;
+  };
+
+  const openTick = (tickId) => {
+    tick = {
+      tickId,
+      attacks: [],
+      flavorMessages: [],
+      flavorEvents: [],
+      postSteps: [],
+    };
+  };
+
+  const flushTick = () => {
+    if (!tick) return;
+    let playerAttack = null;
+    let enemyAttack = null;
+    for (const attack of tick.attacks) {
+      if (!attack.actorInstanceId) continue;
+      if (attack.actorInstanceId.startsWith('p') && !playerAttack) playerAttack = attack;
+      else if (attack.actorInstanceId.startsWith('e') && !enemyAttack) enemyAttack = attack;
+    }
+    const parts = [];
+    if (playerAttack) parts.push(playerAttack.message);
+    if (enemyAttack) parts.push(enemyAttack.message);
+    const message = parts.join('   |   ') || `TICK ${tick.tickId}`;
+    steps.push({
+      type: 'tick',
+      tickId: tick.tickId,
+      message,
+      playerAttack,
+      enemyAttack,
+      flavorMessages: tick.flavorMessages.slice(),
+      flavorEvents: tick.flavorEvents.slice(),
+      ...snapshotStats(),
+    });
+    // Group all deaths from this tick into one death_batch step so the
+    // renderer can play every death animation in parallel. Non-death post
+    // steps (death-defy revives, reanimate_success, etc.) keep firing in
+    // their original order.
+    const tickDeaths = [];
+    for (const post of tick.postSteps) {
+      if (post.diedInstanceId) tickDeaths.push(post);
+      else steps.push(post);
+    }
+    if (tickDeaths.length > 0) {
+      steps.push({
+        type: 'death_batch',
+        tickId: tick.tickId,
+        deaths: tickDeaths,
+        message: tickDeaths.map((d) => d.message).join('   |   '),
+        ...snapshotStats(),
+      });
+    }
+    tick = null;
+  };
+
   for (let i = 0; i < rawEntries.length; i++) {
     const entry = rawEntries[i];
     const kind = entry.kind;
 
     switch (kind) {
-      case 'battle_init': {
-        steps.push({
-          message: 'BATTLE START',
-          ...snapshotHp(),
-        });
+      case 'battle_init':
+        battleInitPending = true;
         break;
-      }
       case 'battle_start':
-        // suppressed — covered by 'battle_init' visual
         break;
       case 'round_start':
-        if (entry.round > 1) {
-          steps.push({ message: `ROUND ${entry.round}`, ...snapshotHp() });
-        }
+        if (tick) flushTick();
+        emitBattleInit();
+        openTick(entry.round);
         break;
       case 'coin_flip':
       case 'action_start':
         break;
+      case 'knight_honorbound_init':
+      case 'grunt_synergy_init':
+        if (entry.instanceId) {
+          if (typeof entry.newHp === 'number') applyHp(entry.instanceId, entry.newHp);
+          if (typeof entry.newAtk === 'number') applyAtk(entry.instanceId, entry.newAtk);
+        }
+        break;
+      case 'berserker_synergy_init':
+        if (entry.instanceId && typeof entry.newAtk === 'number') {
+          applyAtk(entry.instanceId, entry.newAtk);
+        }
+        break;
       case 'attack': {
-        // Reflect hpAfter on the target.
         if (typeof entry.hpAfter === 'number' && entry.targetInstanceId) {
           applyHp(entry.targetInstanceId, entry.hpAfter);
         }
         const atkName = nameOf(entry.attackerInstanceId);
         const tgtName = nameOf(entry.targetInstanceId);
         const dmgTxt = entry.blocked ? 'BLOCKED' : `${entry.damage}`;
-        steps.push({
+        const attack = {
           message: `${atkName} -> ${tgtName} (${dmgTxt})`,
           actorInstanceId: entry.attackerInstanceId ?? null,
           targetInstanceId: entry.targetInstanceId ?? null,
           damage: entry.damage ?? 0,
           blocked: !!entry.blocked,
           animTag: 'attack',
-          ...snapshotHp(),
-        });
-        break;
-      }
-      case 'damage': {
-        if (typeof entry.hpAfter === 'number' && entry.targetInstanceId) {
-          applyHp(entry.targetInstanceId, entry.hpAfter);
-        }
-        const tgtName = nameOf(entry.targetInstanceId);
-        steps.push({
-          message: `${tgtName} takes ${entry.damage}`,
-          targetInstanceId: entry.targetInstanceId ?? null,
-          ...snapshotHp(),
-        });
-        break;
-      }
-      case 'reactive_armor_roll': {
-        if (entry.proc) {
-          const label = entry.targetInstanceId
-            ? nameOf(entry.targetInstanceId)
-            : (entry.target ?? 'unit');
+        };
+        if (tick) {
+          tick.attacks.push(attack);
+        } else {
           steps.push({
-            message: `${label} armored!`,
-            ...snapshotHp(),
+            ...attack,
+            flavorEvents: [],
+            ...snapshotStats(),
           });
         }
         break;
       }
+      case 'damage':
+        if (typeof entry.hpAfter === 'number' && entry.targetInstanceId) {
+          applyHp(entry.targetInstanceId, entry.hpAfter);
+        }
+        emitFlavor(`${nameOf(entry.targetInstanceId)} takes ${entry.damage}`);
+        break;
+      case 'reactive_armor_roll':
+        if (entry.proc) {
+          const label = entry.targetInstanceId ? nameOf(entry.targetInstanceId) : (entry.target ?? 'unit');
+          emitFlavor(`${label} armored!`, {
+            type: 'armor',
+            targetInstanceId: entry.targetInstanceId ?? null,
+            text: 'ARMORED',
+          });
+        }
+        break;
       case 'resonance_stack': {
-        const label = entry.targetInstanceId
-          ? nameOf(entry.targetInstanceId)
-          : (entry.target ?? 'unit');
-        steps.push({
-          message: `${label} resonance ${entry.stacks}`,
+        if (entry.targetInstanceId && typeof entry.newAtk === 'number') {
+          applyAtk(entry.targetInstanceId, entry.newAtk);
+        }
+        const label = entry.targetInstanceId ? nameOf(entry.targetInstanceId) : (entry.target ?? 'unit');
+        emitFlavor(`${label} resonance ${entry.stacks}`, {
+          type: 'resonance',
+          targetInstanceId: entry.targetInstanceId ?? null,
+          text: '+1 ATK',
         });
         break;
       }
+      case 'folk_death_buff':
+        if (entry.recipientInstanceId && typeof entry.newAtk === 'number') {
+          applyAtk(entry.recipientInstanceId, entry.newAtk);
+        }
+        emitFlavor(`${nameOf(entry.recipientInstanceId ?? entry.recipient)} +1 ATK`, {
+          type: 'buff',
+          targetInstanceId: entry.recipientInstanceId ?? null,
+          text: '+1 ATK',
+        });
+        break;
+      case 'reactive_reinforcement_proc':
+        if (entry.instanceId && typeof entry.newAtk === 'number') {
+          applyAtk(entry.instanceId, entry.newAtk);
+        }
+        emitFlavor(`${nameOf(entry.instanceId ?? entry.unit)} +1 ATK`, {
+          type: 'buff',
+          targetInstanceId: entry.instanceId ?? null,
+          text: '+1 ATK',
+        });
+        break;
+      case 'sacrifice_pass_proc':
+        if (entry.recipientInstanceId && typeof entry.newAtk === 'number') {
+          applyAtk(entry.recipientInstanceId, entry.newAtk);
+        }
+        emitFlavor(`${nameOf(entry.recipientInstanceId ?? entry.recipient)} +1 ATK`, {
+          type: 'buff',
+          targetInstanceId: entry.recipientInstanceId ?? null,
+          text: '+1 ATK',
+        });
+        break;
       case 'apply_poison':
+      case 'set_poison': {
+        const applied = Math.max(0, (entry.after ?? 0) - (entry.before ?? 0));
+        const label = nameOf(entry.targetInstanceId ?? entry.target);
+        emitFlavor(
+          `${label} poison ${entry.after ?? entry.stacks ?? entry.amount ?? 1}`,
+          applied > 0
+            ? {
+                type: 'poison',
+                targetInstanceId: entry.targetInstanceId ?? null,
+                text: `+${applied}`,
+              }
+            : null,
+        );
+        break;
+      }
       case 'poison_tick': {
-        const n = entry.stacks ?? entry.amount ?? 1;
-        steps.push({
-          message: `${nameOf(entry.targetInstanceId ?? entry.target)} poison ${n}`,
-          ...snapshotHp(),
+        if (typeof entry.hpAfter === 'number' && entry.targetInstanceId) {
+          applyHp(entry.targetInstanceId, entry.hpAfter);
+        }
+        const label = nameOf(entry.targetInstanceId ?? entry.target);
+        emitFlavor(`${label} poison ${entry.stacks ?? entry.amount ?? 1}`, {
+          type: 'poison',
+          targetInstanceId: entry.targetInstanceId ?? null,
+          text: `-${entry.damage ?? 0}`,
         });
         break;
       }
+      case 'cascade_bounce':
+        emitFlavor(`${nameOf(entry.targetInstanceId ?? entry.target)} toxic cascade`, {
+          type: 'poison',
+          targetInstanceId: entry.targetInstanceId ?? null,
+          text: 'CASCADE',
+        });
+        break;
       case 'faint_start':
-        // Suppressed. CombatCore fires faint_start BEFORE interrupt
-        // handlers (Death-Defy, Monster reanimate) run. If we committed
-        // the death here we'd desync the UI when those handlers save the
-        // unit. The commit lives on `faint_final` instead, which is
-        // emitted only for units that are still dying at end-of-batch.
         break;
       case 'faint_final': {
-        // Commit death: CombatCore has finished the batch and this unit
-        // was NOT saved. Dim the sprite, play the death anim, leave HP
-        // at 0 in the shadow map.
         applyHp(entry.instanceId, 0);
-        steps.push({
+        const deathStep = {
           message: `${nameOf(entry.instanceId)} destroyed!`,
           diedInstanceId: entry.instanceId ?? null,
           targetInstanceId: entry.instanceId ?? null,
           animTag: 'death',
-          ...snapshotHp(),
-        });
+          flavorEvents: [],
+          ...snapshotStats(),
+        };
+        if (tick) tick.postSteps.push(deathStep);
+        else steps.push(deathStep);
         break;
       }
       case 'compact':
-        // internal bookkeeping — suppressed (sprite identity by instanceId,
-        // so compaction does not affect the visual layout).
         break;
       case 'round_end':
+        flushTick();
         break;
       case 'death_defy_trigger': {
-        // Archer saved — restore shadow HP from the engine's reported
-        // newHp (no hardcoded constant; tracks whatever value the ability
-        // handler assigned). Keeps the UI correct if the revive value
-        // changes later.
         const restoredHp = typeof entry.newHp === 'number' ? entry.newHp : 1;
         if (entry.instanceId) applyHp(entry.instanceId, restoredHp);
-        steps.push({
-          message: `${nameOf(entry.instanceId ?? entry.unit)} — death defying!`,
+        const reviveStep = {
+          message: `${nameOf(entry.instanceId ?? entry.unit)} - death defying!`,
           revivedInstanceId: entry.instanceId ?? null,
-          ...snapshotHp(),
-        });
+          flavorEvents: [{
+            type: 'buff',
+            targetInstanceId: entry.instanceId ?? null,
+            text: 'DEATH DEFY',
+          }],
+          ...snapshotStats(),
+        };
+        if (tick) tick.postSteps.push(reviveStep);
+        else steps.push(reviveStep);
         break;
       }
       case 'death_defy_repositioned':
-        // Text/animation already emitted by the trigger step above.
-        break;
       case 'death_defy_aoe':
         break;
-      case 'heart_slam_start': {
-        steps.push({
-          message: `${nameOf(entry.instanceId ?? entry.unit)} — heart slam!`,
-          ...snapshotHp(),
-        });
+      case 'heart_slam_start':
+        emitFlavor(`${nameOf(entry.instanceId ?? entry.unit)} - heart slam!`);
         break;
-      }
       case 'reanimate_success': {
-        // Monster reanimate: unit was dying but is restored to full HP
-        // before faint_final commits. Restore shadow HP so the sprite
-        // stays alive in the visual timeline.
         if (entry.instanceId) applyHp(entry.instanceId, entry.newHp ?? 1);
-        steps.push({
+        const reviveStep = {
           message: `${nameOf(entry.instanceId ?? entry.unit)} reanimates!`,
           revivedInstanceId: entry.instanceId ?? null,
-          ...snapshotHp(),
-        });
+          flavorEvents: [{
+            type: 'buff',
+            targetInstanceId: entry.instanceId ?? null,
+            text: 'REANIMATE',
+          }],
+          ...snapshotStats(),
+        };
+        if (tick) tick.postSteps.push(reviveStep);
+        else steps.push(reviveStep);
         break;
       }
       case 'reanimate_roll':
       case 'reanimate_failed_slot_full':
       case 'reanimate_failed_slot_full_race':
-        // Non-commit rolls; suppressed.
         break;
-      case 'battle_end': {
+      case 'battle_end':
+        emitBattleInit();
+        if (tick) flushTick();
         steps.push({
           message: entry.winner === 'player' ? 'VICTORY' : entry.winner === 'enemy' ? 'DEFEAT' : 'DRAW',
-          ...snapshotHp(),
+          flavorEvents: [],
+          ...snapshotStats(),
         });
         break;
-      }
-      default: {
-        // Generic ability_*_start style — humanize and surface as text.
+      default:
         if (/_start$/i.test(kind) && (entry.unit || entry.instanceId)) {
-          steps.push({
-            message: `${nameOf(entry.instanceId ?? entry.unit)} — ${humanizeAbilityKind(kind)}`,
-            ...snapshotHp(),
-          });
+          emitFlavor(`${nameOf(entry.instanceId ?? entry.unit)} - ${humanizeAbilityKind(kind)}`);
         } else if (!unhandled.has(kind)) {
           unhandled.add(kind);
           console.debug('[AlphaAdapter] unhandled log kind', kind);
         }
         break;
-      }
     }
   }
+
+  emitBattleInit();
+  if (tick) flushTick();
 
   return steps;
 }

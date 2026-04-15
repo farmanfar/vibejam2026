@@ -21,8 +21,10 @@ export function applyPoison(target, stacks, ctx, source = null) {
   target.statuses.poison = after;
   ctx.log.push('apply_poison', {
     source: source ? source.unitId : null,
+    sourceInstanceId: source ? source.instanceId : null,
     sourceSlot: source ? source.slot : null,
     target: target.unitId,
+    targetInstanceId: target.instanceId,
     targetSlot: target.slot,
     targetTeam: target.team,
     before,
@@ -39,8 +41,10 @@ export function setPoison(target, stacks, ctx, source = null) {
   target.statuses.poison = after;
   ctx.log.push('set_poison', {
     source: source ? source.unitId : null,
+    sourceInstanceId: source ? source.instanceId : null,
     sourceSlot: source ? source.slot : null,
     target: target.unitId,
+    targetInstanceId: target.instanceId,
     targetSlot: target.slot,
     targetTeam: target.team,
     before,
@@ -63,6 +67,7 @@ export function tickPoison(ctx, batch) {
       unit.hp -= dmg;
       ctx.log.push('poison_tick', {
         target: unit.unitId,
+        targetInstanceId: unit.instanceId,
         targetSlot: unit.slot,
         targetTeam: unit.team,
         stacks,
@@ -112,9 +117,11 @@ export function rollToxicCascade(dying, ctx, batch) {
   nextEnemy.statuses.poison = after;
   ctx.log.push('cascade_bounce', {
     source: dying.unitId,
+    sourceInstanceId: dying.instanceId,
     sourceSlot: dying.slot,
     sourceTeam: dying.team,
     target: nextEnemy.unitId,
+    targetInstanceId: nextEnemy.instanceId,
     targetSlot: nextEnemy.slot,
     targetTeam: nextEnemy.team,
     transferredStacks: stacks,

@@ -16,6 +16,7 @@ const NAME_STOP_WORDS = new Set([
 ]);
 
 const DEFAULT_CLIP_PRIORITY = ['idle', 'walk', 'run', 'attack', 'hurt', 'death'];
+const SHADOW_LAYER_RE = /shadow/i;
 
 function loadJson(filePath) {
   return JSON.parse(fs.readFileSync(filePath, 'utf8'));
@@ -157,6 +158,53 @@ function runAseprite(exePath, args) {
     stderr: result.stderr?.trim() ?? '',
     error: result.error?.message ?? '',
   };
+}
+
+function listShadowLayers(exePath, projectPath) {
+  const result = spawnSync(exePath, ['--batch', '--list-layer-hierarchy', projectPath], {
+    encoding: 'utf8',
+    windowsHide: true,
+  });
+
+  if (result.status !== 0) {
+    const details = [result.error?.message, result.stderr?.trim(), result.stdout?.trim()].filter(Boolean).join(' | ');
+    throw new Error(`Failed to list layers for ${projectPath}${details ? `: ${details}` : '.'}`);
+  }
+
+  const matched = [];
+  const seen = new Set();
+  const groupStack = [];
+
+  for (const rawLine of (result.stdout ?? '').split(/\r?\n/)) {
+    if (!rawLine.trim()) continue;
+
+    const indent = rawLine.match(/^\s*/)?.[0].length ?? 0;
+    const trimmed = rawLine.trim();
+    const isGroup = trimmed.endsWith('/');
+    const name = isGroup ? trimmed.slice(0, -1).trim() : trimmed;
+    if (!name) continue;
+
+    while (groupStack.length && indent <= groupStack[groupStack.length - 1].indent) {
+      groupStack.pop();
+    }
+
+    const parentPath = groupStack.length ? groupStack[groupStack.length - 1].fullPath : '';
+    const fullPath = parentPath ? `${parentPath}/${name}` : name;
+
+    if (SHADOW_LAYER_RE.test(name)) {
+      for (const candidate of [fullPath, name]) {
+        if (seen.has(candidate)) continue;
+        seen.add(candidate);
+        matched.push(candidate);
+      }
+    }
+
+    if (isGroup) {
+      groupStack.push({ indent, fullPath });
+    }
+  }
+
+  return matched;
 }
 
 function chooseDefaultClip(frameTags) {
@@ -336,6 +384,23 @@ function main() {
       return baseEntry;
     }
 
+    let shadowLayers = [];
+    try {
+      shadowLayers = listShadowLayers(asepriteExe, resolved.projectPath);
+    } catch (error) {
+      baseEntry.status = 'export_error';
+      baseEntry.errors.push(String(error.message));
+      report.totals.exportErrors++;
+      report.problems.exportErrors.push({
+        id: unitSource.id,
+        error: String(error.message),
+      });
+      return baseEntry;
+    }
+
+    const shadowIgnoreArgs = shadowLayers.flatMap((name) => ['--ignore-layer', name]);
+    console.log(`[Units] ${unitSource.id} ignoring layers: ${shadowLayers.join(', ') || '(none)'}`);
+
     const runtimeDir = path.join(runtimeRoot, unitSource.id);
     fs.rmSync(runtimeDir, { recursive: true, force: true });
     ensureDir(runtimeDir);
@@ -358,6 +423,7 @@ function main() {
       '--trim',
       '--filename-format',
       '{frame}',
+      ...shadowIgnoreArgs,
     ]);
 
     if (!atlasExport.ok || !fs.existsSync(sheetPath) || !fs.existsSync(metaPath)) {
@@ -388,6 +454,7 @@ function main() {
       resolved.projectPath,
       '--frame-range',
       `${parsed.defaultFrameIndex},${parsed.defaultFrameIndex}`,
+      ...shadowIgnoreArgs,
       '--save-as',
       portraitPath,
     ]);
