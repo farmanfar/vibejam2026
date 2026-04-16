@@ -29,7 +29,7 @@ Let the user know any time you utilize the server for testing purposes.
 
 ## Design Direction
 
-- **SAP-style economy.** 10 credits/round flat. 1 credit reroll. Full refund same shop phase, ceil(cost/2) after battle. No loss penalty.
+- **SAP-style economy.** 10 credits/round flat. 1 credit reroll. Flat 1 credit refund via merchant drag-to-sell zone. No loss penalty.
 - **Dual-tag synergies (Underlords-style).** Faction synergies give stat bonuses. Class synergies give mechanical effects (armor, splash, double-attack, taunt, heal).
 - **Star levels (TFT combine).** 2 copies → 2-star, 4 copies → 3-star. +1/+1 per star (SAP flat scaling). Legendaries cut for now.
 - **Commanders.** Random at run start. Baseline: reduce synergy thresholds (never below 2). Each unique. Swap offered every 3 wins by merchant for 10 credits.

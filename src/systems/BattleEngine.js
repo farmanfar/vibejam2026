@@ -61,7 +61,7 @@ export class BattleEngine {
 
       if (eAttacker.currentHp <= 0) {
         log.push({
-          message: `${eAttacker.name} destroyed!`,
+          message: `${eAttacker.name} falls!`,
           playerHp: pTeam.map(w => w.currentHp),
           enemyHp: eTeam.map(w => w.currentHp),
         });

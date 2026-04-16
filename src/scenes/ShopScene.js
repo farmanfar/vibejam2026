@@ -1,4 +1,4 @@
-import { Scene, Geom } from 'phaser'
+import { Scene } from 'phaser'
 import {
   Theme, FONT_KEY, PixelButton, PixelLabel, PixelPanel, WarriorCard,
 } from '../ui/index.js'
@@ -9,32 +9,33 @@ import { getEnabledAlphaWarriors as getEnabledWarriors } from '../config/alpha-u
 import { finalizeCaptureScene } from '../systems/CaptureSupport.js'
 import { LayoutEditor } from '../systems/LayoutEditor.js'
 import { logShopRound, logShopBuy, logShopSell, logShopReroll, logShopCombine } from '../systems/PlaytestLogger.js'
-import { getUnitPortraitRef } from '../rendering/UnitArt.js'
 import { SceneCrt } from '../rendering/SceneCrt.js'
 import { getMerchantIdleAnimKey } from '../config/merchants.js'
+import { pulseLevelUp } from '../rendering/OutlineController.js'
 
-const BENCH_START_X = 50
-const BENCH_Y = 390
-const BENCH_SLOT_W = 56
-const BENCH_SLOT_PITCH = 72
-const BENCH_HIT_SLOP_Y = 12
+// Team card row
+const TEAM_Y        = 122
+const TEAM_CARD_XS  = [208, 344, 480, 616, 752]  // visual x per slot [4,3,2,1,0]
+// slot → visual index: visualIdx = 4 - slotIndex
+// slot 0 (front-of-line) = rightmost visual (x=752)
+
+// Shop card row
+const SHOP_Y        = 420   // card rest Y; shelf top at 420; hover rises to 340
+const SHOP_CARD_XS  = [248, 384, 520, 656]
+
+// Columns
+const LEFT_COL_X    = 90
+const MERCHANT_X    = 870
+const MERCHANT_Y    = 160   // merchantStrip container anchor
+const SELL_ZONE_Y_OFFSET = 200  // below merchant anchor inside merchantStrip
+
+// Layout lines
+const SYNERGY_Y     = 198
+const DIVIDER_Y     = 220
+
+// Game rules
+const MAX_STARS       = 3
 const MAX_BENCH_SLOTS = 5
-// Forgiving click/drag hit area — larger than the visual slot so clicks
-// don't need to be precise. Width fills the full pitch; height adds
-// BENCH_HIT_SLOP_Y of slop above and below.
-const BENCH_HIT_W = BENCH_SLOT_PITCH
-const BENCH_HIT_H = BENCH_SLOT_W + BENCH_HIT_SLOP_Y * 2
-
-// TFT-style combine cap. 1* -> 2* -> 3*. Spec: "2 copies → 2-star, 4 copies → 3-star".
-const MAX_STARS = 3
-
-// Slot 0 is the front-of-line / first-to-act unit in combat (engine invariant
-// from CombatCore + position.js). The battle scene renders player slot 0 at
-// the right edge of the player group (closest to the enemy). To keep shop
-// left→right order matching battle left→right order, the bench renders
-// team[0] at the rightmost visual position. Visual index = MAX - 1 - slot.
-const _slotToBenchX = (slot) =>
-  BENCH_START_X + (MAX_BENCH_SLOTS - 1 - slot) * BENCH_SLOT_PITCH
 
 export class ShopScene extends Scene {
   constructor() {
@@ -50,7 +51,13 @@ export class ShopScene extends Scene {
     this.runId = data.runId
     this.commander = data.commander ?? null
     this.merchant = data.merchant ?? null
-    this.team = Array.isArray(data.team) ? data.team.map(w => ({ ...w })) : []
+
+    // Sparse 5-slot model for shop UI. BattleScene and external systems only see this.team (dense).
+    this.teamSlots = new Array(5).fill(null)
+    const incomingTeam = Array.isArray(data.team) ? data.team.map(w => ({ ...w })) : []
+    incomingTeam.forEach((w, i) => { if (i < 5) this.teamSlots[i] = w })
+    this.team = this.teamSlots.filter(Boolean)  // dense mirror, kept in sync
+
     this.availableWarriors = getEnabledWarriors()
     this.shop = new ShopManager(this.availableWarriors, this.stage)
     this.shopOffer = Array.isArray(data.shopOffer)
@@ -59,13 +66,27 @@ export class ShopScene extends Scene {
 
     this.teamCountLabel = null
     this.goldLabel = null
-    this.benchGroup = null
     this.cards = null
+    this._teamAnchors = null
+    this._teamCards = null
+    this._merchantStrip = null
+  }
 
-    this._selectedBenchIndex = null
-    this._draggingFromIndex = null
-    this._benchSlotRects = []
-    this.sellBtn = null
+  _syncDenseTeamFromSlots() {
+    this.team = this.teamSlots.filter(Boolean)
+  }
+
+  _countFilledSlots() {
+    return this.teamSlots.filter(Boolean).length
+  }
+
+  _findMatchingSlot(warrior) {
+    for (let i = 0; i < 5; i++) {
+      const u = this.teamSlots[i]
+      if (u && u.id === warrior.id && (u.stars ?? 1) === (warrior.stars ?? 1) && (u.stars ?? 1) < MAX_STARS)
+        return i
+    }
+    return null
   }
 
   create() {
@@ -77,13 +98,9 @@ export class ShopScene extends Scene {
 
     // CRT post-process (softGameplay — interactive scene)
     const crtController = SceneCrt.attach(this, 'softGameplay')
-    // The CRT barrel shader warps visible content but Phaser hit-testing
-    // uses unwarped source coords, so clicks near the edges land where
-    // source content WAS, not where the user sees it. Patch the input
-    // manager's transformPointer to apply the same forward-barrel formula
-    // to pointer.x/y so hit-testing lines up with what the user sees.
     this._installCrtPointerTransform(crtController)
 
+    // ── Header ───────────────────────────────────────────────
     const headerPanel = new PixelPanel(this, 0, 0, width, 32, {
       bg: Theme.panelBg, border: Theme.panelBorder,
     })
@@ -94,11 +111,17 @@ export class ShopScene extends Scene {
     stageLabel.setDepth(20)
     LayoutEditor.register(this, 'stageLabel', stageLabel, 12, 8)
 
-    this.goldLabel = new PixelLabel(this, width / 2, 8, `GOLD: ${this.gold}`, {
+    const teamHeaderLabel = new PixelLabel(this, width / 2 - 80, 8, 'TEAM', {
+      scale: 2, color: 'accent', align: 'center',
+    })
+    teamHeaderLabel.setDepth(20)
+    LayoutEditor.register(this, 'teamHeaderLabel', teamHeaderLabel, width / 2 - 80, 8)
+
+    this.goldLabel = new PixelLabel(this, width / 2 + 60, 8, `CREDITS: ${this.gold}`, {
       scale: 2, tint: Theme.warning, align: 'center',
     })
     this.goldLabel.setDepth(20)
-    LayoutEditor.register(this, 'goldLabel', this.goldLabel, width / 2, 8)
+    LayoutEditor.register(this, 'goldLabel', this.goldLabel, width / 2 + 60, 8)
 
     const livesLabel = new PixelLabel(this, width - 12, 8, `LIVES: ${3 - this.losses}`, {
       scale: 2, color: 'error', align: 'right',
@@ -106,16 +129,63 @@ export class ShopScene extends Scene {
     livesLabel.setDepth(20)
     LayoutEditor.register(this, 'livesLabel', livesLabel, width - 12, 8)
 
-    // Merchant display: chosen animated merchant (post-win-3) or the
-    // pre-selection placeholder texture from BootScene. The chosen merchant
-    // persists for the rest of the run via init(data).merchant threading.
-    let merchant
+    // ── Section labels ────────────────────────────────────────
+    const storeLabel = new PixelLabel(this, 12, SHOP_Y - 14, 'STORE', {
+      scale: 2, color: 'accent', align: 'left',
+    })
+    storeLabel.setDepth(8)
+    LayoutEditor.register(this, 'storeLabel', storeLabel, 12, SHOP_Y - 14)
+
+    // ── Team anchor containers ────────────────────────────────
+    // 5 persistent containers created once; _drawTeamRow() repopulates children.
+    // Anchors[visualIdx]: visualIdx 0 = leftmost (slot 4), visualIdx 4 = rightmost (slot 0).
+    this._teamAnchors = TEAM_CARD_XS.map((x, visualIdx) => {
+      const slotIndex = (MAX_BENCH_SLOTS - 1) - visualIdx  // slot 0=rightmost=visualIdx 4
+      const anchor = this.add.container(x, TEAM_Y)
+      anchor.setDepth(7)
+      LayoutEditor.register(this, `teamCard_${slotIndex}`, anchor, x, TEAM_Y)
+      return anchor
+    })
+    this._teamCards = new Array(5).fill(null)  // slotIndex → WarriorCard instance
+    this._drawTeamRow()
+
+    // ── Synergy label ─────────────────────────────────────────
+    this._drawSynergyStub()
+
+    // ── Divider ───────────────────────────────────────────────
+    // Registered with LayoutEditor per plan (explicit exception to "no decorative" rule)
+    this.dividerGraphic = this.add.graphics()
+    this.dividerGraphic.lineStyle(1, Theme.panelBorder, 0.8)
+    this.dividerGraphic.lineBetween(0, DIVIDER_Y, width, DIVIDER_Y)
+    this.dividerGraphic.setDepth(6)
+    LayoutEditor.register(this, 'divider', this.dividerGraphic, 0, 0)
+
+    // ── Card shelf ────────────────────────────────────────────
+    this.cardShelf = this.add.graphics()
+    this.cardShelf.fillStyle(Theme.panelBg, 1)
+    this.cardShelf.fillRect(0, SHOP_Y, width, height - SHOP_Y)
+    this.cardShelf.lineStyle(1, Theme.panelBorder, 1)
+    this.cardShelf.lineBetween(0, SHOP_Y, width, SHOP_Y)
+    this.cardShelf.setDepth(5)
+    LayoutEditor.register(this, 'cardShelf', this.cardShelf, 0, 0)
+
+    // ── Shop cards ────────────────────────────────────────────
+    this.cards = []
+    this._drawShopCards()
+
+    // ── Merchant strip ────────────────────────────────────────
+    const merchantStrip = this.add.container(MERCHANT_X, MERCHANT_Y)
+    merchantStrip.setDepth(8)
+    this._merchantStrip = merchantStrip
+    LayoutEditor.register(this, 'merchantStrip', merchantStrip, MERCHANT_X, MERCHANT_Y)
+
     let merchantQuoteText = '"Choose your warriors wisely..."'
+    let merchantSprite
     if (this.merchant && this.textures.exists(this.merchant.spriteKey)) {
-      merchant = this.add.sprite(width / 2, 72, this.merchant.spriteKey).setScale(1.5)
+      merchantSprite = this.add.sprite(0, 0, this.merchant.spriteKey).setScale(1.2)
       const animKey = getMerchantIdleAnimKey(this.merchant)
       try {
-        merchant.play(animKey)
+        merchantSprite.play(animKey)
         console.log(`[Shop] Merchant: ${this.merchant.name} playing '${animKey}'`)
       } catch (e) {
         console.error(`[Shop] sprite.play('${animKey}') failed for ${this.merchant.id}:`, e)
@@ -123,60 +193,56 @@ export class ShopScene extends Scene {
       merchantQuoteText = this.merchant.blurb ?? merchantQuoteText
     } else {
       const merchantKey = this.textures.exists('merchant') ? 'merchant' : 'merchant_placeholder'
-      merchant = this.add.image(width / 2, 72, merchantKey).setScale(1.5)
+      merchantSprite = this.add.image(0, 0, merchantKey).setScale(1.2)
       console.log(`[Shop] Merchant: none chosen yet, using placeholder`)
     }
-    merchant.setDepth(8)
-    LayoutEditor.register(this, 'merchant', merchant, width / 2, 72)
+    merchantStrip.add(merchantSprite)
 
-    const merchantQuote = new PixelLabel(this, width / 2, 115, merchantQuoteText, {
-      scale: 2, color: 'muted', align: 'center',
+    const merchantQuote = new PixelLabel(this, 0, 60, merchantQuoteText, {
+      scale: 1, color: 'muted', align: 'center',
     })
-    merchantQuote.setDepth(8)
-    LayoutEditor.register(this, 'merchantQuote', merchantQuote, width / 2, 115)
+    merchantStrip.add(merchantQuote)
 
-    this.cardGroup = this.add.group()
-    this._drawShopCards()
+    // Sell zone (hidden by default, shown during team drag)
+    this.sellZoneGraphic = this.add.graphics()
+    this.sellZoneGraphic.lineStyle(2, Theme.error, 0.6)
+    this.sellZoneGraphic.strokeRect(-62, SELL_ZONE_Y_OFFSET - 40, 124, 80)
+    this.sellZoneGraphic.setVisible(false)
+    merchantStrip.add(this.sellZoneGraphic)
 
-    // Card shelf — opaque panel that covers the bottom half of resting cards
-    // (depth 5: above cards at rest=1, below cards on hover=10). This is what
-    // creates the "half a card peeking" affordance.
-    this.cardShelf = this.add.graphics()
-    this.cardShelf.fillStyle(Theme.panelBg, 1)
-    this.cardShelf.fillRect(0, 230, width, 110)
-    this.cardShelf.lineStyle(1, Theme.panelBorder, 1)
-    this.cardShelf.lineBetween(0, 230, width, 230)
-    this.cardShelf.setDepth(5)
-    LayoutEditor.register(this, 'cardShelf', this.cardShelf, 0, 0)
+    this.sellLabel = new PixelLabel(this, 0, SELL_ZONE_Y_OFFSET, 'SELL', {
+      scale: 2, color: 'error', align: 'center',
+    })
+    this.sellLabel.setVisible(false)
+    merchantStrip.add(this.sellLabel)
 
-    const teamPanel = new PixelPanel(this, 16, 340, width - 32, 100, { title: 'YOUR TEAM' })
-    teamPanel.setDepth(6)
-    LayoutEditor.register(this, 'teamPanel', teamPanel, 16, 340)
+    // ── Button strip ──────────────────────────────────────────
+    const buttonStrip = this.add.container(LEFT_COL_X, 360)
+    buttonStrip.setDepth(8)
+    LayoutEditor.register(this, 'buttonStrip', buttonStrip, LEFT_COL_X, 360)
 
-    this._drawTeamBench()
-
-    this.rerollBtn = new PixelButton(this, width / 2 - 130, 475, 'REROLL (1g)', () => {
+    this.rerollBtn = new PixelButton(this, 0, -40, 'REROLL (1g)', () => {
       this._reroll()
     }, { style: 'filled', scale: 2, bg: Theme.accentDim, width: 140, height: 32 })
-    this.rerollBtn.setDepth(8)
-    LayoutEditor.register(this, 'rerollBtn', this.rerollBtn, width / 2 - 130, 475)
+    buttonStrip.add(this.rerollBtn)
 
-    this.fightBtn = new PixelButton(this, width / 2 + 130, 475, 'FIGHT!', () => {
+    this.fightBtn = new PixelButton(this, 0, 20, 'FIGHT!', () => {
       this._startBattle()
     }, { style: 'filled', scale: 3, bg: Theme.accent, width: 160, height: 40 })
-    this.fightBtn.setDepth(8)
-    LayoutEditor.register(this, 'fightBtn', this.fightBtn, width / 2 + 130, 475)
+    buttonStrip.add(this.fightBtn)
 
-    this.teamCountLabel = new PixelLabel(this, width / 2, 475, `${this.team.length}/5`, {
+    // ── Team count label ──────────────────────────────────────
+    this.teamCountLabel = new PixelLabel(this, LEFT_COL_X, 310, `${this._countFilledSlots()}/5`, {
       scale: 2, color: 'muted', align: 'center',
     })
     this.teamCountLabel.setDepth(8)
-    LayoutEditor.register(this, 'teamCount', this.teamCountLabel, width / 2, 475)
+    LayoutEditor.register(this, 'teamCount', this.teamCountLabel, LEFT_COL_X, 310)
 
-    this._createSellButton()
+    // ── Drag layer (floats above everything during card drag) ─────────────────
+    this._dragLayer = this.add.container(0, 0)
+    this._dragLayer.setDepth(30)
 
     this.input.dragDistanceThreshold = 6
-    this.input.keyboard.on('keydown-ESC', () => this._deselectBench('esc'))
 
     // Shutdown cleanup
     this.events.once('shutdown', () => {
@@ -191,168 +257,330 @@ export class ShopScene extends Scene {
     finalizeCaptureScene('Shop')
   }
 
-  _drawShopCards() {
-    const { width } = this.cameras.main
-    const cardW = WarriorCard.WIDTH
-    const gap = 16
-    const totalW = this.shopOffer.length * cardW + (this.shopOffer.length - 1) * gap
-    const startX = (width - totalW) / 2 + cardW / 2
+  // ── Team row ──────────────────────────────────────────────────────────────
 
-    this.cards = []
-    this.shopOffer.forEach((warrior, i) => {
-      if (!warrior) return
-      const x = startX + i * (cardW + gap)
-      const y = 230
+  _drawTeamRow() {
+    this._teamAnchors.forEach(a => a.removeAll(true))
+    this._teamCards = new Array(5).fill(null)
 
-      const card = new WarriorCard(this, x, y, warrior, {
-        onClick: () => this._buyWarrior(i),
-      })
-      LayoutEditor.register(this, `card_${i}`, card, x, y)
-      // Capture rest position AFTER LayoutEditor applies overrides — register()
-      // rewrites x/y immediately, so the constructor's snapshot is wrong.
-      card.captureRestPosition()
-      card.setDepth(1)
-      this.cards.push(card)
-    })
-  }
+    for (let slotIndex = 0; slotIndex < 5; slotIndex++) {
+      const unit = this.teamSlots[slotIndex]
+      const visualIdx = (MAX_BENCH_SLOTS - 1) - slotIndex  // 0=slot4, 4=slot0
+      const anchor = this._teamAnchors[visualIdx]
 
-  _drawTeamBench() {
-    if (this.benchGroup) this.benchGroup.destroy(true)
-    this.benchGroup = this.add.group()
-    this._benchSlotRects = []
-
-    for (let i = 0; i < 5; i++) {
-      const x = _slotToBenchX(i)
-      const y = BENCH_Y
-
-      const slot = this.add.rectangle(x, y, BENCH_SLOT_W, BENCH_SLOT_W, Theme.screenBg)
-        .setStrokeStyle(1, Theme.panelBorder)
-      slot.setDepth(7)
-      this.benchGroup.add(slot)
-      this._benchSlotRects[i] = slot
-
-      if (this.team[i]) {
-        const w = this.team[i]
-        const ref = getUnitPortraitRef(this, w, 'shop bench')
-        // sprite + name are children of unitContainer only — NOT added to benchGroup
-        // separately. benchGroup.destroy(true) recursively destroys container children.
-        const sprite = this.add.image(0, -6, ref.key, ref.frame).setScale(1.3)
-        const name = this.add.bitmapText(0, 22, FONT_KEY, w.name, 7)
-          .setOrigin(0.5).setTint(Theme.primaryText)
-
-        // Star badge above portrait for combined units. ASCII-only because
-        // PixelFont (m5x7) has no glyph for ★ — it would render as '?'.
-        const stars = w.stars ?? 1
-        const starBadge = stars > 1
-          ? this.add.bitmapText(0, -28, FONT_KEY, `*${stars}`, 7)
-              .setOrigin(0.5).setTint(Theme.warning)
-          : null
-
-        const children = starBadge ? [sprite, name, starBadge] : [sprite, name]
-        const unitContainer = this.add.container(x, y, children)
-        unitContainer.setSize(BENCH_HIT_W, BENCH_HIT_H)
-        unitContainer.setInteractive({
-          hitArea: new Geom.Rectangle(-BENCH_HIT_W / 2, -BENCH_HIT_H / 2, BENCH_HIT_W, BENCH_HIT_H),
-          hitAreaCallback: Geom.Rectangle.Contains,
-          useHandCursor: true,
-          draggable: true,
-        })
-        unitContainer.setDepth(8)
-        // Per-container drag flag — set on dragstart, cleared on pointerdown.
-        // Robust against Phaser's dragend→pointerup ordering.
-        unitContainer._didDrag = false
-        this.benchGroup.add(unitContainer)
-
-        unitContainer.on('pointerdown', () => {
-          unitContainer._didDrag = false
-        })
-
-        unitContainer.on('pointerup', () => {
-          if (unitContainer._didDrag) return
-          if (this._selectedBenchIndex === i) return
-          this._selectBench(i)
-        })
-
-        unitContainer.on('pointerover', () => {
-          if (this._selectedBenchIndex === i) return
-          slot.setStrokeStyle(1, Theme.error)
-        })
-        unitContainer.on('pointerout', () => {
-          if (this._selectedBenchIndex === i) return
-          slot.setStrokeStyle(1, Theme.panelBorder)
-        })
-
-        unitContainer.on('dragstart', () => {
-          unitContainer._didDrag = true
-          this._draggingFromIndex = i
-          unitContainer.setDepth(20)
-          console.log(`[Shop] Drag start: slot ${i} (${this.team[i].name})`)
-        })
-        unitContainer.on('drag', (pointer, dragX, dragY) => {
-          unitContainer.x = dragX
-          unitContainer.y = dragY
-        })
-        unitContainer.on('dragend', (pointer) => {
-          const from = this._draggingFromIndex
-          this._draggingFromIndex = null
-          const target = this._getSlotIndexFromPointer(pointer)
-
-          if (target === null || target === from) {
-            console.log(`[Shop] Drag end: slot ${from} — invalid drop, snapped back`)
-            this._drawTeamBench()
-            return
-          }
-
-          const dragged = this.team[from]
-          const occupant = this.team[target]
-
-          // Same-unit drop → attempt TFT-style combine before falling through
-          // to swap. Rejections (mismatched stars, at max) snap back with a log.
-          if (occupant && dragged && occupant.id === dragged.id) {
-            const result = this._combineBench(from, target)
-            if (result === 'combined') return
-            console.log(`[Shop] Drag end: slot ${from} → slot ${target} — combine rejected (${result})`)
-            this._drawTeamBench()
-            return
-          }
-
-          if (occupant) {
-            console.log(`[Shop] Drag end: slot ${from} → slot ${target} — swap with ${occupant.name}`)
-            this._swapBench(from, target)
-          } else {
-            // Empty target beyond team.length: splice + push (keep dense)
-            console.log(`[Shop] Drag end: slot ${from} → slot ${target} — moved to end`)
-            const [moved] = this.team.splice(from, 1)
-            this.team.push(moved)
-            if (this._selectedBenchIndex === from) {
-              this._selectedBenchIndex = this.team.length - 1
-            } else if (this._selectedBenchIndex !== null && this._selectedBenchIndex > from) {
-              this._selectedBenchIndex -= 1
-            }
-            this._drawTeamBench()
-          }
-        })
+      if (unit) {
+        const card = new WarriorCard(this, 0, 0, unit, { draggable: true, teamCard: true })
+        card.captureRestPosition()
+        anchor.add(card)
+        this._teamCards[slotIndex] = card
+        this._bindTeamCardDrag(card, slotIndex)
       } else {
-        // Empty slot: click to deselect (when something is selected)
-        slot.setInteractive({ useHandCursor: false })
-        slot.on('pointerdown', () => {
-          if (this._selectedBenchIndex !== null) {
-            this._deselectBench('empty slot click')
-          }
-        })
+        const placeholder = this.add.rectangle(0, 0, WarriorCard.WIDTH, WarriorCard.HEIGHT)
+          .setStrokeStyle(1, Theme.panelBorder, 0.4)
+        anchor.add(placeholder)
       }
     }
 
-    if (this.teamCountLabel) {
-      this.teamCountLabel.setText(`${this.team.length}/5`)
+    if (this.synergyLabel) this._updateSynergyStub()
+    if (this.teamCountLabel) this.teamCountLabel.setText(`${this._countFilledSlots()}/5`)
+  }
+
+  // ── Synergy label ─────────────────────────────────────────────────────────
+
+  _drawSynergyStub() {
+    const text = this._buildSynergyText()
+    this.synergyLabel = new PixelLabel(this, this.cameras.main.width / 2, SYNERGY_Y, text, {
+      scale: 2, tint: Theme.fantasyGoldBright, align: 'center',
+    })
+    this.synergyLabel.setDepth(8)
+    LayoutEditor.register(this, 'synergyText', this.synergyLabel, this.cameras.main.width / 2, SYNERGY_Y)
+  }
+
+  _updateSynergyStub() {
+    this.synergyLabel.setText(this._buildSynergyText())
+  }
+
+  _buildSynergyText() {
+    const counts = {}
+    this.teamSlots.filter(Boolean).forEach(u => {
+      if (u.faction) counts[u.faction] = (counts[u.faction] || 0) + 1
+      if (u.class)   counts[u.class]   = (counts[u.class]   || 0) + 1
+    })
+    const parts = Object.entries(counts).map(([tag, n]) => `${tag} x${n}`)
+    return parts.join('   ')
+  }
+
+  // ── Shop cards ────────────────────────────────────────────────────────────
+
+  _drawShopCards() {
+    this.cards = []
+    this.shopOffer.forEach((warrior, i) => {
+      if (!warrior) return
+      const x = SHOP_CARD_XS[i]
+      const y = SHOP_Y
+
+      const card = new WarriorCard(this, x, y, warrior, { draggable: true })
+      LayoutEditor.register(this, `card_${i}`, card, x, y)
+      card.captureRestPosition()
+      card.setDepth(1)
+      this.cards[i] = card
+      this._bindShopCardDrag(card, i)
+    })
+  }
+
+  // ── Drag layer helpers ────────────────────────────────────────────────────
+
+  _beginCardDrag(card, source, index, pointer) {
+    card.cancelHoverTween()
+    card._isHeld = true
+
+    // Capture world position before reparenting (anchors are unrotated/unscaled)
+    const worldX = card.parentContainer ? card.parentContainer.x + card.x : card.x
+    const worldY = card.parentContainer ? card.parentContainer.y + card.y : card.y
+
+    // Cursor offset so card doesn't snap its center to the pointer
+    card._dragOffsetX = pointer.x - worldX
+    card._dragOffsetY = pointer.y - worldY
+
+    // Reparent — removes from scene displayList or anchor container automatically
+    this._dragLayer.add(card)
+    card.x = worldX
+    card.y = worldY
+    card.setDepth(30)
+
+    console.log(`[Shop] drag-start visual source=${source} index=${index} world=(${Math.round(worldX)},${Math.round(worldY)}) offset=(${Math.round(card._dragOffsetX)},${Math.round(card._dragOffsetY)})`)
+  }
+
+  _moveDraggedCard(card, pointer) {
+    card.x = pointer.x - card._dragOffsetX
+    card.y = pointer.y - card._dragOffsetY
+  }
+
+  _endCardDrag(card) {
+    card._isHeld = false
+    card._dragOffsetX = undefined
+    card._dragOffsetY = undefined
+  }
+
+  // ── Shop card drag ────────────────────────────────────────────────────────
+
+  _bindShopCardDrag(card, shopIndex) {
+    let _rejected = false
+
+    card.hitZone.on('dragstart', (pointer) => {
+      const warrior = this.shopOffer[shopIndex]
+      if (!warrior) { _rejected = true; return }
+      const creditsOk = this.gold >= warrior.cost
+      const teamFull  = this._countFilledSlots() === MAX_BENCH_SLOTS
+      const hasMatch  = this._findMatchingSlot(warrior) !== null
+
+      console.log(`[Shop] drag-start id=${warrior.id} source=shop index=${shopIndex} creditsOk=${creditsOk} hasMatch=${hasMatch} teamFull=${teamFull}`)
+
+      if (!creditsOk || (teamFull && !hasMatch)) {
+        _rejected = true
+        card.shake()
+        const reason = !creditsOk ? 'reject-no-credits' : 'reject-full-team'
+        console.log(`[Shop] drop resolution=${reason} source=shop from=${shopIndex} to=none`)
+        return
+      }
+      _rejected = false
+      this._beginCardDrag(card, 'shop', shopIndex, pointer)
+    })
+
+    card.hitZone.on('drag', (pointer, dragX, dragY) => {
+      if (_rejected) return
+      this._moveDraggedCard(card, pointer)
+    })
+
+    card.hitZone.on('dragend', (pointer) => {
+      if (_rejected) { _rejected = false; return }
+      this._resolveShopDrop(shopIndex, card, pointer)
+    })
+  }
+
+  _resolveShopDrop(shopIndex, card, pointer) {
+    this._endCardDrag(card)
+    const warrior = this.shopOffer[shopIndex]
+    const target = this._getLogicalSlotFromPointer(pointer)
+
+    if (target === null) {
+      card.snapBack(Theme.error)
+      console.log(`[Shop] drop resolution=reject-dead-zone source=shop from=${shopIndex} to=none`)
+      return
     }
 
-    if (this._selectedBenchIndex !== null && this._selectedBenchIndex >= this.team.length) {
-      this._selectedBenchIndex = null
+    const occupant = this.teamSlots[target]
+
+    if (occupant && occupant.id === warrior.id &&
+        (occupant.stars ?? 1) === (warrior.stars ?? 1) &&
+        (occupant.stars ?? 1) < MAX_STARS) {
+      // buy-combine
+      this.gold -= warrior.cost
+      this.goldLabel.setText(`GOLD: ${this.gold}`)
+      this.shopOffer[shopIndex] = null
+      occupant.stars = (occupant.stars ?? 1) + 1
+      occupant.hp  += 1
+      occupant.atk += 1
+      this._syncDenseTeamFromSlots()
+      this._drawTeamRow()
+      // Destroy the dragged shop card — it lives in _dragLayer now and would
+      // otherwise float over the newly-drawn team card ("double vision").
+      // _drawShopCards() rebuilds the shop row on the next reroll.
+      this._dragLayer.remove(card, true)
+      const hostCard = this._teamCards[target]
+      if (hostCard?.sprite) pulseLevelUp(this, hostCard.sprite)
+      console.log(`[Shop] drop resolution=buy-combine source=shop from=${shopIndex} to=${target}`)
+      console.log(`[Shop] vfx slot=${target} stars=${occupant.stars}`)
+      logShopBuy({ scene: this, unit: warrior, cost: warrior.cost, creditsAfter: this.gold, starLevel: occupant.stars })
+      logShopCombine({ scene: this, unit: occupant, fromSlot: -1, toSlot: target, hostSlotAfter: target, newStars: occupant.stars })
+
+    } else if (!occupant) {
+      // buy-empty
+      this.gold -= warrior.cost
+      this.goldLabel.setText(`GOLD: ${this.gold}`)
+      this.shopOffer[shopIndex] = null
+      this.teamSlots[target] = { ...warrior, stars: warrior.stars ?? 1 }
+      this._syncDenseTeamFromSlots()
+      this._drawTeamRow()
+      // Destroy the dragged shop card — see buy-combine note above.
+      this._dragLayer.remove(card, true)
+      console.log(`[Shop] drop resolution=buy-empty source=shop from=${shopIndex} to=${target}`)
+      logShopBuy({ scene: this, unit: warrior, cost: warrior.cost, creditsAfter: this.gold, starLevel: warrior.stars ?? 1 })
+
+    } else {
+      // reject-no-match
+      card.snapBack(Theme.error)
+      console.log(`[Shop] drop resolution=reject-no-match source=shop from=${shopIndex} to=${target}`)
     }
-    this._updateSelectionHighlight()
-    this._updateSellButton()
   }
+
+  // ── Team card drag ────────────────────────────────────────────────────────
+
+  _bindTeamCardDrag(card, slotIndex) {
+    card.hitZone.on('dragstart', (pointer) => {
+      this._beginCardDrag(card, 'team', slotIndex, pointer)
+      this.sellZoneGraphic.setVisible(true)
+      this.sellLabel.setVisible(true)
+      this.sellLabel.setText('SELL')
+      this.sellZoneGraphic.setAlpha(0.6)
+      console.log(`[Shop] drag-start id=${this.teamSlots[slotIndex]?.id} source=team index=${slotIndex} creditsOk=true hasMatch=false teamFull=${this._countFilledSlots() === MAX_BENCH_SLOTS}`)
+    })
+
+    card.hitZone.on('drag', (pointer, dragX, dragY) => {
+      this._moveDraggedCard(card, pointer)
+      if (this._isPointerInSellZone(pointer)) {
+        this.sellLabel.setText('SELL +1')
+        this.sellZoneGraphic.setAlpha(1.0)
+      } else {
+        this.sellLabel.setText('SELL')
+        this.sellZoneGraphic.setAlpha(0.6)
+      }
+    })
+
+    card.hitZone.on('dragend', (pointer) => {
+      this.sellZoneGraphic.setVisible(false)
+      this.sellLabel.setVisible(false)
+      this._resolveTeamDrop(slotIndex, card, pointer)
+    })
+  }
+
+  _resolveTeamDrop(fromSlot, card, pointer) {
+    this._endCardDrag(card)
+    // Remove the dragged instance from the drag layer — _drawTeamRow() will recreate it
+    this._dragLayer.remove(card, true)
+    const unit = this.teamSlots[fromSlot]
+
+    if (this._isPointerInSellZone(pointer)) {
+      this.teamSlots[fromSlot] = null
+      this._syncDenseTeamFromSlots()
+      this.gold += 1
+      this.goldLabel.setText(`GOLD: ${this.gold}`)
+      this._drawTeamRow()
+      console.log(`[Shop] drop resolution=sell source=team from=${fromSlot} to=merchant`)
+      logShopSell({ scene: this, unit, refund: 1, creditsAfter: this.gold })
+      return
+    }
+
+    const target = this._getLogicalSlotFromPointer(pointer)
+    if (target === null || target === fromSlot) {
+      this._drawTeamRow()
+      console.log(`[Shop] drop resolution=reject-dead-zone source=team from=${fromSlot} to=none`)
+      return
+    }
+
+    const occupant = this.teamSlots[target]
+    const dragged  = this.teamSlots[fromSlot]
+
+    if (occupant && dragged.id === occupant.id) {
+      // combine
+      const aStars = dragged.stars ?? 1
+      const bStars = occupant.stars ?? 1
+      if (aStars !== bStars) {
+        this._drawTeamRow()
+        console.log(`[Shop] drop resolution=combine source=team from=${fromSlot} to=${target} rejected=stars-mismatch`)
+        return
+      }
+      if (bStars >= MAX_STARS) {
+        this._drawTeamRow()
+        console.log(`[Shop] drop resolution=combine source=team from=${fromSlot} to=${target} rejected=already-max`)
+        return
+      }
+      occupant.stars = bStars + 1
+      occupant.hp  += 1
+      occupant.atk += 1
+      this.teamSlots[fromSlot] = null
+      this._syncDenseTeamFromSlots()
+      this._drawTeamRow()
+      const hostCard = this._teamCards[target]
+      if (hostCard?.sprite) pulseLevelUp(this, hostCard.sprite)
+      console.log(`[Shop] drop resolution=combine source=team from=${fromSlot} to=${target}`)
+      console.log(`[Shop] vfx slot=${target} stars=${occupant.stars}`)
+      logShopCombine({ scene: this, unit: occupant, fromSlot, toSlot: target, hostSlotAfter: target, newStars: occupant.stars })
+
+    } else if (occupant) {
+      // swap
+      this.teamSlots[fromSlot] = occupant
+      this.teamSlots[target]   = dragged
+      this._syncDenseTeamFromSlots()
+      this._drawTeamRow()
+      console.log(`[Shop] drop resolution=swap source=team from=${fromSlot} to=${target}`)
+
+    } else {
+      // reorder (move to empty slot)
+      this.teamSlots[target]   = dragged
+      this.teamSlots[fromSlot] = null
+      this._syncDenseTeamFromSlots()
+      this._drawTeamRow()
+      console.log(`[Shop] drop resolution=reorder source=team from=${fromSlot} to=${target}`)
+    }
+  }
+
+  // ── Drop target helpers ───────────────────────────────────────────────────
+
+  _getLogicalSlotFromPointer(pointer) {
+    const cardH = WarriorCard.HEIGHT
+    const cardW = WarriorCard.WIDTH
+
+    // Check team row — use anchor world position (LayoutEditor may have moved them)
+    for (let visualIdx = 0; visualIdx < MAX_BENCH_SLOTS; visualIdx++) {
+      const anchor = this._teamAnchors[visualIdx]
+      if (!anchor) continue
+      if (Math.abs(pointer.y - anchor.y) <= cardH / 2 + 20 &&
+          Math.abs(pointer.x - anchor.x) <= cardW / 2 + 10) {
+        return (MAX_BENCH_SLOTS - 1) - visualIdx   // slot index
+      }
+    }
+    return null
+  }
+
+  _isPointerInSellZone(pointer) {
+    const strip = this._merchantStrip
+    const wx = strip.x + 0
+    const wy = strip.y + SELL_ZONE_Y_OFFSET
+    return Math.abs(pointer.x - wx) < 72 && Math.abs(pointer.y - wy) < 50
+  }
+
+  // ── CRT pointer transform (unchanged) ────────────────────────────────────
 
   _installCrtPointerTransform(crtController) {
     if (!crtController) {
@@ -381,10 +609,6 @@ export class ShopScene extends Scene {
       const uvX = pointer.x / w - 0.5
       const uvY = pointer.y / h - 0.5
       const d = uvX * uvX + uvY * uvY
-      // Forward barrel: source content at uv' = uv + (uv - 0.5) * |uv - 0.5|² * amount
-      // is displayed at screen uv. So to convert a pointer (at screen uv) to
-      // the source coord the user intended to click on, apply the same
-      // forward transform.
       const p0 = pointer.position
       p0.x = (uvX + uvX * d * amt + 0.5) * w
       p0.y = (uvY + uvY * d * amt + 0.5) * h
@@ -412,149 +636,17 @@ export class ShopScene extends Scene {
     this._crtPointerRestore = null
   }
 
-  _createSellButton() {
-    const { width } = this.cameras.main
-    this.sellBtn = new PixelButton(this, width / 2, 505, 'SELL (+1g)', () => {
-      this._sellSelected()
-    }, { style: 'filled', scale: 2, bg: Theme.error, pill: true, width: 120, height: 28 })
-    this.sellBtn.setDepth(9)
-    this.sellBtn.setVisible(false)
-    LayoutEditor.register(this, 'sellBtn', this.sellBtn, width / 2, 505)
-    console.log('[Shop] SELL button created (hidden)')
-  }
-
-  _selectBench(index) {
-    if (!this.team[index]) return
-    const prev = this._selectedBenchIndex
-    this._selectedBenchIndex = index
-    if (prev !== null && prev !== index) {
-      console.log(`[Shop] Bench select: slot ${prev} → slot ${index} (${this.team[index].name})`)
-    } else {
-      console.log(`[Shop] Bench select: slot ${index} (${this.team[index].name})`)
-    }
-    this._updateSelectionHighlight(prev)
-    this._updateSellButton()
-  }
-
-  _deselectBench(reason) {
-    if (this._selectedBenchIndex === null) return
-    const prev = this._selectedBenchIndex
-    this._selectedBenchIndex = null
-    console.log(`[Shop] Bench deselect (${reason})`)
-    this._updateSelectionHighlight(prev)
-    this._updateSellButton()
-  }
-
-  _updateSelectionHighlight(previousIndex = null) {
-    if (previousIndex !== null && this._benchSlotRects[previousIndex]) {
-      this._benchSlotRects[previousIndex].setStrokeStyle(1, Theme.panelBorder)
-    }
-    const sel = this._selectedBenchIndex
-    if (sel !== null && this._benchSlotRects[sel]) {
-      this._benchSlotRects[sel].setStrokeStyle(2, Theme.selection)
-    }
-  }
-
-  _updateSellButton() {
-    if (!this.sellBtn) return
-    this.sellBtn.setVisible(this._selectedBenchIndex !== null)
-  }
-
-  _sellSelected() {
-    if (this._selectedBenchIndex === null) return
-    const idx = this._selectedBenchIndex
-    console.log(`[Shop] Sell via button: slot ${idx} (${this.team[idx].name}) refund 1g, credits now ${this.gold + 1}`)
-    this._selectedBenchIndex = null
-    this._sellWarrior(idx)
-  }
-
-  _swapBench(a, b) {
-    const tmp = this.team[a]
-    this.team[a] = this.team[b]
-    this.team[b] = tmp
-    if (this._selectedBenchIndex === a) this._selectedBenchIndex = b
-    else if (this._selectedBenchIndex === b) this._selectedBenchIndex = a
-    this._drawTeamBench()
-  }
-
-  // Drag-to-combine: the dragged warrior (A, at slot `from`) is consumed
-  // and the host warrior (B, at slot `target`) gains +1 star / +1 HP / +1 ATK.
-  // Returns 'combined' on success, otherwise a short reason string used by
-  // the dragend handler to log a snap-back.
-  //
-  // Dense-bench invariant: splicing `from` shifts every index > from down
-  // by 1, so the host's post-splice index is `target - 1` when from < target,
-  // otherwise `target`. The host *warrior* survives; its *slot index* may
-  // shift by one.
-  _combineBench(from, target) {
-    const dragged = this.team[from]
-    const host = this.team[target]
-    if (!dragged || !host) return 'missing-unit'
-    if (dragged.id !== host.id) return 'id-mismatch'
-
-    const aStars = dragged.stars ?? 1
-    const bStars = host.stars ?? 1
-    if (aStars !== bStars) return `stars-mismatch (${aStars}* vs ${bStars}*)`
-    if (bStars >= MAX_STARS) return 'already-max'
-
-    const nextStars = bStars + 1
-    const prevHp = host.hp
-    const prevAtk = host.atk
-    host.stars = nextStars
-    host.hp = prevHp + 1
-    host.atk = prevAtk + 1
-
-    this.team.splice(from, 1)
-    const hostIndexAfter = (from < target) ? target - 1 : target
-
-    if (this._selectedBenchIndex === from || this._selectedBenchIndex === target) {
-      this._selectedBenchIndex = hostIndexAfter
-    } else if (this._selectedBenchIndex !== null && this._selectedBenchIndex > from) {
-      this._selectedBenchIndex -= 1
-    }
-
-    console.log(`[Shop] Combine: slot ${from} -> slot ${target} (host now at slot ${hostIndexAfter}), ${host.name} ${bStars}*->${nextStars}* (${prevHp}/${prevAtk} -> ${host.hp}/${host.atk})`)
-    logShopCombine({ scene: this, unit: host, fromSlot: from, toSlot: target, hostSlotAfter: hostIndexAfter, newStars: nextStars })
-    this._drawTeamBench()
-    return 'combined'
-  }
-
-  _getSlotIndexFromPointer(pointer) {
-    if (Math.abs(pointer.y - BENCH_Y) > (BENCH_SLOT_W / 2 + BENCH_HIT_SLOP_Y)) return null
-    const visualIdx = Math.round((pointer.x - BENCH_START_X) / BENCH_SLOT_PITCH)
-    const idx = (MAX_BENCH_SLOTS - 1) - visualIdx
-    if (idx < 0 || idx > 4) return null
-    return idx
-  }
-
-  _buyWarrior(index) {
-    const warrior = this.shopOffer[index]
-    if (!warrior) return
-    if (this.gold < warrior.cost) return
-    if (this.team.length >= 5) return
-
-    const cost = warrior.cost
-    this.gold -= cost
-    this.team.push({ ...warrior, stars: warrior.stars ?? 1 })
-    this.shopOffer[index] = null
-    this.goldLabel.setText(`GOLD: ${this.gold}`)
-
-    if (this.cards[index]) {
-      this.cards[index].setDisabled()
-    }
-
-    this._drawTeamBench()
-    logShopBuy({ scene: this, unit: warrior, cost, creditsAfter: this.gold, starLevel: warrior.stars ?? 1 })
-  }
+  // ── Game actions ──────────────────────────────────────────────────────────
 
   _sellWarrior(index) {
-    const warrior = this.team[index]
+    const warrior = this.teamSlots[index]
     if (!warrior) return
     const refund = 1
     this.gold += refund
-    this.team.splice(index, 1)
+    this.teamSlots[index] = null
+    this._syncDenseTeamFromSlots()
     this.goldLabel.setText(`GOLD: ${this.gold}`)
-    this._drawTeamBench()
+    this._drawTeamRow()
     logShopSell({ scene: this, unit: warrior, refund, creditsAfter: this.gold })
   }
 
@@ -562,9 +654,6 @@ export class ShopScene extends Scene {
     if (this.gold < 1) return
     this.gold -= 1
     this.shopOffer = this.shop.roll()
-    // Log reroll payment before restart — the upcoming create() will log a
-    // shop_round with the actual cards shown (init will re-roll since we
-    // don't thread shopOffer through restart data).
     logShopReroll({ scene: this, cost: 1, creditsAfter: this.gold, rolled: null })
     this.scene.restart({
       stage: this.stage, gold: this.gold, wins: this.wins, losses: this.losses,
@@ -577,7 +666,7 @@ export class ShopScene extends Scene {
 
     if (this.fightBtn) this.fightBtn.setEnabled(false)
     const { width } = this.cameras.main
-    const findingText = new PixelLabel(this, width / 2 + 130, 510, 'FINDING OPPONENT...', {
+    const findingText = new PixelLabel(this, LEFT_COL_X, 410, 'FINDING OPPONENT...', {
       scale: 1, color: 'muted', align: 'center',
     })
 

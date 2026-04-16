@@ -19,7 +19,7 @@
       "source": "THE DARK PAID ASSETS/08 DARK - Character Pack 2/Dagger Mush/Dagger Mushroom.aseprite",
       "displayScale": 2.5,
       "defaultTag": "Idle",
-      "portraitFrame": 0,
+      "portraitFrame": 1,
       "ignoreLayers": ["Layer 1", "Layer 2"],
       "animTagOverrides": { "idle": "Idle", "attack": "throw", "death": "Death" }
     },

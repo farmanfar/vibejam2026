@@ -167,7 +167,7 @@ function translateLog(rawEntries, playerTeamStamped, enemyTeamStamped) {
   const emitBattleInit = () => {
     if (!battleInitPending) return;
     steps.push({
-      message: 'BATTLE START',
+      message: 'The battle begins!',
       flavorEvents: [],
       ...snapshotStats(),
     });
@@ -221,7 +221,7 @@ function translateLog(rawEntries, playerTeamStamped, enemyTeamStamped) {
         type: 'death_batch',
         tickId: tick.tickId,
         deaths: tickDeaths,
-        message: tickDeaths.map((d) => d.message).join('   |   '),
+        message: tickDeaths.map((d) => d.message).filter(Boolean).join('. '),
         ...snapshotStats(),
       });
     }
@@ -264,9 +264,18 @@ function translateLog(rawEntries, playerTeamStamped, enemyTeamStamped) {
         }
         const atkName = nameOf(entry.attackerInstanceId);
         const tgtName = nameOf(entry.targetInstanceId);
-        const dmgTxt = entry.blocked ? 'BLOCKED' : `${entry.damage}`;
+        let attackMsg;
+        if (entry.blocked) {
+          attackMsg = `${atkName} attacks ${tgtName} — blocked`;
+        } else {
+          const hpAfter = typeof entry.hpAfter === 'number' ? entry.hpAfter : null;
+          const result = hpAfter === null ? '' : hpAfter <= 0 ? 'dead' : `${hpAfter} health remaining`;
+          attackMsg = result
+            ? `${atkName} hits ${tgtName} for ${entry.damage}, ${result}`
+            : `${atkName} hits ${tgtName} for ${entry.damage}`;
+        }
         const attack = {
-          message: `${atkName} -> ${tgtName} (${dmgTxt})`,
+          message: attackMsg,
           actorInstanceId: entry.attackerInstanceId ?? null,
           targetInstanceId: entry.targetInstanceId ?? null,
           damage: entry.damage ?? 0,
@@ -382,7 +391,7 @@ function translateLog(rawEntries, playerTeamStamped, enemyTeamStamped) {
       case 'faint_final': {
         applyHp(entry.instanceId, 0);
         const deathStep = {
-          message: `${nameOf(entry.instanceId)} destroyed!`,
+          message: '',
           diedInstanceId: entry.instanceId ?? null,
           targetInstanceId: entry.instanceId ?? null,
           animTag: 'death',
@@ -445,7 +454,7 @@ function translateLog(rawEntries, playerTeamStamped, enemyTeamStamped) {
         emitBattleInit();
         if (tick) flushTick();
         steps.push({
-          message: entry.winner === 'player' ? 'VICTORY' : entry.winner === 'enemy' ? 'DEFEAT' : 'DRAW',
+          message: entry.winner === 'player' ? 'Your team wins!' : entry.winner === 'enemy' ? 'Your team was defeated.' : 'Draw.',
           flavorEvents: [],
           ...snapshotStats(),
         });

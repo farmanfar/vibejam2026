@@ -106,12 +106,33 @@ export function getUnitPortraitRef(scene, unit, context = 'unit') {
 
   if (unit?.hasPortrait && scene.textures.exists(requestedKey)) {
     const asepriteData = scene.cache?.json?.get?.(requestedKey) ?? null;
-    const idx = resolvePortraitFrameIndex({
+    const texture = scene.textures.get(requestedKey);
+    let idx = resolvePortraitFrameIndex({
       portraitFrame: unit.art?.portraitFrame,
       defaultTag: unit.art?.defaultTag,
       asepriteData,
     });
-    const frame = resolvePortraitFrameName(scene.textures.get(requestedKey), idx);
+
+    // Heuristic fallback: if asepriteData was not in cache (cache miss) and
+    // the portrait resolved to 0 while a defaultTag is declared, frame 0 is
+    // almost certainly a junk/silhouette reference frame in the PENUSBMIC atlas.
+    // Frame 1 is where the first named animation tag starts for these atlases.
+    if (!asepriteData && idx === 0 && unit.art?.defaultTag) {
+      const frameNames = texture?.getFrameNames?.() ?? [];
+      if (frameNames.some((n) => parseNumericFrameSuffix(n) === 1)) {
+        const heuristicKey = `heuristic:${requestedKey}:${unit?.id ?? 'missing'}`;
+        if (!loggedPortraitFrameFixes.has(heuristicKey)) {
+          loggedPortraitFrameFixes.add(heuristicKey);
+          console.warn(
+            `[UnitArt] ${context} asepriteData cache miss for '${unit?.id ?? 'unknown'}' `
+            + `(defaultTag='${unit.art.defaultTag}') — heuristic frame 1 fallback instead of stale frame 0`,
+          );
+        }
+        idx = 1;
+      }
+    }
+
+    const frame = resolvePortraitFrameName(texture, idx);
     const logKey = `${requestedKey}:${unit?.id ?? 'missing'}`;
 
     if (

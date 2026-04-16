@@ -92,6 +92,15 @@ export class BootScene extends Scene {
     });
     console.log(`[Boot] Queued ${blankCardFiles.length} blank fantasy card frames for preload`);
 
+    // Card stat icons (9x9 PENUSBMIC, drawn over blank card frames next to
+    // ATK/HP numbers). To swap the sword pick, change ICON_ATK_FILE to another
+    // number in public/assets/cards/icons/Icon#.png.
+    const ICON_HP_FILE  = 'Icon5';  // confirmed red heart
+    const ICON_ATK_FILE = 'Icon3';  // tentative sword — verify in-game
+    this.load.image('card-icon-hp',  `assets/cards/icons/${ICON_HP_FILE}.png`);
+    this.load.image('card-icon-atk', `assets/cards/icons/${ICON_ATK_FILE}.png`);
+    console.log(`[Boot] Card stat icons: hp=${ICON_HP_FILE}, atk=${ICON_ATK_FILE}`);
+
     // Generate placeholder textures for warriors (before font is ready)
     const colors = [0x64b4d2, 0x7cceff, 0x66cc66, 0xffcc78, 0xcc66ff];
     colors.forEach((color, i) => {

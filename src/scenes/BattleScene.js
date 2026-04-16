@@ -12,16 +12,25 @@ import { getUnitPortraitRef } from '../rendering/UnitArt.js'
 import { getAsepriteTagConfigs } from '../rendering/AsepriteAnimations.js'
 import { SceneCrt, startSceneWithCrtPolicy } from '../rendering/SceneCrt.js'
 import { attachOutlineToSprite } from '../rendering/OutlineController.js'
+import { getTightFrameBounds } from '../rendering/spriteBounds.js'
+
+// Minimum on-screen height (in display px) for battle-sprite characters.
+// PENUSBMIC atlases vary wildly in how much of the 192x192 frame is actually
+// character pixels — some units (dagger_mush, electrocutioner) have 18-24px
+// tight bounds, so the shared displayScale=2.5 paints them at 45-60px while
+// a normal unit renders at 150-200px. This floor ensures small characters
+// stay readable in the lineup without shrinking larger ones.
+const MIN_BATTLE_SPRITE_H = 72
 
 const FLOAT_TEXT_STYLES = {
-  damage: { color: Theme.error, fontSize: 18, prefix: '-' },
-  block: { color: Theme.mutedText, fontSize: 14, defaultText: 'BLOCK' },
-  heal: { color: Theme.success, fontSize: 16 },
-  buff: { color: Theme.warning, fontSize: 14 },
-  debuff: { color: 0xc678dd, fontSize: 14 },
-  poison: { color: 0xc678dd, fontSize: 14 },
-  armor: { color: Theme.accent, fontSize: 14, defaultText: 'ARMORED' },
-  resonance: { color: Theme.fantasyGoldBright, fontSize: 14 },
+  damage: { color: Theme.error, fontSize: 36, prefix: '-' },
+  block: { color: Theme.mutedText, fontSize: 28, defaultText: 'BLOCK' },
+  heal: { color: Theme.success, fontSize: 32 },
+  buff: { color: Theme.warning, fontSize: 28 },
+  debuff: { color: 0xc678dd, fontSize: 28 },
+  poison: { color: 0xc678dd, fontSize: 28 },
+  armor: { color: Theme.accent, fontSize: 28, defaultText: 'ARMORED' },
+  resonance: { color: Theme.fantasyGoldBright, fontSize: 28 },
 }
 
 export class BattleScene extends Scene {
@@ -100,6 +109,7 @@ export class BattleScene extends Scene {
       const sprite = this.add.sprite(x, y, ref.key, ref.frame)
         .setScale(scale)
         .setDepth(battleDepth)
+      this._adjustBattleSprite(sprite, w, ref, 'player')
       // Enable normal-map lighting on unit sprites only (not labels/health bars)
       if (useLights) sprite.setLighting(true)
       attachOutlineToSprite(sprite)
@@ -132,6 +142,7 @@ export class BattleScene extends Scene {
         .setScale(scale)
         .setFlipX(true)
         .setDepth(battleDepth)
+      this._adjustBattleSprite(sprite, w, ref, 'enemy')
       if (useLights) sprite.setLighting(true)
       attachOutlineToSprite(sprite)
       this._wireAlphaAnimations(sprite, w, 'enemy')
@@ -181,11 +192,26 @@ export class BattleScene extends Scene {
       .setDepth(battleDepth)
     LayoutEditor.register(this, 'vsText', vsText, width / 2, 300)
 
-    this.logText = this.add.bitmapText(width / 2, 500, FONT_KEY, '', 14)
-      .setOrigin(0.5)
+    this._logHistory = []
+
+    const logBoxW = 900
+    const logBoxH = 56
+    const logBoxX = width / 2 - logBoxW / 2
+    const logBoxY = 474
+    const logBg = this.add.graphics()
+    logBg.fillStyle(Theme.panelBg, 0.82)
+    logBg.fillRect(logBoxX, logBoxY, logBoxW, logBoxH)
+    logBg.lineStyle(1, Theme.panelBorder, 0.4)
+    logBg.strokeRect(logBoxX, logBoxY, logBoxW, logBoxH)
+    logBg.setDepth(battleDepth - 1)
+
+    this.logText = this.add.bitmapText(logBoxX + 8, logBoxY + 4, FONT_KEY, '', 12)
+      .setOrigin(0, 0)
       .setTint(Theme.mutedText)
       .setDepth(battleDepth)
-    LayoutEditor.register(this, 'logText', this.logText, width / 2, 500)
+      .setAlpha(0.85)
+      .setMaxWidth(logBoxW - 16)
+    LayoutEditor.register(this, 'logText', this.logText, logBoxX + 8, logBoxY + 4)
 
     this.events.once('shutdown', () => {
       console.log('[Battle] Shutdown - cleaning up')
@@ -207,6 +233,54 @@ export class BattleScene extends Scene {
   update(time, delta) {
     if (this.captureFreeze) return
     if (this.parallax) this.parallax.update(time, delta)
+  }
+
+  // Re-center the battle sprite on the character's actual pixels and floor
+  // tiny atlases to MIN_BATTLE_SPRITE_H so they aren't dwarfed by units
+  // whose character art happens to fill more of the 192x192 frame.
+  //
+  // Why this is needed: PENUSBMIC atlases pack characters at wildly different
+  // sizes and positions inside each frame. dagger_mush lives at (39,72) with
+  // tight bounds 24x24 — with default origin (0.5, 0.5) the visible character
+  // lands ~112px left and 30px above the sprite's (x,y), so the name label,
+  // stat badge, and point light (all placed at x,y) end up nowhere near it.
+  // Shifting origin to the tight-bounds center puts the character back under
+  // its UI, the same trick WarriorCard already uses for shop portraits.
+  _adjustBattleSprite(sprite, warrior, ref, side) {
+    const bounds = getTightFrameBounds(this, ref.key, ref.frame)
+    if (!bounds || bounds.w <= 0 || bounds.h <= 0 || bounds.fullyTransparent) {
+      console.warn(`[Battle] ${side} ${warrior.id}: no tight bounds — leaving default origin/scale`)
+      return
+    }
+    const frameW = sprite.frame?.width ?? sprite.width
+    const frameH = sprite.frame?.height ?? sprite.height
+    const rawOx = (bounds.x + bounds.w / 2) / frameW
+    const oy = (bounds.y + bounds.h / 2) / frameH
+    // Enemy sprites get setFlipX(true) before we reach this helper. Phaser
+    // mirrors the texture inside the sprite's bounds but leaves the origin
+    // fraction untouched — so an origin of 0.266 on a flipped enemy anchors
+    // at the empty right half of the (mirrored) frame, nowhere near the
+    // character. Invert for flipped sprites so the anchor re-lands on the
+    // mirrored character.
+    const ox = sprite.flipX ? 1 - rawOx : rawOx
+    sprite.setOrigin(ox, oy)
+
+    const configScale = warrior.art?.displayScale ?? 2.5
+    const displayH = bounds.h * configScale
+    if (displayH < MIN_BATTLE_SPRITE_H) {
+      const boosted = MIN_BATTLE_SPRITE_H / bounds.h
+      sprite.setScale(boosted)
+      console.log(
+        `[Battle] ${side} ${warrior.id} tight ${bounds.w}x${bounds.h} @ (${bounds.x},${bounds.y}) `
+        + `origin (${ox.toFixed(3)},${oy.toFixed(3)}) scale ${configScale.toFixed(2)} → ${boosted.toFixed(2)} `
+        + `(boosted to min ${MIN_BATTLE_SPRITE_H}px)`,
+      )
+    } else {
+      console.log(
+        `[Battle] ${side} ${warrior.id} tight ${bounds.w}x${bounds.h} @ (${bounds.x},${bounds.y}) `
+        + `origin (${ox.toFixed(3)},${oy.toFixed(3)}) scale ${configScale.toFixed(2)}`,
+      )
+    }
   }
 
   _wireAlphaAnimations(sprite, warrior, side) {
@@ -315,7 +389,7 @@ export class BattleScene extends Scene {
 
     const jitterX = ((slot % 3) - 1) * 10
     const startX = posOverride ? (posOverride.x + jitterX) : (entry.sprite.x + jitterX)
-    const startY = posOverride ? posOverride.y : (entry.sprite.y - 30)
+    const startY = posOverride ? posOverride.y : (entry.sprite.y + 70)
 
     const label = this.add.bitmapText(startX, startY, FONT_KEY, resolvedText, config.fontSize)
       .setOrigin(0.5, 1)
@@ -334,7 +408,7 @@ export class BattleScene extends Scene {
     })
     this.tweens.add({
       targets: label,
-      y: startY - 32,
+      y: startY + 30,
       alpha: 0,
       duration: 420,
       delay: 70,
@@ -361,6 +435,13 @@ export class BattleScene extends Scene {
     logBattle({ scene: this, result, playerTeam: playerDefs, enemyTeam: enemyDefs })
     const frames = this._buildVisualScript(result.log)
     this._runFrames(frames)
+  }
+
+  _addLogEntry(msg) {
+    if (!msg) return
+    this._logHistory.push(msg)
+    if (this._logHistory.length > 3) this._logHistory.shift()
+    this.logText.setText(this._logHistory.join('\n'))
   }
 
   // ---------- visual script preprocessing ----------
@@ -559,9 +640,9 @@ export class BattleScene extends Scene {
       }
 
       const flavor = frame?.flavorMessages ?? []
-      const headLine = `${a.message}   |   ${b.message}`
+      const headLine = `${a.message}. ${b.message}`
       const flavorLine = flavor.length ? `  [${flavor.join(' | ')}]` : ''
-      this.logText.setText(headLine + flavorLine)
+      this._addLogEntry(headLine + flavorLine)
 
       const pSprite = pEntry.sprite
       const eSprite = eEntry.sprite
@@ -588,10 +669,10 @@ export class BattleScene extends Scene {
         this._applyStatSnapshot(b)
 
         if (typeof a.damage === 'number') {
-          this._showFloatText(a.targetInstanceId, `${a.damage}`, a.blocked === true ? 'block' : 'damage', { x: clashX, y: 300 })
+          this._showFloatText(a.targetInstanceId, `${a.damage}`, a.blocked === true ? 'block' : 'damage', { x: clashX, y: 385 })
         }
         if (typeof b.damage === 'number') {
-          this._showFloatText(b.targetInstanceId, `${b.damage}`, b.blocked === true ? 'block' : 'damage', { x: clashX, y: 318 })
+          this._showFloatText(b.targetInstanceId, `${b.damage}`, b.blocked === true ? 'block' : 'damage', { x: clashX, y: 403 })
         }
         this._spawnFlavorPops(frame?.flavorEvents)
 
@@ -647,13 +728,13 @@ export class BattleScene extends Scene {
       if (!attackerEntry?.sprite || !targetEntry?.sprite) {
         console.warn(`[Battle] solo aborted — missing sprite actor=${step.actorInstanceId} target=${step.targetInstanceId}`)
         this._applyStatSnapshot(step)
-        this.logText.setText(step.message ?? '')
+        this._addLogEntry(step.message ?? '')
         this._spawnFlavorPops(step.flavorEvents)
         resolve()
         return
       }
 
-      this.logText.setText(step.message ?? '')
+      this._addLogEntry(step.message ?? '')
 
       const sprite = attackerEntry.sprite
       const targetSprite = targetEntry.sprite
@@ -675,7 +756,7 @@ export class BattleScene extends Scene {
           this._playActorAnim(step.actorInstanceId, 'attack')
           this._applyStatSnapshot(step)
           if (typeof step.damage === 'number') {
-            this._showFloatText(step.targetInstanceId, `${step.damage}`, step.blocked === true ? 'block' : 'damage', { x: popupX, y: 310 })
+            this._showFloatText(step.targetInstanceId, `${step.damage}`, step.blocked === true ? 'block' : 'damage', { x: popupX, y: 390 })
           }
           this._spawnFlavorPops(step.flavorEvents)
           this.cameras.main.shake(100, 0.005)
@@ -699,7 +780,7 @@ export class BattleScene extends Scene {
 
   _playFlavor(step) {
     return new Promise((resolve) => {
-      this.logText.setText(step.message ?? '')
+      this._addLogEntry(step.message ?? '')
       this._applyStatSnapshot(step)
       this._spawnFlavorPops(step.flavorEvents)
       this.time.delayedCall(200, resolve)
@@ -709,7 +790,7 @@ export class BattleScene extends Scene {
   _playDeath(step) {
     return new Promise((resolve) => {
       const diedId = step.diedInstanceId
-      this.logText.setText(step.message ?? '')
+      this._addLogEntry(step.message ?? '')
       this._applyStatSnapshot(step)
 
       const entry = this.spriteByInstance?.get(diedId)
@@ -764,7 +845,7 @@ export class BattleScene extends Scene {
     return new Promise((resolve) => {
       const deaths = step.deaths ?? []
       this._applyStatSnapshot(step)
-      this.logText.setText(step.message ?? '')
+      this._addLogEntry(step.message ?? '')
 
       if (deaths.length === 0) {
         resolve()

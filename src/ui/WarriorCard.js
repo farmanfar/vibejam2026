@@ -17,13 +17,26 @@ const FACTION_FRAME = {
   Tribal:  'card-blank-3', // parchment
 };
 
-// Bubble positions in card-local space (frame centered at origin, 124x160).
-// All blank card variants share the same upper-left bubble cluster, so one
-// set works. ATK/DEF use fontSize 7 (1x m5x7) so 2-digit values fit inside
-// the small ~14-16px bubbles. TIER stays at 14 (single digit, big circle).
-const TIER_BUBBLE  = { x: -44, y: -60, fontSize: 14 }; // big upper-left circle
-const ATK_BUBBLE   = { x: -28, y: -56, fontSize: 7  }; // small bubble #1 (upper)
-const DEF_BUBBLE   = { x: -32, y: -44, fontSize: 7  }; // small bubble #2 (lower)
+// Bubble / stat positions in card-local space (frame centered at origin,
+// 124x160). The PENUSBMIC blank card art has THREE bubbles baked into the
+// upper-left cluster: one big circle + two small sub-bubbles. Layout matches
+// the layers of `Cards SPRITE File.aseprite`:
+//   • BIG circle       → TIER, rendered as Roman numeral (I / II / III…)
+//   • upper sub-bubble → ATK (sword icon + number)
+//   • lower sub-bubble → HP  (heart icon + number)
+// Icons are shrunk (ICON_SCALE) so they fit next to the digit inside the
+// ~14px sub-bubbles without bleeding into neighbors.
+const TIER_BUBBLE  = { x: -44, y: -60, fontSize: 14 };
+const ATK_ICON     = { x: -32, y: -58 };
+const ATK_NUMBER   = { x: -25, y: -56, fontSize: 7 };
+const HP_ICON      = { x: -36, y: -46 };
+const HP_NUMBER    = { x: -29, y: -44, fontSize: 7 };
+const STAT_ICON_SCALE = 0.6; // 9x9 source → ~5.4px on card, fits in sub-bubble
+
+function tierToRoman(n) {
+  const table = ['', 'I', 'II', 'III', 'IV', 'V', 'VI', 'VII', 'VIII', 'IX', 'X'];
+  return table[n] ?? String(n);
+}
 const TITLE_BANNER = {
   x: 12,    // anchored right of the bubble cluster (avoids TIER overlap)
   y: -68,   // top strip of the card
@@ -90,6 +103,7 @@ export class WarriorCard extends GameObjects.Container {
     this._restY = y;
     this._tweening = false;
     this._isHovered = false;
+    this._isHeld = false;
 
     // ── Card frame (background) ──────────────────────────────
     const frameKey = FACTION_FRAME[warrior.faction] ?? 'card-blank-1';
@@ -141,7 +155,8 @@ export class WarriorCard extends GameObjects.Container {
           + `fallback frame-fit ${frameW}x${frameH} → scale ${scale.toFixed(2)}`,
         );
       }
-      attachOutlineToSprite(this.sprite);
+      this._outlineCtrl = attachOutlineToSprite(this.sprite);
+      if (this.sprite._outlineCtrl === undefined) this.sprite._outlineCtrl = this._outlineCtrl;
     } else {
       const tierColors = [0xe74c3c, 0x3498db, 0x2ecc71, 0xf39c12, 0x9b59b6];
       this.sprite = scene.add.rectangle(
@@ -175,13 +190,30 @@ export class WarriorCard extends GameObjects.Container {
     ).setOrigin(0.5, 0.5).setTint(Theme.fantasyGoldBright);
     this.add(this.nameLabel);
 
-    // ── TIER / ATK / DEF text inside the artwork bubbles ─────
-    // DEF reads warrior.hp because the alpha combat engine has no separate
+    // ── TIER text inside the big baked-in bubble (Roman numeral) ──
+    this.tierText = this._addBadgeText(
+      TIER_BUBBLE, tierToRoman(warrior.tier ?? 1), Theme.fantasyGoldBright,
+    );
+
+    // ── ATK + HP icon/number clusters (upper-left / upper-right) ──
+    // HP uses warrior.hp because the alpha combat engine has no separate
     // def stat — hp IS the defense pool. If a real def field is added later,
     // update this single call site.
-    this.tierText = this._addBadgeText(TIER_BUBBLE, warrior.tier ?? 1, Theme.fantasyGoldBright);
-    this.atkText  = this._addBadgeText(ATK_BUBBLE,  warrior.atk  ?? 0, Theme.criticalText);
-    this.defText  = this._addBadgeText(DEF_BUBBLE,  warrior.hp   ?? 0, Theme.criticalText);
+    const atkCluster = this._addStatCluster(
+      'card-icon-atk', ATK_ICON, ATK_NUMBER, warrior.atk ?? 0, Theme.criticalText,
+    );
+    const hpCluster = this._addStatCluster(
+      'card-icon-hp',  HP_ICON,  HP_NUMBER,  warrior.hp  ?? 0, Theme.criticalText,
+    );
+    this.atkCluster = atkCluster;
+    this.hpCluster  = hpCluster;
+    // Back-compat aliases — existing code elsewhere only reads .text refs, but
+    // keep these so any future caller lands on the number bitmapText.
+    this.atkText = atkCluster.text;
+    this.defText = hpCluster.text;
+    console.log(
+      `[WarriorCard] ${warrior.name} stats: ATK=${warrior.atk ?? 0} HP=${warrior.hp ?? 0}`,
+    );
 
     // ── BOTTOM HALF (revealed on hover) ──────────────────────
     // Class · Tier line
@@ -211,15 +243,38 @@ export class WarriorCard extends GameObjects.Container {
     this.rulesText.setMaxWidth(this.cardW - 14);
     this.add(this.rulesText);
 
+    // ── Team gold frame accent (opts.teamCard) ───────────────
+    if (opts.teamCard) {
+      this.teamAccent = scene.add.graphics();
+      this.teamAccent.lineStyle(2, Theme.fantasyBorderGold, 1);
+      this.teamAccent.strokeRoundedRect(-this.cardW / 2, -this.cardH / 2, this.cardW, this.cardH, 4);
+      this.add(this.teamAccent);
+    }
+
+    // ── Star badge ────────────────────────────────────────────
+    const starCount = warrior.stars ?? 1;
+    if (starCount > 1) {
+      this.starBadge = scene.add.bitmapText(44, -60, FONT_KEY, `*${starCount}`, 14)
+        .setOrigin(0.5, 0.5).setTint(Theme.warning);
+      this.add(this.starBadge);
+    }
+
     // ── Hit zone (toggles between resting / hovered) ─────────
     // Resting: top half only (124x80, local y=-40)
     // Hovered: full card (124x160, local y=0)
-    this.hitZone = scene.add.rectangle(0, -40, this.cardW, this.cardH / 2, 0x000000, 0)
-      .setInteractive({ useHandCursor: true });
+    if (opts.draggable) {
+      this.hitZone = scene.add.rectangle(0, -40, this.cardW, this.cardH / 2, 0x000000, 0)
+        .setInteractive({ useHandCursor: true, draggable: true });
+    } else {
+      this.hitZone = scene.add.rectangle(0, -40, this.cardW, this.cardH / 2, 0x000000, 0)
+        .setInteractive({ useHandCursor: true });
+    }
     this.add(this.hitZone);
 
+    this._setupHover();
+
     if (opts.onClick) {
-      this._setupInteraction(opts.onClick);
+      this.hitZone.on('pointerdown', () => opts.onClick());
     }
 
     scene.add.existing(this);
@@ -231,6 +286,27 @@ export class WarriorCard extends GameObjects.Container {
     ).setOrigin(0.5, 0.5).setTint(color);
     this.add(label);
     return label;
+  }
+
+  /**
+   * Add a stat icon + number pair. Used for ATK (sword) and HP (heart) so
+   * players can tell the two stats apart at a glance. Icons are rendered
+   * un-tinted (full-color PENUSBMIC pixel art); only the number gets a tint.
+   * Falls back to number-only if the icon texture failed to load.
+   * @returns {{ icon: Phaser.GameObjects.Image | null, text: Phaser.GameObjects.BitmapText }}
+   */
+  _addStatCluster(iconKey, iconPos, numberPos, value, tint) {
+    let icon = null;
+    if (this.scene.textures.exists(iconKey)) {
+      icon = this.scene.add.image(iconPos.x, iconPos.y, iconKey)
+        .setOrigin(0.5, 0.5)
+        .setScale(STAT_ICON_SCALE);
+      this.add(icon);
+    } else {
+      console.warn(`[WarriorCard] missing stat icon '${iconKey}' — rendering number only`);
+    }
+    const text = this._addBadgeText(numberPos, value, tint);
+    return { icon, text };
   }
 
   /**
@@ -253,8 +329,9 @@ export class WarriorCard extends GameObjects.Container {
     }
   }
 
-  _setupInteraction(onClick) {
+  _setupHover() {
     this.hitZone.on('pointerover', () => {
+      if (this._isHeld) return;
       if (this._isHovered) return;
       this._isHovered = true;
       this._setHitZoneState('hovered');
@@ -269,6 +346,7 @@ export class WarriorCard extends GameObjects.Container {
     });
 
     this.hitZone.on('pointerout', () => {
+      if (this._isHeld) return;
       if (!this._isHovered) return;
       this._isHovered = false;
       this._setHitZoneState('resting');
@@ -283,9 +361,48 @@ export class WarriorCard extends GameObjects.Container {
         },
       });
     });
+  }
 
-    this.hitZone.on('pointerdown', () => {
-      onClick();
+  updateStars(newStars) {
+    if (!this.starBadge && newStars > 1) {
+      this.starBadge = this.scene.add.bitmapText(44, -60, FONT_KEY, `*${newStars}`, 14)
+        .setOrigin(0.5, 0.5).setTint(Theme.warning);
+      this.add(this.starBadge);
+    } else if (this.starBadge) {
+      this.starBadge.setText(`*${newStars}`);
+    }
+  }
+
+  cancelHoverTween() {
+    this.scene.tweens.killTweensOf(this);
+    this._isHovered = false;
+    this._setHitZoneState('resting');
+  }
+
+  snapBack(flashColor = null) {
+    this._isHeld = false;
+    this.cancelHoverTween();
+    this.scene.tweens.add({
+      targets: this, x: this._restX, y: this._restY,
+      duration: 180, ease: 'Cubic.Out',
+      onComplete: () => this.setDepth(1),
+    });
+    if (flashColor && this.frame?.setTint) {
+      this.frame.setTint(flashColor);
+      this.scene.time.delayedCall(120, () => this.frame.clearTint());
+    }
+  }
+
+  // 120ms shake: x restX-6 → restX+6 → restX, 40ms per leg
+  shake() {
+    const origX = this._restX;
+    this.scene.tweens.chain({
+      targets: this,
+      tweens: [
+        { x: origX - 6, duration: 40, ease: 'Sine.Out' },
+        { x: origX + 6, duration: 40, ease: 'Sine.InOut' },
+        { x: origX,     duration: 40, ease: 'Sine.In' },
+      ],
     });
   }
 

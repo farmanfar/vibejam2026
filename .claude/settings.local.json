@@ -1,0 +1,15 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(\"C:/Program Files/Aseprite/aseprite.exe\" --batch --list-layer-hierarchy \"C:/Users/bigto/Documents/GitHub/hammertime/art assets/THE DARK PAID ASSETS/DARK - Glitch Samurai/Glitch Samurai.aseprite\")",
+      "Bash(npm run:*)",
+      "mcp__Claude_Preview__preview_start",
+      "Bash(git add:*)",
+      "Bash(git commit -m ':*)"
+    ]
+  },
+  "enableAllProjectMcpServers": true,
+  "enabledMcpjsonServers": [
+    "mcp-docs"
+  ]
+}

@@ -95,7 +95,52 @@ export function attachOutlineToSprite(sprite) {
   }
   const ctrl = new OutlineController(sprite.filterCamera);
   sprite.filters.internal.add(ctrl);
+  sprite._outlineCtrl = ctrl;   // cache for VFX lookup
   return ctrl;
+}
+
+/**
+ * 500ms outline pulse: black→gold→white→black, thickness 0.5→1.5→0.5.
+ * Tween proxies a plain object to avoid mutating the array reference.
+ * Non-blocking — does not freeze input.
+ *
+ * @param {Phaser.Scene} scene
+ * @param {Phaser.GameObjects.GameObject} sprite - must have sprite._outlineCtrl set
+ */
+export function pulseLevelUp(scene, sprite) {
+  const ctrl = sprite?._outlineCtrl;
+  if (!ctrl) {
+    console.warn('[Outline] pulseLevelUp — no controller cached on sprite');
+    return;
+  }
+  const origColor = [...ctrl.color];   // snapshot, not a live reference
+  const origThick = ctrl.thickness;
+  const GOLD  = [1.0, 0.84, 0.0];
+  const WHITE = [1.0, 1.0, 1.0];
+
+  const proxy = { r: origColor[0], g: origColor[1], b: origColor[2], t: origThick };
+
+  scene.tweens.chain({
+    targets: proxy,
+    tweens: [
+      {
+        r: GOLD[0], g: GOLD[1], b: GOLD[2], t: 1.5,
+        duration: 170, ease: 'Sine.Out',
+        onUpdate: () => { ctrl.color = [proxy.r, proxy.g, proxy.b]; ctrl.thickness = proxy.t; },
+      },
+      {
+        r: WHITE[0], g: WHITE[1], b: WHITE[2], t: 1.0,
+        duration: 165, ease: 'Sine.InOut',
+        onUpdate: () => { ctrl.color = [proxy.r, proxy.g, proxy.b]; ctrl.thickness = proxy.t; },
+      },
+      {
+        r: origColor[0], g: origColor[1], b: origColor[2], t: origThick,
+        duration: 165, ease: 'Sine.In',
+        onUpdate: () => { ctrl.color = [proxy.r, proxy.g, proxy.b]; ctrl.thickness = proxy.t; },
+        onComplete: () => { ctrl.color = origColor; ctrl.thickness = origThick; },
+      },
+    ],
+  });
 }
 
 export { OutlineController };

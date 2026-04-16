@@ -6,7 +6,7 @@ Locked in via grill session 2026-04-11. SAP economy baseline, differentiated thr
 
 - **10 credits/round**, flat, no win/loss variance
 - **Reroll:** 1 credit per reroll
-- **Sell-back:** Full refund during current shop phase; `ceil(cost/2)` after battle
+- **Sell-back:** Flat 1 credit refund via merchant drag-to-sell zone
 - **Loss penalty:** None — losses only cost strikes, not credits
 - **Bonus income:** Some units generate bonus credits (unit ability). Some faction synergies also generate credits.
 - **Currency:** "credits" everywhere. Code rename from `gold` pending.
@@ -90,7 +90,7 @@ Commander synergy reduction never drops a threshold below 2. You always need at 
 - **4 cards per roll** (keep current)
 - **Tier gating by stage** (keep current ramp: stages 1-2 cap T1, 3-4 cap T2, etc.)
 - **Combining:** Buying a duplicate of a unit you own auto-merges into higher star level (no extra bench slot consumed)
-- **Shop phase = safe zone:** Full sell refunds, team management, rerolling — all before clicking Fight
+- **Shop phase = safe zone:** Sell via drag-to-merchant zone (1 credit flat), team management, rerolling — all before clicking Fight
 
 ## What's NOT In Scope (Yet)
 
