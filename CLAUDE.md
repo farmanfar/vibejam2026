@@ -1,106 +1,60 @@
 # CLAUDE.md — Hired Swords
 
-## Framework
+SAP/TFT/Underlords-style auto-battler roguelike. 960x540 pixel art, m5x7 font, DarkTech theme.
 
-- **Phaser 4.0.0** (`^4.0.0` in package.json). This is NOT Phaser 3.
-- **Never use Phaser 3 APIs.** Many tutorials, docs, and LLM training data reference Phaser 3. Always verify APIs exist in Phaser 4 before using them.
-- Key Phaser 3 → 4 breaking changes to watch for:
-  - `GeometryMask` is Canvas-only in v4 WebGL. Masks moved to the filters system.
-  - Scene lifecycle, input, and camera APIs have changed. Check the migration guide.
-- **Build:** `npm run dev` (Vite dev server)
-- **Test:** `npm test` (vitest, headless, Node env — alpha combat engine only)
-- **Alpha sim:** `npm run sim` (single battle CLI), `npm run sim:balance` (1000-battle bulk run + report)
-- **Unit generator:** `npm run alpha:generate` (reads `design/units/*.md` → `src/config/alpha-units.generated.json`)
-- **Stack:** Phaser 4 + Vite 8 + Supabase (auth/cloud)
+**Stack:** Phaser **4.0.0** + Vite 8 + Supabase (auth/cloud). Currency is **credits** (code still says `gold` — rename pending). Full design spec: `design/game-design-spec.md` (locked 2026-04-11).
 
-## Docs Server
+## Commands
 
-MCP documentation server is the **sole source of truth** for `phaser` — do not use web search or training knowledge. See `design/mcp_server.md`
-Let the user know any time you utilize the server for testing purposes.
-## Game
+- `npm run dev` — Vite dev server
+- `npm test` — vitest (alpha combat engine only, headless Node)
+- `npm run sim` / `npm run sim:balance` — alpha combat sim (1 or 1000 battles)
+- `npm run alpha:generate` — `design/units/*.md` → `src/config/alpha-units.generated.json`
+- `npm run alpha:sprites` — re-bake alpha atlases from `src/config/alpha-sprite-mapping.json`
 
-- Auto-battler roguelike: recruit warriors, build synergies, fight AI/ghost opponents
-- 960x540 pixel art, m5x7 bitmap font, DarkTech theme
-- 5 factions (Robot, Undead, Beast, Fantasy, Tribal) + 4-5 classes (Warrior, Mage, Ranger, Tank, Support) — dual-tag system
-- Currency is **credits** (not gold). ⚠️ Code still uses `gold` everywhere — rename pending.
-- Art pipeline: PENUSBMIC assets imported via unit-catalog system. Placeholder textures generated at boot for units without art. See `public/assets/CLAUDE.md` for asset directory details.
-- Alpha portrait footgun: some Aseprite atlases have junk/blank frame `0` even when `alpha-art.generated.json` says `portraitFrame: 0`. If a shop card, bench portrait, or battle sprite renders tiny/empty/scrambled, check the unit's cached Aseprite `meta.frameTags` and prefer the first frame of `defaultTag`. See `src/rendering/CLAUDE.md`.
-- **Full design spec:** `design/game-design-spec.md` (locked 2026-04-11)
+## Phaser 4 — not 3
 
-## Design Direction
+- **Never use Phaser 3 APIs.** Most tutorials and LLM training data are Phaser 3. Verify every API against Phaser 4.
+- `GeometryMask` is Canvas-only in v4 WebGL; masks moved to the filters system.
+- The MCP docs server is the **sole source of truth** for Phaser APIs (no web search, no training knowledge). See `design/mcp_server.md`. Tell the user when you consult it.
 
-- **SAP-style economy.** 10 credits/round flat. 1 credit reroll. Flat 1 credit refund via merchant drag-to-sell zone. No loss penalty.
-- **Dual-tag synergies (Underlords-style).** Faction synergies give stat bonuses. Class synergies give mechanical effects (armor, splash, double-attack, taunt, heal).
-- **Star levels (TFT combine).** 2 copies → 2-star, 4 copies → 3-star. +1/+1 per star (SAP flat scaling). Legendaries cut for now.
-- **Commanders.** Random at run start. Baseline: reduce synergy thresholds (never below 2). Each unique. Swap offered every 3 wins by merchant for 10 credits.
-- **Merchants.** Random each round, type weighted by team comp. Mechanical — influences shop unit pool/odds.
-- **Dynamic run length.** Play until 9 wins or 3 losses. 5 bench slots from stage 1. No permadeath — team persists. Full HP heal each round.
+## Subsystem rules
 
-## Structure
+Each subdirectory has its own CLAUDE.md — read the relevant one(s) before editing:
 
-Each subdirectory has its own CLAUDE.md with subsystem-specific rules.
+- `src/scenes/` — scene flow, state shape, LayoutEditor registration contract
+- `src/systems/` — BattleEngine, ShopManager, GhostManager, LayoutEditor internals
+- `src/systems/combat/` — headless alpha combat engine (sim/tests only — never imported by scenes)
+- `src/rendering/` — Aseprite pipeline, portrait frame resolution, alpha animation wiring, portrait-frame footgun
+- `src/ui/` — PixelUI components, Theme (DarkTech palette), m5x7 font
+- `src/widgets/` — multi-layer UI widgets
+- `src/config/`, `public/assets/`, `design/units/` — data + asset conventions
 
-```
-src/
-├── main.js              # Phaser Game config (960x540, pixelArt, scene order)
-├── supabase.js          # Supabase client, anonymous auth
-├── config/              # Data definitions (units, synergies, unit-catalog, layout-overrides.json)
-├── scenes/              # Phaser Scenes (Boot, Menu, Shop, Battle, GameOver, HallOfFame, Settings, UnitLab)
-├── systems/             # Game logic (BattleEngine, ShopManager, GhostManager, LayoutEditor, PlayerConfig)
-├── widgets/             # Reusable multi-layer UI widgets (SelectionMenuWidget). See widgets/CLAUDE.md.
-└── ui/                  # PixelUI components (Theme, Font, Button, Label, Panel, HealthBar, Card, Typewriter, TextInput)
-```
+Project-wide rules live here; subsystem rules stay in subsystem files.
 
 ## Workflow
 
-This is a Codex-reviewed project. Follow this loop:
+1. **Plan mode always.** Log EVERYTHING — positions, transitions, decisions, fallbacks. Make the plan unambiguous for Codex review.
+2. Codex reviews the plan (user copy-pastes externally). Iterate until the plan is right — no revision-loop living.
+3. Implement (suggest Sonnet when work is mechanical / no design ambiguity).
+4. Codex reviews the code. Ship or fix.
 
-1. **Plan mode always.** Plan tests that prove success. Log EVERYTHING — positions, state transitions, decisions, fallbacks. Codex will review, so make the plan unambiguous.
-2. Codex reviews plan, gives feedback.
-3. Improve plan knowing Codex will look again.
-4. Codex gives second feedback pass.
-5. Get plan 1000% right. No living in revision loops.
-6. Implementation (suggest Sonnet when work is mechanical / no design ambiguity).
-7. Codex reviews implementation.
-8. Ship — or fix and re-review.
-
-**Do NOT invoke Codex, codex:rescue, or any Codex-related tooling from Claude Code.** The user handles plan/code review externally by copy-pasting to Codex.
+**Do not invoke Codex, codex:rescue, or Codex tooling from Claude Code — the user drives all Codex review externally.**
 
 ## Logging
 
 Log aggressively. The user debugs by pasting console output — silent failures are invisible.
 
-- **Every layout-managed element:** `[Layout] Scene.ElementId at (x, y)`
-- **Every state transition:** scene changes, W/L updates, credit changes
-- **Every network call:** before, result, error with context
-- **Every fallback path:** log WHY the fallback was taken
-- **Every error:** never `catch (_) {}` — always `catch (e) { console.error('[System] context:', e) }`
-- **System prefixes:** `[Layout]`, `[Editor]`, `[Auth]`, `[Ghost]`, `[Shop]`, `[Battle]`, `[Menu]`, `[Boot]`
-
-## UI / Visual Work
-
-Claude is weak at spatial layout. The **F2 Layout Editor** exists so the user does visual positioning.
-
-- The `frontend-design` skill has limited utility for Phaser canvas rendering — it's designed for HTML/CSS, not game engine UIs.
-- Every authored UI element must be registered with LayoutEditor for F2 editing.
-- Decorative elements (scanlines, grid lines, dividers) are NOT registered.
+- Every layout-managed element: `[Layout] Scene.ElementId at (x, y)`
+- Every state transition, network call, and fallback path (log WHY the fallback ran)
+- Never `catch (_) {}` — always `catch (e) { console.error('[System] context:', e) }`
+- System prefixes: `[Layout]`, `[Editor]`, `[Auth]`, `[Ghost]`, `[Shop]`, `[Battle]`, `[Menu]`, `[Boot]`
 
 ## F2 Layout Editor
 
-Runtime debug tool — press **F2** to toggle edit mode.
+Claude is weak at spatial layout — the user positions UI visually via F2 drag editor. The `frontend-design` skill targets HTML/CSS and has limited utility for Phaser canvas UI.
 
-- **Hotkeys (edit mode only):**
-  - **F2** — toggle edit mode on/off
-  - **`[` / `]`** — scale selected element down / up (10% per step)
-  - **G** — cycle grid snap: OFF → 8px → 16px → 32px → OFF
-  - **R** — reset selected element to default position + scale
-  - **Escape** — deselect current element
-- **Registered elements:** panels, labels, buttons, cards. NOT combat sprites, health bars, or decorative primitives.
-- **Edit mode:** disables all game input (prevents buy/sell/reroll). Drag elements freely. Green position labels + yellow selection highlight.
-- **Persistence:** positions + scale saved to **localStorage** immediately. Survives page refresh.
-- **Buttons:** Export JSON, Reset Scene (current scene to defaults), Clear All (all scenes).
-- **Export:** click "Export" in edit mode (or `LayoutEditor.exportJSON()` in console). Copy into `src/config/layout-overrides.json`.
-- **Load priority:** localStorage > layout-overrides.json > hardcoded defaults.
-- **For publish:** commit `layout-overrides.json` with the user's preferred positions. Clear localStorage.
-- **Console commands:** `LayoutEditor.exportJSON()`, `LayoutEditor.clearAll()`
-- **Scene lifecycle:** each scene calls `LayoutEditor.unregisterScene()` on shutdown. No stale refs.
+- Every authored UI element (panels, labels, buttons, cards) must call `LayoutEditor.register(this, 'elementId', element, defaultX, defaultY)`. Decorative primitives (scanlines, grids, dividers) and combat sprites/health bars do NOT register.
+- Each scene hooks `this.events.once('shutdown', () => LayoutEditor.unregisterScene(this.scene.key))`.
+- Load priority: **localStorage > `src/config/layout-overrides.json` > hardcoded defaults.** For publish, commit overrides and clear localStorage.
+- Hotkeys (edit mode): **F2** toggle · **[ / ]** scale · **G** grid snap · **R** reset · **Esc** deselect. Console: `LayoutEditor.exportJSON()`, `LayoutEditor.clearAll()`.

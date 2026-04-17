@@ -9,6 +9,7 @@ import { getCommanders } from '../config/commanders.js';
 import { getMerchants } from '../config/merchants.js';
 import { resetCaptureReady, resolveCaptureRoute } from '../systems/CaptureSupport.js';
 import { attachGeneratedNormalMap } from '../rendering/NormalMapGenerator.js';
+import { getAllPreloadEntries as getAllSynergyIconPreloadEntries } from '../config/synergy-icons.js';
 
 export class BootScene extends Scene {
   constructor() {
@@ -100,6 +101,16 @@ export class BootScene extends Scene {
     this.load.image('card-icon-hp',  `assets/cards/icons/${ICON_HP_FILE}.png`);
     this.load.image('card-icon-atk', `assets/cards/icons/${ICON_ATK_FILE}.png`);
     console.log(`[Boot] Card stat icons: hp=${ICON_HP_FILE}, atk=${ICON_ATK_FILE}`);
+
+    // Synergy chip icons (shop scene faction/class chips). See
+    // src/config/synergy-icons.js for the texture-key → file mapping. Swap any
+    // PNG in public/assets/ui/synergies/ to change the visual; no code change
+    // needed unless adding a new tag.
+    const synergyIconEntries = getAllSynergyIconPreloadEntries();
+    synergyIconEntries.forEach(({ textureKey, file }) => {
+      this.load.image(textureKey, `assets/ui/synergies/${file}`);
+    });
+    console.log(`[Boot] Queued ${synergyIconEntries.length} synergy chip icons for preload`);
 
     // Generate placeholder textures for warriors (before font is ready)
     const colors = [0x64b4d2, 0x7cceff, 0x66cc66, 0xffcc78, 0xcc66ff];

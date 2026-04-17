@@ -211,22 +211,143 @@ export class PixelButton extends GameObjects.Container {
     const bg = this.bgRect;
 
     bg.on('pointerover', () => {
-      if (!this.enabled) return;
+      if (!this.enabled || this._spinning) return;
       this._redrawBg(brighten(this.btnBg));
     });
 
     bg.on('pointerout', () => {
+      if (this._spinning) return;
       this._redrawBg(this.enabled ? this.btnBg : Theme.disabled);
     });
 
     bg.on('pointerdown', () => {
-      if (!this.enabled) return;
+      if (!this.enabled || this._spinning) return;
       // White flash
       this._redrawBg(0xffffff);
       this.scene.time.delayedCall(80, () => {
         this._redrawBg(brighten(this.btnBg));
       });
       this.onClick?.();
+    });
+  }
+
+  /**
+   * Slot-machine spin: each letter spins around the horizontal axis (scaleY
+   * oscillating between tall and edge-on), cycling random characters at the
+   * edge-on moment for a mechanical cylinder feel. Letters settle left-to-right
+   * with a stagger, each crashing into place with a squash/stretch bounce.
+   *
+   * Fires `settleCallback` after the last letter finishes its bounce. No-op on
+   * text-style buttons. Ignores clicks while spinning.
+   *
+   * @param {Function} [settleCallback]
+   * @param {object}   [opts]
+   * @param {number}   [opts.spinBeforeSettle=420]  — ms everyone spins before first letter locks
+   * @param {number}   [opts.stagger=95]            — ms between per-letter settles
+   * @param {number}   [opts.flipHalfMs=70]         — ms per half-rotation of a spinning letter
+   * @param {string}   [opts.filler]                — character pool for random swaps
+   */
+  spin(settleCallback, opts = {}) {
+    if (this._spinning) return;
+    if (!this.isFilled) { settleCallback?.(); return; }
+
+    console.log(`[PixelButton] spin start label="${this.label}"`);
+    this._spinning = true;
+
+    const original         = this.label;
+    const fontSize         = 7 * this.fontScale;
+    const filler           = (opts.filler ?? 'ABCDEFGHJKLMNPQRSTUVWXYZ0123456789').split('');
+    const spinBeforeSettle = opts.spinBeforeSettle ?? 420;
+    const stagger          = opts.stagger ?? 95;
+    const flipHalfMs       = opts.flipHalfMs ?? 70;
+
+    // Measure per-character cell rects on the current (original) label so the
+    // per-char sprites line up exactly where the real label sits.
+    this.text.setText(original);
+    this._layoutFilledText();
+    const bounds = this.text.getTextBounds(false);
+    const charInfo = bounds.characters || [];
+
+    this.text.setVisible(false);
+
+    // Build one bitmap-text per character, centered in its cell, origin (0.5, 0.5)
+    // so scaleX/scaleY animations pivot around the letter's middle.
+    const pool = [];
+    for (let i = 0; i < original.length; i++) {
+      const ch = original[i];
+      const info = charInfo[i];
+      if (!info) continue;
+      const cx = this.text.x + (info.x + info.r) / 2;
+      const cy = this.text.y + (info.t + info.b) / 2;
+      const obj = this.scene.add.bitmapText(cx, cy, FONT_KEY, ch, fontSize)
+        .setOrigin(0.5, 0.5)
+        .setTint(Theme.criticalText);
+      this.add(obj);
+      pool.push({ obj, finalChar: ch, settled: false });
+    }
+
+    // Per-letter spin loop: 1.0 → 0.15 (edge-on, invisible) → swap char → 0.15 → 1.0.
+    // Reads as a cylinder rotating around a horizontal axis.
+    const spinOne = (p) => {
+      if (p.settled) return;
+      this.scene.tweens.add({
+        targets: p.obj,
+        scaleY: 0.15,
+        duration: flipHalfMs,
+        ease: 'Sine.In',
+        onComplete: () => {
+          if (p.settled) return;
+          p.obj.setText(filler[Math.floor(Math.random() * filler.length)]);
+          this.scene.tweens.add({
+            targets: p.obj,
+            scaleY: 1.0,
+            duration: flipHalfMs,
+            ease: 'Sine.Out',
+            onComplete: () => spinOne(p),
+          });
+        },
+      });
+    };
+    pool.forEach(spinOne);
+
+    // Crash-settle: stretch tall (falling in), squish wide (impact), spring up (Back.Out).
+    const settleOne = (p) => {
+      if (p.settled) return;
+      p.settled = true;
+      this.scene.tweens.killTweensOf(p.obj);
+      p.obj.setText(p.finalChar);
+      p.obj.setScale(1.0, 1.45);
+      this.scene.tweens.add({
+        targets: p.obj,
+        scaleX: 1.25, scaleY: 0.65,
+        duration: 95,
+        ease: 'Sine.InOut',
+        onComplete: () => {
+          this.scene.tweens.add({
+            targets: p.obj,
+            scaleX: 1.0, scaleY: 1.0,
+            duration: 200,
+            ease: 'Back.Out',
+          });
+        },
+      });
+    };
+
+    // Stagger settles left-to-right so letters crash in like reels locking.
+    pool.forEach((p, i) => {
+      this.scene.time.delayedCall(spinBeforeSettle + i * stagger, () => settleOne(p));
+    });
+
+    // Cleanup after the last letter's bounce finishes.
+    const cleanupDelay = spinBeforeSettle + (pool.length - 1) * stagger + 340;
+    this.scene.time.delayedCall(cleanupDelay, () => {
+      pool.forEach(p => { this.scene.tweens.killTweensOf(p.obj); p.obj.destroy(); });
+      this.text.setVisible(true);
+      this.text.setText(original);
+      this._layoutFilledText();
+      this._spinning = false;
+      console.log(`[PixelButton] spin settle label="${original}"`);
+      settleCallback?.();
     });
   }
 

@@ -143,4 +143,74 @@ export function pulseLevelUp(scene, sprite) {
   });
 }
 
+/**
+ * Star-level pop: scale + flash on the newest star in a WarriorCard's
+ * persistent star bar. Paired with `pulseLevelUp()` at combine time so the
+ * portrait outline and the new star light up together.
+ *
+ * The card's `_drawStarBar()` rebuilds the star bar fresh each time a card
+ * is constructed, so the "last" star in the array is always the one that
+ * just arrived when a combine fires _drawTeamRow().
+ *
+ * @param {Phaser.Scene} scene
+ * @param {import('../ui/WarriorCard.js').WarriorCard} card
+ */
+export function pulseStarLevelUp(scene, card) {
+  const bar = card?._starBar;
+  const stars = bar?.stars;
+  if (!stars || stars.length === 0) {
+    console.warn('[VFX] pulseStarLevelUp — card has no star bar');
+    return;
+  }
+  const star = stars[stars.length - 1];
+  const gold = star._restTint ?? 0xffd700;
+  const GOLD_R = (gold >> 16) & 0xff;
+  const GOLD_G = (gold >> 8) & 0xff;
+  const GOLD_B = gold & 0xff;
+
+  console.log(`[VFX] starLevelUp stars=${stars.length}`);
+
+  // Star pop: scale 0 → 1.5 → 1.0 + alpha 0.3 → 1
+  star.setScale(0).setAlpha(0.3).setTint(0xffffff);
+  scene.tweens.chain({
+    targets: star,
+    tweens: [
+      { scale: 1.5, alpha: 1, duration: 220, ease: 'Back.Out' },
+      { scale: 1.0, duration: 140, ease: 'Sine.InOut' },
+    ],
+  });
+
+  // Tint lerp: white → gold over 340ms (covers both pop phases).
+  scene.tweens.addCounter({
+    from: 0,
+    to: 1,
+    duration: 340,
+    onUpdate: (tween) => {
+      const t = tween.getValue();
+      const r = Math.round(255 * (1 - t) + GOLD_R * t);
+      const g = Math.round(255 * (1 - t) + GOLD_G * t);
+      const b = Math.round(255 * (1 - t) + GOLD_B * t);
+      star.setTint((r << 16) | (g << 8) | b);
+    },
+    onComplete: () => star.setTint(gold),
+  });
+
+  // Ring flash: expanding gold circle behind the star, fades out.
+  const ring = scene.add.graphics();
+  ring.lineStyle(2, gold, 1);
+  ring.strokeCircle(0, 0, 8);
+  ring.x = star.x;
+  ring.y = 0; // star bar is the parent at (0, STAR_BAR_Y)
+  ring.setAlpha(0.85);
+  bar.addAt(ring, 0); // behind the stars
+  scene.tweens.add({
+    targets: ring,
+    scale: 2.4,
+    alpha: 0,
+    duration: 380,
+    ease: 'Sine.Out',
+    onComplete: () => ring.destroy(),
+  });
+}
+
 export { OutlineController };

@@ -47,9 +47,9 @@ export class ParallaxBackground {
     this._createSideLayers('right', this.rightSetId, this.rightLayers, this.rightTiles)
     this._createCenterSeam()
 
-    // Clean up on ANY scene exit
+    // Phaser fires 'shutdown' first during scene teardown; the scene's own
+    // destroy() on this class (below) handles the explicit-destroy path.
     this.scene.events.on('shutdown', this._onShutdown, this)
-    this.scene.events.on('destroy', this._onShutdown, this)
 
     console.log(`[Parallax] Created: ${this.gameObjects.length} objects`)
   }
@@ -158,7 +158,6 @@ export class ParallaxBackground {
 
   _onShutdown() {
     this.scene.events.off('shutdown', this._onShutdown, this)
-    this.scene.events.off('destroy', this._onShutdown, this)
 
     for (const obj of this.gameObjects) {
       if (obj && obj.destroy) obj.destroy()

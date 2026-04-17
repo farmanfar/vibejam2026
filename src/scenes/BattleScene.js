@@ -12,7 +12,7 @@ import { getUnitPortraitRef } from '../rendering/UnitArt.js'
 import { getAsepriteTagConfigs } from '../rendering/AsepriteAnimations.js'
 import { SceneCrt, startSceneWithCrtPolicy } from '../rendering/SceneCrt.js'
 import { attachOutlineToSprite } from '../rendering/OutlineController.js'
-import { getTightFrameBounds } from '../rendering/spriteBounds.js'
+import { fitSpriteToPortraitBounds } from '../rendering/SpriteFit.js'
 
 // Minimum on-screen height (in display px) for battle-sprite characters.
 // PENUSBMIC atlases vary wildly in how much of the 192x192 frame is actually
@@ -122,12 +122,8 @@ export class BattleScene extends Scene {
         hp: w.hp,
       })
       badge.setDepth(battleDepth)
-      const name = this.add.bitmapText(x, y - 48, FONT_KEY, w.name, 7)
-        .setOrigin(0.5)
-        .setTint(Theme.accent)
-        .setDepth(battleDepth)
       return {
-        sprite, badge, name, light,
+        sprite, badge, light,
         warrior: { ...w, currentHp: w.hp },
         instanceId: `p${i}`,
       }
@@ -155,12 +151,8 @@ export class BattleScene extends Scene {
         isEnemy: true,
       })
       badge.setDepth(battleDepth)
-      const name = this.add.bitmapText(x, y - 48, FONT_KEY, w.name, 7)
-        .setOrigin(0.5)
-        .setTint(Theme.error)
-        .setDepth(battleDepth)
       return {
-        sprite, badge, name, light,
+        sprite, badge, light,
         warrior: { ...w, currentHp: w.hp },
         instanceId: `e${i}`,
       }
@@ -192,26 +184,77 @@ export class BattleScene extends Scene {
       .setDepth(battleDepth)
     LayoutEditor.register(this, 'vsText', vsText, width / 2, 300)
 
+    // Scrollable event log — mirrors HammerTime/UI/GameLog.cs style:
+    // uppercase entries, muted tint, small m5x7 text, header + divider,
+    // mouse-wheel scrollback with a scrollbar thumb.
     this._logHistory = []
+    this._logScrollOffset = 0 // lines from bottom (0 = pinned to newest)
 
     const logBoxW = 900
-    const logBoxH = 56
+    const logBoxH = 100
     const logBoxX = width / 2 - logBoxW / 2
-    const logBoxY = 474
+    const logBoxY = 430
+    const logPad = 6
+    const logHeaderH = 16
+    const logDivY = logBoxY + 2 + logHeaderH
+    const logTextY = logDivY + 2
+    const logTextH = logBoxY + logBoxH - logTextY - 2
+
     const logBg = this.add.graphics()
     logBg.fillStyle(Theme.panelBg, 0.82)
     logBg.fillRect(logBoxX, logBoxY, logBoxW, logBoxH)
     logBg.lineStyle(1, Theme.panelBorder, 0.4)
     logBg.strokeRect(logBoxX, logBoxY, logBoxW, logBoxH)
+    logBg.lineStyle(1, Theme.panelBorder, 0.5)
+    logBg.lineBetween(logBoxX + 2, logDivY, logBoxX + logBoxW - 2, logDivY)
     logBg.setDepth(battleDepth - 1)
 
-    this.logText = this.add.bitmapText(logBoxX + 8, logBoxY + 4, FONT_KEY, '', 12)
+    this.add.bitmapText(logBoxX + logPad, logBoxY + 2, FONT_KEY, 'EVENT LOG', 14)
+      .setTint(Theme.mutedText)
+      .setAlpha(0.55)
+      .setDepth(battleDepth)
+
+    this.logText = this.add.bitmapText(logBoxX + logPad, logTextY, FONT_KEY, '', 14)
       .setOrigin(0, 0)
       .setTint(Theme.mutedText)
       .setDepth(battleDepth)
-      .setAlpha(0.85)
-      .setMaxWidth(logBoxW - 16)
-    LayoutEditor.register(this, 'logText', this.logText, logBoxX + 8, logBoxY + 4)
+      .setAlpha(0.9)
+
+    // Measure actual glyph advance from the bitmap font rather than trusting
+    // a hardcoded charW — Phaser's RetroFont advance depends on CELL_W vs
+    // GLYPH_H ratio in a way that doesn't always match PixelFont.measure().
+    // Using getTextBounds on a probe string is authoritative.
+    let measuredCharW = 12
+    let measuredLineH = 16
+    try {
+      this.logText.setText('MMMMMMMMMMMMMMMM')
+      const b = this.logText.getTextBounds(false).local
+      if (b.width > 0) measuredCharW = b.width / 16
+      if (b.height > 0) measuredLineH = b.height
+      this.logText.setText('')
+      console.log(`[Battle] log font measured charW=${measuredCharW.toFixed(2)} lineH=${measuredLineH.toFixed(2)}`)
+    } catch (e) {
+      console.error('[Battle] log font measurement failed, using fallback:', e)
+    }
+
+    this._logScrollbar = this.add.graphics().setDepth(battleDepth + 1)
+    this._logLayout = {
+      x: logBoxX, y: logBoxY, w: logBoxW, h: logBoxH,
+      pad: logPad, textY: logTextY, textH: logTextH,
+      charW: measuredCharW, lineH: Math.max(measuredLineH, 14) + 2,
+    }
+
+    this.input.on('wheel', (pointer, _objs, _dx, dy) => {
+      const L = this._logLayout
+      if (!L) return
+      if (pointer.x < L.x || pointer.x > L.x + L.w) return
+      if (pointer.y < L.y || pointer.y > L.y + L.h) return
+      if (dy < 0) this._logScrollOffset += 2
+      else if (dy > 0) this._logScrollOffset = Math.max(0, this._logScrollOffset - 2)
+      this._renderLog()
+    })
+
+    LayoutEditor.register(this, 'logText', this.logText, logBoxX + logPad, logTextY)
 
     this.events.once('shutdown', () => {
       console.log('[Battle] Shutdown - cleaning up')
@@ -247,40 +290,17 @@ export class BattleScene extends Scene {
   // Shifting origin to the tight-bounds center puts the character back under
   // its UI, the same trick WarriorCard already uses for shop portraits.
   _adjustBattleSprite(sprite, warrior, ref, side) {
-    const bounds = getTightFrameBounds(this, ref.key, ref.frame)
-    if (!bounds || bounds.w <= 0 || bounds.h <= 0 || bounds.fullyTransparent) {
-      console.warn(`[Battle] ${side} ${warrior.id}: no tight bounds — leaving default origin/scale`)
-      return
-    }
-    const frameW = sprite.frame?.width ?? sprite.width
-    const frameH = sprite.frame?.height ?? sprite.height
-    const rawOx = (bounds.x + bounds.w / 2) / frameW
-    const oy = (bounds.y + bounds.h / 2) / frameH
-    // Enemy sprites get setFlipX(true) before we reach this helper. Phaser
-    // mirrors the texture inside the sprite's bounds but leaves the origin
-    // fraction untouched — so an origin of 0.266 on a flipped enemy anchors
-    // at the empty right half of the (mirrored) frame, nowhere near the
-    // character. Invert for flipped sprites so the anchor re-lands on the
-    // mirrored character.
-    const ox = sprite.flipX ? 1 - rawOx : rawOx
-    sprite.setOrigin(ox, oy)
-
-    const configScale = warrior.art?.displayScale ?? 2.5
-    const displayH = bounds.h * configScale
-    if (displayH < MIN_BATTLE_SPRITE_H) {
-      const boosted = MIN_BATTLE_SPRITE_H / bounds.h
-      sprite.setScale(boosted)
-      console.log(
-        `[Battle] ${side} ${warrior.id} tight ${bounds.w}x${bounds.h} @ (${bounds.x},${bounds.y}) `
-        + `origin (${ox.toFixed(3)},${oy.toFixed(3)}) scale ${configScale.toFixed(2)} → ${boosted.toFixed(2)} `
-        + `(boosted to min ${MIN_BATTLE_SPRITE_H}px)`,
-      )
-    } else {
-      console.log(
-        `[Battle] ${side} ${warrior.id} tight ${bounds.w}x${bounds.h} @ (${bounds.x},${bounds.y}) `
-        + `origin (${ox.toFixed(3)},${oy.toFixed(3)}) scale ${configScale.toFixed(2)}`,
-      )
-    }
+    // Enemy sprites get setFlipX(true) before this call — flipXInvert tells
+    // the helper to mirror the origin.x so the anchor lands on the mirrored
+    // character instead of the empty right half of the flipped frame.
+    fitSpriteToPortraitBounds(this, sprite, ref, {
+      configScale: warrior.art?.displayScale ?? 2.5,
+      minHeightPx: MIN_BATTLE_SPRITE_H,
+      flipXInvert: true,
+      logTag: '[Battle]',
+      warriorId: warrior.id,
+      side,
+    })
   }
 
   _wireAlphaAnimations(sprite, warrior, side) {
@@ -352,7 +372,7 @@ export class BattleScene extends Scene {
         ? centerX - frontOffset - i * spacing
         : centerX + frontOffset + i * spacing
       positions.push(newX)
-      const targets = [s.sprite, s.badge, s.name, s.light].filter(Boolean)
+      const targets = [s.sprite, s.badge, s.light].filter(Boolean)
       if (targets.length === 0) return
       this.tweens.add({
         targets,
@@ -439,9 +459,71 @@ export class BattleScene extends Scene {
 
   _addLogEntry(msg) {
     if (!msg) return
-    this._logHistory.push(msg)
-    if (this._logHistory.length > 3) this._logHistory.shift()
-    this.logText.setText(this._logHistory.join('\n'))
+    this._logHistory.push(String(msg).toUpperCase())
+    if (this._logHistory.length > 200) this._logHistory.shift()
+    this._logScrollOffset = 0 // auto-scroll to bottom on new entry
+    this._renderLog()
+  }
+
+  _wrapLogLine(text, maxChars) {
+    if (!text) return ['']
+    const out = []
+    for (const paragraph of String(text).split('\n')) {
+      const words = paragraph.split(' ')
+      let current = ''
+      for (const word of words) {
+        if (!current) {
+          current = word
+        } else if (current.length + 1 + word.length <= maxChars) {
+          current += ' ' + word
+        } else {
+          out.push(current)
+          current = word
+        }
+      }
+      if (current) out.push(current)
+      else if (paragraph === '') out.push('')
+    }
+    // Hard-break any single token longer than the line width.
+    const final = []
+    for (const line of out) {
+      if (line.length <= maxChars) final.push(line)
+      else for (let i = 0; i < line.length; i += maxChars) final.push(line.slice(i, i + maxChars))
+    }
+    return final.length ? final : ['']
+  }
+
+  _renderLog() {
+    const L = this._logLayout
+    if (!L || !this.logText) return
+
+    const contentW = L.w - L.pad * 2 - 6 // 6px reserved for scrollbar
+    const maxChars = Math.max(8, Math.floor(contentW / L.charW))
+    const visibleLines = Math.max(1, Math.floor(L.textH / L.lineH))
+
+    const displayLines = []
+    for (const entry of this._logHistory) {
+      for (const line of this._wrapLogLine(entry, maxChars)) displayLines.push(line)
+    }
+
+    const maxScroll = Math.max(0, displayLines.length - visibleLines)
+    if (this._logScrollOffset > maxScroll) this._logScrollOffset = maxScroll
+
+    const endIdx = displayLines.length - this._logScrollOffset
+    const startIdx = Math.max(0, endIdx - visibleLines)
+    this.logText.setText(displayLines.slice(startIdx, endIdx).join('\n'))
+
+    const sb = this._logScrollbar
+    if (!sb) return
+    sb.clear()
+    if (displayLines.length > visibleLines) {
+      const trackH = L.textH - 2
+      const thumbH = Math.max(6, Math.floor(trackH * visibleLines / displayLines.length))
+      const scrollFrac = maxScroll === 0 ? 0 : this._logScrollOffset / maxScroll
+      const thumbY = L.textY + 1 + Math.floor((trackH - thumbH) * (1 - scrollFrac))
+      sb.fillStyle(Theme.mutedText, 0.6)
+      sb.fillRect(L.x + L.w - 5, thumbY, 3, thumbH)
+    }
   }
 
   // ---------- visual script preprocessing ----------
@@ -812,14 +894,12 @@ export class BattleScene extends Scene {
         cleanedUp = true
         if (entry.sprite) entry.sprite.destroy()
         if (entry.badge) entry.badge.destroy()
-        if (entry.name) entry.name.destroy()
         if (entry.light) {
           entry.light.setActive(false)
           entry.light.setVisible(false)
         }
         entry.sprite = null
         entry.badge = null
-        entry.name = null
         entry.light = null
         this._reflowTeam(side)
         // Wait one reflow duration (_reflowTeam uses 400ms Cubic.Out at
@@ -875,14 +955,12 @@ export class BattleScene extends Scene {
           cleanedUp = true
           if (entry.sprite) entry.sprite.destroy()
           if (entry.badge) entry.badge.destroy()
-          if (entry.name) entry.name.destroy()
           if (entry.light) {
             entry.light.setActive(false)
             entry.light.setVisible(false)
           }
           entry.sprite = null
           entry.badge = null
-          entry.name = null
           entry.light = null
           resolveAnim()
         }
