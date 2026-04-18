@@ -14,7 +14,21 @@
  * the editable originals if art needs to be retouched.
  */
 
-export const MERCHANTS = [
+// Favors: each merchant has a preferred class or faction. When that merchant
+// is hired for the run, the favored set counts as if it had one more member
+// on the team at battle start, so threshold/scaling synergies trigger with
+// one fewer actual unit. Distributed across the 3 factions (Folk/Monster/
+// Robot) and 3 thematically-fitting classes for an even spread.
+const MERCHANT_FAVORS = {
+  traveler:        { kind: 'faction', name: 'Robot'     },
+  skull_trader:    { kind: 'faction', name: 'Monster'   },
+  fruit_vendor:    { kind: 'faction', name: 'Folk'      },
+  bread_vendor:    { kind: 'class',   name: 'Knight'    },
+  fortune_teller:  { kind: 'class',   name: 'Ancient'   },
+  mushroom_dealer: { kind: 'class',   name: 'Assassin'  },
+};
+
+const BASE_MERCHANTS = [
   { id: 'traveler',        name: 'Wandering Trader',
     spriteKey: 'merchant-traveler',
     asset: 'assets/merchants/npcs/traveler_blue.png',
@@ -54,6 +68,11 @@ export const MERCHANTS = [
     blurb: '"Fresh spores, half price."' },
 ];
 
+export const MERCHANTS = BASE_MERCHANTS.map((m) => ({
+  ...m,
+  favors: MERCHANT_FAVORS[m.id] ?? null,
+}));
+
 export function getMerchants() {
   return [...MERCHANTS];
 }
@@ -75,4 +94,32 @@ export function pickRandomMerchants(count = 3) {
  */
 export function getMerchantIdleAnimKey(merchant) {
   return `${merchant.spriteKey}-idle`;
+}
+
+// ---------------------------------------------------------------------------
+// Favors — tooltip + combat helpers
+// ---------------------------------------------------------------------------
+
+/**
+ * Raw favor descriptor `{ kind, name }` or null. Combat adapter plumbs this
+ * into CombatCore as `team.favor` so class/faction initialize hooks can add
+ * +1 to their counted-member logic (see combat/classes/* and combat/factions/*).
+ */
+export function getMerchantFavor(merchant) {
+  return merchant?.favors ?? null;
+}
+
+/** Short label rendered on the merchant card: e.g. "FAVORS KNIGHT". */
+export function getMerchantFavorLabel(merchant) {
+  const f = merchant?.favors;
+  if (!f?.name) return '';
+  return `FAVORS ${String(f.name).toUpperCase()}`;
+}
+
+/** Verbose hover tooltip: "Needs 1 less Knight to trigger the class set bonus." */
+export function getMerchantFavorTooltip(merchant) {
+  const f = merchant?.favors;
+  if (!f?.name) return '';
+  const bucket = f.kind === 'faction' ? 'faction' : 'class';
+  return `Needs 1 less ${f.name} to trigger the ${bucket} set bonus.`;
 }

@@ -10,7 +10,9 @@ import { BattleScene } from './scenes/BattleScene.js';
 import { GameOverScene } from './scenes/GameOverScene.js';
 import { HallOfFameScene } from './scenes/HallOfFameScene.js';
 import { SettingsScene } from './scenes/SettingsScene.js';
+import { RulesScene } from './scenes/RulesScene.js';
 import { LayoutEditor } from './systems/LayoutEditor.js';
+import { DebugCapture } from './systems/DebugCapture.js';
 import { resetCaptureReady } from './systems/CaptureSupport.js';
 
 const config = {
@@ -31,9 +33,10 @@ const config = {
     // Reserve up to 12 simultaneous point lights for BattleScene unit lighting
     maxLights: 12,
   },
-  scene: [BootScene, MenuScene, CommanderSelectScene, MerchantSelectScene, ShopScene, BattleScene, GameOverScene, HallOfFameScene, SettingsScene],
+  scene: [BootScene, MenuScene, CommanderSelectScene, MerchantSelectScene, ShopScene, BattleScene, GameOverScene, HallOfFameScene, SettingsScene, RulesScene],
 };
 
 resetCaptureReady();
 const game = new Game(config);
 LayoutEditor.init(game);
+DebugCapture.init(game);

@@ -83,3 +83,60 @@ export function lerpColor(a, b, t) {
   const bl = Math.round(ab + (bb - ab) * t);
   return (r << 16) | (g << 8) | bl;
 }
+
+/** Derive SNES-start-button tonal ramp from a single base color. */
+export function pillShades(baseColor) {
+  return {
+    rim:    lerpColor(baseColor, 0x000000, 0.70),
+    under:  lerpColor(baseColor, 0x000000, 0.35),
+    body:   baseColor,
+    bright: lerpColor(baseColor, 0xffffff, 0.40),
+    spec:   lerpColor(baseColor, 0xffffff, 0.75),
+  };
+}
+
+/**
+ * Draws a layered 3D pill face (rim → under-shadow → body cap → top highlight →
+ * 1px specular streak) into an existing Graphics object, centered at (0, 0).
+ * The dark band at the bottom is the rim + under-shadow peeking out beneath the
+ * raised body cap — that's what sells the arcade-pad bump.
+ *
+ * @param {boolean} [pressed=false]  When true, the body cap sinks into the rim
+ *     (top drops, bottom extends) so the pedestal collapses from ~7px to ~2px.
+ *     Pair with a downward shift on the label to complete the press feel.
+ */
+export function drawPill3D(gfx, W, H, R, baseColor, pressed = false) {
+  const s = pillShades(baseColor);
+  const r = Math.min(R, H / 2, W / 2);
+  gfx.clear();
+
+  // Rim — full silhouette, static across press states.
+  gfx.fillStyle(s.rim, 1);
+  gfx.fillRoundedRect(-W / 2, -H / 2, W, H, r);
+
+  // Cap geometry: at rest the body sits 3px below the rim top and exposes 7px
+  // of pedestal below (4px under-shadow + 3px rim). On press the cap shifts
+  // down so the pedestal collapses to 2px — the arcade button has bottomed out.
+  const bodyTop = pressed ? 4 : 1;
+  const bodyBot = pressed ? 2 : 7;
+  const underBot = Math.max(0, bodyBot - 3);  // under peeks 3px below body
+
+  gfx.fillStyle(s.under, 1);
+  gfx.fillRoundedRect(-W / 2 + 1, -H / 2 + 1, W - 2, H - 1 - underBot, Math.max(1, r - 1));
+
+  gfx.fillStyle(s.body, 1);
+  gfx.fillRoundedRect(-W / 2 + 1, -H / 2 + bodyTop, W - 2, H - bodyTop - bodyBot, Math.max(1, r - 1));
+
+  // Highlight and specular track the body top so the lighting stays on the cap.
+  const hlInset = 4;
+  const hlH = Math.max(4, Math.floor(H * 0.45));
+  const hlR = Math.min(Math.max(1, r - hlInset), Math.floor(hlH / 2));
+  gfx.fillStyle(s.bright, 1);
+  gfx.fillRoundedRect(-W / 2 + hlInset, -H / 2 + 1 + bodyTop, W - 2 * hlInset, hlH, hlR);
+
+  const specInset = Math.max(hlInset + 4, 10);
+  if (W > 2 * specInset) {
+    gfx.fillStyle(s.spec, 1);
+    gfx.fillRect(-W / 2 + specInset, -H / 2 + 2 + bodyTop, W - 2 * specInset, 1);
+  }
+}

@@ -8,7 +8,8 @@ export const gruntClass = {
 
   initialize(ctx, unit) {
     const team = ctx.ownTeamOf(unit);
-    const gruntCount = team.slots.filter((u) => u.class === 'Grunt').length;
+    const gruntCount = team.slots.filter((u) => u.class === 'Grunt').length
+      + ctx.favorCount(team, 'class', 'Grunt');
     let bonusHp = 0;
     let bonusAtk = 0;
     if (gruntCount >= 5) { bonusHp = 3; bonusAtk = 3; }

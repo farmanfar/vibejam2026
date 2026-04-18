@@ -7,7 +7,8 @@ export const gunnerClass = {
 
   initialize(ctx, unit) {
     const team = ctx.ownTeamOf(unit);
-    const gunnerCount = team.slots.filter((u) => u.class === 'Gunner').length;
+    const gunnerCount = team.slots.filter((u) => u.class === 'Gunner').length
+      + ctx.favorCount(team, 'class', 'Gunner');
     if (gunnerCount < 3) return;
     const target = ctx.position.highestSlotAliveEnemy(unit);
     if (!target) return;

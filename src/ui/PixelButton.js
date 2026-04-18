@@ -1,5 +1,5 @@
 import { GameObjects } from 'phaser';
-import { Theme, brighten } from './Theme.js';
+import { Theme, brighten, drawPill3D } from './Theme.js';
 import { FONT_KEY, PixelFont } from './PixelFont.js';
 
 /**
@@ -197,14 +197,21 @@ export class PixelButton extends GameObjects.Container {
 
   _redrawBg(color) {
     if (this.bgGfx) {
-      this.bgGfx.clear();
-      this.bgGfx.fillStyle(color, 1);
-      this.bgGfx.fillRoundedRect(-this.btnW / 2, -this.btnH / 2, this.btnW, this.btnH, this.cornerRadius);
-      this.bgGfx.lineStyle(1, Theme.panelBorder, 1);
-      this.bgGfx.strokeRoundedRect(-this.btnW / 2, -this.btnH / 2, this.btnW, this.btnH, this.cornerRadius);
+      // Layered arcade-pad bump — rim/under/body/highlight/specular derived from
+      // the passed color so hover-brighten and press animate coherently across
+      // all tonal layers. `_pressed` collapses the pedestal so the cap sinks in.
+      drawPill3D(this.bgGfx, this.btnW, this.btnH, this.cornerRadius, color, !!this._pressed);
     } else {
       this.bgRect.setFillStyle(color);
     }
+  }
+
+  // Label rides the cap: shift it down by the same ~3px the body drops so the
+  // text reads as glued to the button face, not hovering in space.
+  _applyPressedTextOffset() {
+    if (!this.text) return;
+    if (this._textBaseY == null) this._textBaseY = this.text.y;
+    this.text.y = this._textBaseY + (this._pressed ? 3 : 0);
   }
 
   _setupFilledInteraction() {
@@ -217,18 +224,33 @@ export class PixelButton extends GameObjects.Container {
 
     bg.on('pointerout', () => {
       if (this._spinning) return;
+      this._pressed = false;
+      this._applyPressedTextOffset();
       this._redrawBg(this.enabled ? this.btnBg : Theme.disabled);
     });
 
     bg.on('pointerdown', () => {
       if (!this.enabled || this._spinning) return;
-      // White flash
-      this._redrawBg(0xffffff);
-      this.scene.time.delayedCall(80, () => {
-        this._redrawBg(brighten(this.btnBg));
-      });
+      // Depress: cap sinks, label drops — the press IS the feedback, replacing
+      // the old white flash with an arcade-pad depress.
+      this._pressed = true;
+      this._applyPressedTextOffset();
+      this._redrawBg(brighten(this.btnBg));
       this.onClick?.();
     });
+
+    // Spring back on release — both pointerup (still over) and pointerupoutside
+    // (dragged off) so the cap never sticks in the pressed state.
+    const springBack = () => {
+      if (this._spinning) return;
+      if (!this._pressed) return;
+      this._pressed = false;
+      this._applyPressedTextOffset();
+      // Keep the brighten tone if still hovered; else drop to rest color.
+      this._redrawBg(this.enabled ? brighten(this.btnBg) : Theme.disabled);
+    };
+    bg.on('pointerup', springBack);
+    bg.on('pointerupoutside', springBack);
   }
 
   /**
@@ -246,15 +268,20 @@ export class PixelButton extends GameObjects.Container {
    * @param {number}   [opts.stagger=95]            — ms between per-letter settles
    * @param {number}   [opts.flipHalfMs=70]         — ms per half-rotation of a spinning letter
    * @param {string}   [opts.filler]                — character pool for random swaps
+   * @param {string}   [opts.settleLabel]           — label to crash-settle into (defaults to current label)
    */
   spin(settleCallback, opts = {}) {
     if (this._spinning) return;
     if (!this.isFilled) { settleCallback?.(); return; }
 
-    console.log(`[PixelButton] spin start label="${this.label}"`);
+    const settleLabel = opts.settleLabel ?? this.label;
+    console.log(`[PixelButton] spin start label="${this.label}" settle="${settleLabel}"`);
     this._spinning = true;
 
-    const original         = this.label;
+    // Cells, scrambled chars, and final settle text all use settleLabel — so
+    // a spin that ends on a *different* word (e.g. shop "REROLL" → "NO FUNDS")
+    // lays out and lands cleanly on the new word's character positions.
+    const original         = settleLabel;
     const fontSize         = 7 * this.fontScale;
     const filler           = (opts.filler ?? 'ABCDEFGHJKLMNPQRSTUVWXYZ0123456789').split('');
     const spinBeforeSettle = opts.spinBeforeSettle ?? 420;
@@ -345,6 +372,7 @@ export class PixelButton extends GameObjects.Container {
       this.text.setVisible(true);
       this.text.setText(original);
       this._layoutFilledText();
+      this.label = original;
       this._spinning = false;
       console.log(`[PixelButton] spin settle label="${original}"`);
       settleCallback?.();

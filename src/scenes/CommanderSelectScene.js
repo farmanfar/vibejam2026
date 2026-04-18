@@ -4,6 +4,7 @@ import { finalizeCaptureScene } from '../systems/CaptureSupport.js';
 import { getCommanders, pickRandomCommanders } from '../config/commanders.js';
 import { SelectionMenuWidget } from '../widgets/SelectionMenuWidget.js';
 import { SceneCrt, startSceneWithCrtPolicy } from '../rendering/SceneCrt.js';
+import { SceneDust } from '../rendering/SceneDust.js';
 import { attachOutlineToSprite } from '../rendering/OutlineController.js';
 
 // Translate legacy capture --view names to current widget view IDs
@@ -40,6 +41,8 @@ export class CommanderSelectScene extends Scene {
 
     // CRT post-process (softGameplay — interactive scene, lighter curvature)
     SceneCrt.attach(this, 'softGameplay')
+    // Ambient dust — cool blue embers rising from below
+    SceneDust.attach(this, 'commanderSelect')
 
     // Phaser 4 Light2D — moderate ambient so resting commanders remain
     // readable while leaving ~60% dynamic range for the hover point light
@@ -136,6 +139,7 @@ export class CommanderSelectScene extends Scene {
         textureKeyForItem: (item) => `commander-sprite-${item.spriteIndex}`,
         labelForItem:      (item) => item.name.toUpperCase(),
         subtitleForItem:   (item) => `#${item.spriteIndex}`,
+        abilityForItem:    (item) => item.rule?.description ?? '',
         spriteScale:       2,
         onSpriteCreated:   (sprite) => attachOutlineToSprite(sprite),
         // Featured-only: enable Light2D shading on the three featured

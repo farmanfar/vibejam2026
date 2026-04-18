@@ -27,6 +27,7 @@
 
 import { CombatCore } from './CombatCore.js';
 import { buildRegistry } from './index.js';
+import { getMerchantFavor } from '../../config/merchants.js';
 
 let _registry = null;
 function getRegistry() {
@@ -61,7 +62,7 @@ function humanizeAbilityKind(kind) {
     .trim();
 }
 
-export function runAlphaBattle(playerTeam, enemyTeam, seed = (Date.now() & 0xffffffff)) {
+export function runAlphaBattle(playerTeam, enemyTeam, seed = (Date.now() & 0xffffffff), opts = {}) {
   console.log(
     `[AlphaAdapter] runAlphaBattle - ${playerTeam.length} vs ${enemyTeam.length}, seed=${seed}`,
   );
@@ -69,12 +70,19 @@ export function runAlphaBattle(playerTeam, enemyTeam, seed = (Date.now() & 0xfff
   const p = playerTeam.map((w, i) => ({ ...w, _instanceId: `p${i}` }));
   const e = enemyTeam.map((w, i) => ({ ...w, _instanceId: `e${i}` }));
 
+  const playerFavor = getMerchantFavor(opts.playerMerchant);
+  const enemyFavor  = getMerchantFavor(opts.enemyMerchant);
+  if (playerFavor) console.log(`[AlphaAdapter] Player favor: ${playerFavor.kind}:${playerFavor.name}`);
+  if (enemyFavor)  console.log(`[AlphaAdapter] Enemy favor: ${enemyFavor.kind}:${enemyFavor.name}`);
+
   const core = new CombatCore({ registry: getRegistry(), seed });
   let result;
   try {
     result = core.run({
       player: p.map(toCoreDef),
       enemy: e.map(toCoreDef),
+      playerFavor,
+      enemyFavor,
     });
   } catch (err) {
     console.error('[AlphaAdapter] CombatCore.run threw - falling back to empty result:', err);
@@ -254,8 +262,14 @@ function translateLog(rawEntries, playerTeamStamped, enemyTeamStamped) {
         }
         break;
       case 'berserker_synergy_init':
+      case 'ancient_favor_init':
         if (entry.instanceId && typeof entry.newAtk === 'number') {
           applyAtk(entry.instanceId, entry.newAtk);
+        }
+        break;
+      case 'folk_favor_buff':
+        if (entry.recipientInstanceId && typeof entry.newAtk === 'number') {
+          applyAtk(entry.recipientInstanceId, entry.newAtk);
         }
         break;
       case 'attack': {

@@ -1,6 +1,7 @@
 import { GameObjects } from 'phaser';
 import { Theme } from './Theme.js';
 import { FONT_KEY } from './PixelFont.js';
+import { UnitStatBadge } from './UnitStatBadge.js';
 import { getUnitPortraitRef } from '../rendering/UnitArt.js';
 import { attachOutlineToSprite } from '../rendering/OutlineController.js';
 import { fitSpriteToPortraitBounds } from '../rendering/SpriteFit.js';
@@ -18,18 +19,9 @@ const FACTION_FRAME = {
 };
 
 // Stat bubble layout (card-local space, frame centered at origin, 124x160).
-// We draw our own round bubbles on top of the baked frame art so the sizing
-// stays consistent across frame variants.
-const ATK_BADGE = { cx: -42, cy: -54, r: 11 };
-const ATK_NUMBER = { x: -42, y: -57, fontSize: 14 };
-const ATK_ICON = { x: -42, y: -51, scale: 0.7 };
-
-const TIER_BADGE = { cx: -26, cy: -64, r: 8 };
-const TIER_NUMBER = { x: -26, y: -64, fontSize: 7 };
-
-const HP_BADGE = { cx: -26, cy: -44, r: 8 };
-const HP_NUMBER = { x: -26, y: -47, fontSize: 7 };
-const HP_ICON = { x: -26, y: -41, scale: 0.7 };
+// Tier badge remains upper-left; ATK/HP values render as labels at the bottom.
+const TIER_BADGE = { cx: -52, cy: -68, r: 8 };
+const TIER_NUMBER = { x: -52, y: -68, fontSize: 7 };
 
 function tierToRoman(n) {
   const table = ['', 'I', 'II', 'III', 'IV', 'V', 'VI', 'VII', 'VIII', 'IX', 'X'];
@@ -89,7 +81,7 @@ function ensureStarTexture(scene) {
 
 const RULES_PANEL = {
   y: 36,
-  h: 42,
+  h: 22,
   inset: 3,
 };
 const RULES_MAX_TEXT_H = RULES_PANEL.h - RULES_PANEL.inset * 2;
@@ -184,21 +176,22 @@ export class WarriorCard extends GameObjects.Container {
     this.frontLayer.add(this.nameLabel);
 
     this._drawStatBadge(TIER_BADGE, this.frontLayer);
-    this._drawStatBadge(ATK_BADGE, this.frontLayer);
-    this._drawStatBadge(HP_BADGE, this.frontLayer);
 
     this.tierText = this._addBadgeText(
       TIER_NUMBER, tierToRoman(warrior.tier ?? 1), Theme.fantasyGoldBright, this.frontLayer,
     );
 
-    this.atkCluster = this._addStatCluster(
-      'card-icon-atk', ATK_ICON, ATK_NUMBER, warrior.atk ?? 0, Theme.criticalText, this.frontLayer,
-    );
-    this.hpCluster = this._addStatCluster(
-      'card-icon-hp', HP_ICON, HP_NUMBER, warrior.hp ?? 0, Theme.criticalText, this.frontLayer,
-    );
-    this.atkText = this.atkCluster.text;
-    this.defText = this.hpCluster.text;
+    this.statBadge = new UnitStatBadge(scene, 0, 74, {
+      atk: warrior.atk ?? 0,
+      hp: warrior.hp ?? 0,
+      isEnemy: false,
+      borderColor: Theme.fantasyBorderGold,
+      borderWidth: 2,
+      showIcons: true,
+      size: 'large',
+      animateChanges: true,
+    });
+    this.frontLayer.add(this.statBadge);
     console.log(
       `[WarriorCard] ${warrior.name} stats: ATK=${warrior.atk ?? 0} HP=${warrior.hp ?? 0}`,
     );
@@ -294,20 +287,6 @@ export class WarriorCard extends GameObjects.Container {
     g.strokePath();
     targetLayer.add(g);
     return g;
-  }
-
-  _addStatCluster(iconKey, iconPos, numberPos, value, tint, targetLayer) {
-    let icon = null;
-    if (this.scene.textures.exists(iconKey)) {
-      icon = this.scene.add.image(iconPos.x, iconPos.y, iconKey)
-        .setOrigin(0.5, 0.5)
-        .setScale(iconPos.scale ?? 1);
-      targetLayer.add(icon);
-    } else {
-      console.warn(`[WarriorCard] missing stat icon '${iconKey}' - rendering number only`);
-    }
-    const text = this._addBadgeText(numberPos, value, tint, targetLayer);
-    return { icon, text };
   }
 
   captureRestPosition() {

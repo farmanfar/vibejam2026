@@ -1,11 +1,11 @@
 import { Scene } from 'phaser';
-import { Theme, FONT_KEY, PixelButton, PixelLabel, PixelTypewriter, PixelTextInput } from '../ui/index.js';
+import { Theme, FONT_KEY, PixelLabel, PixelList, PixelTypewriter, PixelTextInput } from '../ui/index.js';
 import { PlayerConfig } from '../systems/PlayerConfig.js';
 import { finalizeCaptureScene } from '../systems/CaptureSupport.js';
 import { LayoutEditor } from '../systems/LayoutEditor.js';
-import { getUnitValidation } from '../config/warriors.js';
 import { pickRandomMerchants, getMerchantIdleAnimKey } from '../config/merchants.js';
 import { SceneCrt } from '../rendering/SceneCrt.js';
+import { SceneDust } from '../rendering/SceneDust.js';
 
 // --- Typewriter message pools ---
 
@@ -57,14 +57,33 @@ export class MenuScene extends Scene {
   create() {
     const { width, height } = this.cameras.main;
     const savedName = PlayerConfig.getName();
-    const validation = getUnitValidation();
-    const readyArtCount = validation.summary.readyArtCount;
-    const totalUnits = validation.summary.total;
 
     console.log(`[Menu] Creating menu scene (${width}x${height}), saved name: "${savedName || '(none)'}"`);
 
+    // One-time migration: the 4 PixelButton rows were replaced by a single
+    // PixelList, so the old per-button layout keys are orphaned. Clear them
+    // and the typewriter override (its default y moved) once per browser.
+    try {
+      const RESET_FLAG = 'hired_swords_menu_list_migration_v2';
+      if (typeof localStorage !== 'undefined' && !localStorage.getItem(RESET_FLAG)) {
+        [
+          'layout_Menu.startBtn',
+          'layout_Menu.hofBtn',
+          'layout_Menu.settingsBtn',
+          'layout_Menu.rulesBtn',
+          'layout_Menu.typewriter',
+        ].forEach((k) => localStorage.removeItem(k));
+        localStorage.setItem(RESET_FLAG, '1');
+        console.log('[Menu] Cleared stale per-button layout overrides (list migration v2)');
+      }
+    } catch (e) {
+      console.error('[Menu] list migration reset failed:', e);
+    }
+
     // CRT post-process (strongUi preset — stronger curvature/scanlines for menus)
     SceneCrt.attach(this, 'strongUi');
+    // Ambient dust — warm amber motes drifting in a sunbeam
+    SceneDust.attach(this, 'menu');
 
     // --- Full-width header ---
 
@@ -92,13 +111,15 @@ export class MenuScene extends Scene {
 
     // Typewriter text
     const messages = savedName ? buildNamedMessages(savedName) : UNNAMED_MESSAGES;
-    this._typewriter = new PixelTypewriter(this, leftX, 100, {
+    const typewriterX = 36;
+    const typewriterY = 355;
+    this._typewriter = new PixelTypewriter(this, typewriterX, typewriterY, {
       messages,
       scale: 2,
       tint: 0xB49669,
       maxWidth: 360,
     });
-    LayoutEditor.register(this, 'typewriter', this._typewriter, leftX, 100);
+    LayoutEditor.register(this, 'typewriter', this._typewriter, typewriterX, typewriterY);
 
     // Name label
     const nameLabel = new PixelLabel(this, leftX, 142, 'YOUR NAME:', {
@@ -127,35 +148,46 @@ export class MenuScene extends Scene {
       },
     });
 
-    // --- Menu buttons (text style) ---
+    // --- Menu list (single PixelList = uniform scale for every row) ---
     const menuX = leftX;
     const menuStartY = 210;
-    const menuSpacing = 36;
 
-    const startBtn = new PixelButton(this, menuX, menuStartY, 'START GAME', () => {
-      const runId = crypto.randomUUID();
-      console.log(`[Menu] Starting new run: ${runId}`);
-      this.scene.start('CommanderSelect', { runId });
-    }, { style: 'text', scale: 3 });
-    LayoutEditor.register(this, 'startBtn', startBtn, menuX, menuStartY);
-
-    const hofBtn = new PixelButton(this, menuX, menuStartY + menuSpacing, 'HALL OF FAME', () => {
-      console.log('[Menu] Opening Hall of Fame');
-      this.scene.start('HallOfFame');
-    }, { style: 'text', scale: 3 });
-    LayoutEditor.register(this, 'hofBtn', hofBtn, menuX, menuStartY + menuSpacing);
-
-    const settingsBtn = new PixelButton(this, menuX, menuStartY + menuSpacing * 2, 'SETTINGS', () => {
-      console.log('[Menu] Opening Settings');
-      this.scene.start('Settings');
-    }, { style: 'text', scale: 3 });
-    LayoutEditor.register(this, 'settingsBtn', settingsBtn, menuX, menuStartY + menuSpacing * 2);
-
-    const rosterStatus = new PixelLabel(this, leftX, menuStartY + menuSpacing * 4 + 12, `ART READY: ${readyArtCount}/${totalUnits}`, {
-      scale: 2,
-      color: readyArtCount > 0 ? 'accent' : 'warning',
-    });
-    LayoutEditor.register(this, 'rosterStatus', rosterStatus, leftX, menuStartY + menuSpacing * 4 + 12);
+    const menuList = new PixelList(this, menuX, menuStartY, [
+      {
+        label: 'START GAME',
+        scale: 3,
+        onClick: () => {
+          const runId = crypto.randomUUID();
+          console.log(`[Menu] Starting new run: ${runId}`);
+          this.scene.start('CommanderSelect', { runId });
+        },
+      },
+      {
+        label: 'HALL OF FAME',
+        scale: 2,
+        onClick: () => {
+          console.log('[Menu] Opening Hall of Fame');
+          this.scene.start('HallOfFame');
+        },
+      },
+      {
+        label: 'SETTINGS',
+        scale: 2,
+        onClick: () => {
+          console.log('[Menu] Opening Settings');
+          this.scene.start('Settings');
+        },
+      },
+      {
+        label: 'FACTION & CLASS RULES',
+        scale: 2,
+        onClick: () => {
+          console.log('[Menu] Opening Rules');
+          this.scene.start('Rules');
+        },
+      },
+    ], { scale: 2, itemPadding: 6 });
+    LayoutEditor.register(this, 'menuList', menuList, menuX, menuStartY);
 
     // --- Credits footer ---
     const vibeJam = new PixelLabel(this, leftX, height - 36, 'VibeJam2026 Entry by Farman.Farout', {
@@ -173,9 +205,9 @@ export class MenuScene extends Scene {
     // Composition mirrors TorchWars MainMenuScreen: single idle-looping NPC
     // with a vertical-flip reflection at 7.5% alpha underneath. Motion comes
     // entirely from the Aseprite idle frames — no bob/breathing tweens.
-    const merchantX = 710;
-    const merchantY = 292;
-    const merchantScale = 3;
+    const merchantX = 692;
+    const merchantY = 382;
+    const merchantScale = 5.84;
 
     const merchant = pickRandomMerchants(1)[0];
     const hasAnimatedMerchant = merchant && this.textures.exists(merchant.spriteKey);

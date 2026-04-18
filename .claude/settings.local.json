@@ -5,7 +5,8 @@
       "Bash(npm run:*)",
       "mcp__Claude_Preview__preview_start",
       "Bash(git add:*)",
-      "Bash(git commit -m ':*)"
+      "Bash(git commit -m ':*)",
+      "Bash(curl -s -o /dev/null -w \"%{http_code}\\\\n\" --max-time 3 http://192.168.77.29/)"
     ]
   },
   "enableAllProjectMcpServers": true,

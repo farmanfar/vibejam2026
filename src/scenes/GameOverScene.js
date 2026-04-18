@@ -3,6 +3,7 @@ import { Theme, PixelLabel, PixelButton, FloatingBanner } from '../ui/index.js'
 import { finalizeCaptureScene } from '../systems/CaptureSupport.js'
 import { LayoutEditor } from '../systems/LayoutEditor.js'
 import { SceneCrt, startSceneWithCrtPolicy } from '../rendering/SceneCrt.js'
+import { SceneDust } from '../rendering/SceneDust.js'
 
 export class GameOverScene extends Scene {
   constructor() {
@@ -20,6 +21,8 @@ export class GameOverScene extends Scene {
 
     // CRT post-process (strongUi preset — narrative/end screens)
     SceneCrt.attach(this, 'strongUi')
+    // Ambient dust — cold grey ash falling (mournful)
+    SceneDust.attach(this, 'gameOver')
 
     const title = new PixelLabel(this, width / 2, height * 0.25, 'GAME OVER', {
       scale: 8, color: 'error', align: 'center',

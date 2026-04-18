@@ -4,6 +4,7 @@ import { GhostManager } from '../systems/GhostManager.js'
 import { finalizeCaptureScene } from '../systems/CaptureSupport.js'
 import { LayoutEditor } from '../systems/LayoutEditor.js'
 import { SceneCrt, startSceneWithCrtPolicy } from '../rendering/SceneCrt.js'
+import { SceneDust } from '../rendering/SceneDust.js'
 
 export class HallOfFameScene extends Scene {
   constructor() {
@@ -27,6 +28,8 @@ export class HallOfFameScene extends Scene {
 
     // CRT post-process (strongUi preset — narrative/end screens)
     SceneCrt.attach(this, 'strongUi')
+    // Ambient dust — celebratory golden sparkles
+    SceneDust.attach(this, 'hallOfFame')
 
     if (this.fromMenu) {
       const hofTitle = new PixelLabel(this, width / 2, height * 0.14, 'HALL OF FAME', {

@@ -76,25 +76,39 @@ export class CombatCore {
 
   // ---------- lifecycle ----------
 
-  run({ player, enemy }) {
-    this._initTeams(player, enemy);
+  run({ player, enemy, playerFavor = null, enemyFavor = null }) {
+    this._initTeams(player, enemy, playerFavor, enemyFavor);
     this._fireBattleStart();
     this._mainLoop();
     return this._finalize();
   }
 
-  _initTeams(playerDefs, enemyDefs) {
+  _initTeams(playerDefs, enemyDefs, playerFavor = null, enemyFavor = null) {
     this.teams = {
-      player: { id: 'player', slots: [] },
-      enemy: { id: 'enemy', slots: [] },
+      player: { id: 'player', slots: [], favor: playerFavor ?? null },
+      enemy:  { id: 'enemy',  slots: [], favor: enemyFavor  ?? null },
     };
     this._populateTeam(this.teams.player, playerDefs, 'player');
     this._populateTeam(this.teams.enemy, enemyDefs, 'enemy');
     this.log.push('battle_init', {
       player: this.teams.player.slots.map((u) => this._snapshot(u)),
       enemy: this.teams.enemy.slots.map((u) => this._snapshot(u)),
+      playerFavor: this.teams.player.favor,
+      enemyFavor:  this.teams.enemy.favor,
       seed: this.rng.seed,
     });
+  }
+
+  /**
+   * Favor contributes a phantom member to the favored class/faction for any
+   * count-based synergy (Knight/Grunt/Berserker/Gunner/Tank/Robot/Monster).
+   * Returns 1 if `team.favor` matches, else 0. Handlers that want "+1 member"
+   * logic just add this to their existing `team.slots.filter(...).length`.
+   */
+  favorCount(team, kind, name) {
+    const f = team?.favor;
+    if (!f || !kind || !name) return 0;
+    return f.kind === kind && f.name === name ? 1 : 0;
   }
 
   _populateTeam(team, defs, teamId) {
@@ -447,7 +461,11 @@ export class CombatCore {
         setPoison(target, override, this, attacker);
         attacker.flags.infectiousBiteOverride = 0;
       } else {
-        applyPoison(target, 1, this, attacker);
+        // Merchant favor (Mushroom Dealer): +1 poison stack on every basic
+        // Assassin hit when the team favors Assassin — the "phantom member"
+        // set-bonus interpretation for a class with no count threshold.
+        const atkTeam = this.ownTeamOf(attacker);
+        applyPoison(target, 1 + this.favorCount(atkTeam, 'class', 'Assassin'), this, attacker);
       }
     }
 
@@ -523,9 +541,10 @@ export class CombatCore {
     if (target.class !== 'Tank') return false;
     // Filter dying: a Tank marked dying mid-SAP-tick is about to be removed
     // and shouldn't contribute to the armor-chance pool.
-    const tankCount = this.ownTeamOf(target).slots.filter(
+    const team = this.ownTeamOf(target);
+    const tankCount = team.slots.filter(
       (u) => u.class === 'Tank' && u.alive && !u.dying,
-    ).length;
+    ).length + this.favorCount(team, 'class', 'Tank');
     const chance = Math.min(0.5, 0.1 * tankCount);
     const proc = this.rng.chance(chance);
     this.log.push('reactive_armor_roll', {

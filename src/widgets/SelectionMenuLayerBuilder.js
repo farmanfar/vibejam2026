@@ -31,6 +31,8 @@ export function buildPanelLayer(scene, container, side, items, slots, config, ca
   const title  = scene.add.bitmapText(0, -217, FONT_KEY, titleText, 10).setOrigin(0.5).setTint(Theme.fantasyGold)
   container.add([panel, header, title])
 
+  // Per-slot frames + sprites (decorative — no input here)
+  const slotRefs = []
   items.forEach((item, index) => {
     const slot = slots[index]
     if (!slot) return
@@ -41,10 +43,12 @@ export function buildPanelLayer(scene, container, side, items, slots, config, ca
     const idLabel  = scene.add.bitmapText(slot.x, slot.y + 28, FONT_KEY, subText, 8).setOrigin(0.5).setTint(Theme.ambientText)
     container.add([frame, trim, idLabel])
     buildItemSprite(scene, container, item, slot.x, slot.y - 8, 0.24 * spriteScale, config.visuals)
+    slotRefs.push({ item, slot, frame })
   })
 
   // Hover highlight + click-to-focus — added on top of all content
   let hitzone = null
+  let tooltip = null
   if (callbacks) {
     const targetView = side === 'left' ? 'left' : 'right'
     const hoverRect  = scene.add.rectangle(0, 0, 186, 416, 0xffffff, 0)
@@ -65,9 +69,93 @@ export function buildPanelLayer(scene, container, side, items, slots, config, ca
         callbacks.changeView(targetView, { reason: `clicked ${side} panel` })
       }
     })
+
+    // Per-slot tooltip — single shared container at scene level (depth 2000),
+    // populated on hover. Lives outside the panel container so it isn't dimmed
+    // by the center-view alpha (~0.42) and isn't transformed by view tweens.
+    tooltip = buildPanelTooltip(scene)
+
+    // Slot zones MUST be added after the panel hitzone so they capture input on
+    // top — otherwise the panel-wide hitzone steals pointerover events from
+    // every slot underneath it.
+    slotRefs.forEach(({ item, slot }, index) => {
+      const zone = scene.add.zone(slot.x, slot.y, 70, 92).setInteractive({ useHandCursor: true })
+      container.add(zone)
+
+      zone.on('pointerover', () => {
+        const view = callbacks.getView()
+        // Tooltip only when this wing is the active focus — center / opposite-
+        // wing / featuredClose / previewClose all suppress it so the dimmed
+        // panels stay quiet until the user explicitly drills in.
+        if (view === targetView) {
+          const name    = (config.visuals.labelForItem?.(item) ?? '').toUpperCase()
+          const ability = typeof config.visuals.abilityForItem === 'function'
+            ? (config.visuals.abilityForItem(item) ?? '')
+            : ''
+          showPanelTooltip(tooltip, zone, side, name, ability)
+        } else {
+          tooltip.setVisible(false)
+        }
+        if (!callbacks.isBusy()) {
+          if (view === 'center' || view === 'featuredClose') hoverRect.setAlpha(0.06)
+        }
+      })
+      zone.on('pointerout', () => {
+        tooltip.setVisible(false)
+        hoverRect.setAlpha(0)
+      })
+      zone.on('pointerdown', () => {
+        tooltip.setVisible(false)
+        callbacks.markHandled?.()
+        if (callbacks.isBusy()) return
+        const view = callbacks.getView()
+        if (view === 'center' || view === 'featuredClose') {
+          callbacks.changeView(targetView, { reason: `clicked ${side} panel slot ${index} (${item?.id ?? '?'})` })
+        }
+      })
+    })
+
+    scene.events.once('shutdown', () => {
+      try { tooltip?.destroy() } catch (_) { /* scene tearing down */ }
+    })
   }
 
-  return { title, header, hitzone }
+  return { title, header, hitzone, tooltip }
+}
+
+// ---------------------------------------------------------------------------
+// Panel tooltip helpers — single shared instance per panel side
+// ---------------------------------------------------------------------------
+
+function buildPanelTooltip(scene) {
+  const tip = scene.add.container(0, 0).setDepth(2000).setVisible(false)
+  const bg  = scene.add.rectangle(0, 0, 172, 40, 0x0d0a14, 0.96).setStrokeStyle(1, Theme.fantasyBorderGold, 0.95)
+  const trim = scene.add.rectangle(0, -16, 154, 4, Theme.fantasyPurpleDark, 0.85)
+  const name    = scene.add.bitmapText(0, -10, FONT_KEY, '', 10).setOrigin(0.5).setTint(Theme.fantasyGold)
+  const ability = scene.add.bitmapText(0, 8,  FONT_KEY, '', 8).setOrigin(0.5).setTint(Theme.primaryText)
+  tip.add([bg, trim, name, ability])
+  tip.bg      = bg
+  tip.name    = name
+  tip.ability = ability
+  return tip
+}
+
+function showPanelTooltip(tip, slotZone, side, nameText, abilityText) {
+  tip.name.setText(nameText)
+  tip.ability.setText(abilityText)
+  // Resize bg to fit longest of the two texts (with horizontal padding)
+  const maxTextWidth = Math.max(tip.name.width, tip.ability.width)
+  const w = Math.max(140, Math.ceil(maxTextWidth) + 24)
+  tip.bg.setSize(w, 40)
+
+  // Anchor to slot's world position; offset toward screen center so tooltips
+  // never clip the wing panels they belong to.
+  const m       = slotZone.getWorldTransformMatrix()
+  const halfBg  = w / 2
+  const offsetX = side === 'left' ? (44 + halfBg) : -(44 + halfBg)
+  tip.setPosition(Math.round(m.tx + offsetX), Math.round(m.ty))
+  tip.setVisible(true)
+  console.log(`[Widget] tooltip ${side} "${nameText}" -> (${tip.x}, ${tip.y}) w=${w}`)
 }
 
 // ---------------------------------------------------------------------------
@@ -110,18 +198,32 @@ export function buildFeaturedLayer(scene, container, items, slots, config, callb
 
     const namePlate  = scene.add.rectangle(0, 26, 118, 18, Theme.fantasyPurpleDark, 1.0).setStrokeStyle(1, Theme.fantasyBorderGold, 0.72)
     const nameText   = scene.add.bitmapText(0, 19, FONT_KEY, config.visuals.labelForItem(item), 8).setOrigin(0.5).setTint(Theme.primaryText)
-    const hint       = scene.add.bitmapText(0, 42, FONT_KEY, 'SELECT', 8).setOrigin(0.5).setTint(Theme.ambientText)
+    display.add([namePlate, nameText])
+
+    // "At the feet": ability blurb rendered below the nameplate, always on.
+    // Intentionally unbounded horizontally — long rules like
+    // "+1 ATK / +1 HP TO ALL UNITS" overflow the 110px frame, which is OK
+    // because this sits below the frame in the shadow gap.
+    const abilityText  = typeof config.visuals.abilityForItem === 'function' ? (config.visuals.abilityForItem(item) ?? '') : ''
+    let abilityLabel   = null
+    if (abilityText) {
+      abilityLabel = scene.add.bitmapText(0, 46, FONT_KEY, abilityText, 8).setOrigin(0.5).setTint(Theme.fantasyGold)
+      display.add(abilityLabel)
+    }
+
+    const hint       = scene.add.bitmapText(0, 62, FONT_KEY, 'SELECT', 8).setOrigin(0.5).setTint(Theme.ambientText)
     const hitZone    = scene.add.zone(0, 20, 160, 252).setInteractive({ useHandCursor: true })
 
-    display.add([namePlate, nameText, hint, hitZone])
+    display.add([hint, hitZone])
 
-    display.shadow  = shadow
-    display.glow    = glow
-    display.frame   = frame
-    display.name    = nameText
-    display.hint    = hint
-    display.art     = art
-    display.hitZone = hitZone
+    display.shadow   = shadow
+    display.glow     = glow
+    display.frame    = frame
+    display.name     = nameText
+    display.ability  = abilityLabel
+    display.hint     = hint
+    display.art      = art
+    display.hitZone  = hitZone
 
     hitZone.on('pointerover', () => {
       if (callbacks.isBusy()) return

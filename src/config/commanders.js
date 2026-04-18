@@ -2,8 +2,19 @@
  * Commander definitions — all 25 from the Fantasy Cards pack.
  * Names are placeholder — review the card art and rename as needed.
  * spriteIndex maps to cards/card{N}.png and sprites/Sprite{N}.png.
+ *
+ * Each commander also gets a `rule` applied to all units on their team
+ * at battle start. Initial pass cycles three simple flat-stat presets
+ * across the 25 commanders (index % 3) — to be redesigned later.
  */
-export const COMMANDERS = [
+
+const RULE_PRESETS = [
+  { atk: 1, hp: 1, description: '+1 ATK / +1 HP TO ALL UNITS' },
+  { atk: 0, hp: 2, description: '+2 HP TO ALL UNITS' },
+  { atk: 2, hp: 0, description: '+2 ATK TO ALL UNITS' },
+];
+
+const BASE_COMMANDERS = [
   { id: 'commander_1',  name: 'Thornmaw',         spriteIndex: 1 },
   { id: 'commander_2',  name: 'Void Warden',      spriteIndex: 2 },
   { id: 'commander_3',  name: 'Iron Juggernaut',   spriteIndex: 3 },
@@ -30,6 +41,15 @@ export const COMMANDERS = [
   { id: 'commander_24', name: 'War Rig',           spriteIndex: 24 },
   { id: 'commander_25', name: 'Spark Golem',       spriteIndex: 25 },
 ];
+
+export const COMMANDERS = BASE_COMMANDERS.map((c, i) => ({
+  ...c,
+  rule: RULE_PRESETS[i % RULE_PRESETS.length],
+}));
+
+export function getCommanderRule(commander) {
+  return commander?.rule ?? { atk: 0, hp: 0, description: 'NO EFFECT' };
+}
 
 export function getCommanders() {
   return [...COMMANDERS];

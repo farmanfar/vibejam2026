@@ -11,8 +11,25 @@
 export const ancientClass = {
   name: 'Ancient',
 
-  // No initialize — atk starts at baseAtk, resonance stacks start at 0.
-  // _grantAncientResonance recomputes atk when stacks change.
+  // Merchant favor (Fortune Teller): team-level Ancient favor grants every
+  // Ancient +1 starting resonance stack — the "phantom trigger" interpretation
+  // of "one less needed for the set bonus." No-op on teams without the favor,
+  // so normal runs are unchanged.
+  initialize(ctx, unit) {
+    const team = ctx.ownTeamOf(unit);
+    if (ctx.favorCount(team, 'class', 'Ancient') <= 0) return;
+    if (unit.resonanceStacks >= 5) return;
+    unit.resonanceStacks += 1;
+    unit.atk = unit.baseAtk + unit.resonanceStacks + (unit.flags._staticBonusAtk || 0);
+    ctx.log.push('ancient_favor_init', {
+      unit: unit.unitId,
+      instanceId: unit.instanceId,
+      slot: unit.slot,
+      team: unit.team,
+      stacks: unit.resonanceStacks,
+      newAtk: unit.atk,
+    });
+  },
 
   onAction(ctx, unit) {
     const enemyTeam = ctx.enemyTeamOf(unit);

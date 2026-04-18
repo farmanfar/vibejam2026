@@ -29,6 +29,7 @@ const FRAG_SRC = [
   'uniform float     uCurvatureAmount;',
   'uniform float     uVignetteAmount;',
   'uniform float     uPowerOff;',
+  'uniform float     uWiggle;',
 
   'varying vec2 outTexCoord;',
 
@@ -53,6 +54,18 @@ const FRAG_SRC = [
   '    // Barrel / screen curvature',
   '    vec2 curved = barrelDistort(outTexCoord, uCurvatureAmount);',
 
+  '    // CRT wiggle — brief rippled horizontal jitter (scheduled by controller).',
+  '    // Masked toward screen edges so the centre stays stable for UI/read-ability.',
+  '    // edgeMask: 0 near center, 1 at far sides (starts fading in past ~35% out).',
+  '    float edgeMask = smoothstep(0.35, 0.5, abs(outTexCoord.x - 0.5));',
+  '    float wEff = uWiggle * edgeMask;',
+  '    if (wEff > 0.0) {',
+  '        float w1 = sin(curved.y * 42.0 + uTime * 28.0);',
+  '        float w2 = sin(curved.y * 7.0  + uTime * 11.0);',
+  '        curved.x += wEff * (w1 * 0.0018 + w2 * 0.0006);',
+  '        curved.y += wEff * w2 * 0.0004;',
+  '    }',
+
   '    // Vertical squish toward center during power-off',
   '    if (uPowerOff > 0.0)',
   '    {',
@@ -72,7 +85,7 @@ const FRAG_SRC = [
   '    vec2  centDir   = curved - 0.5;',
   '    float centLen   = length(centDir);',
   '    vec2  chromaDir = (centLen > 0.0001) ? (centDir / centLen) : vec2(0.0, 0.0);',
-  '    vec2  chromaOff = chromaDir * (uChromaOffset * pixelSize);',
+  '    vec2  chromaOff = chromaDir * (uChromaOffset * pixelSize) * (1.0 + wEff * 1.5);',
   '    float r = texture2D(uMainSampler, curved - chromaOff).r;',
   '    float g = texture2D(uMainSampler, curved).g;',
   '    float b = texture2D(uMainSampler, curved + chromaOff).b;',
@@ -134,6 +147,7 @@ FilterCRT.prototype.setupUniforms = function (controller, drawingContext) {
   pm.setUniform('uCurvatureAmount',   controller.curvatureAmount);
   pm.setUniform('uVignetteAmount',    controller.vignetteAmount);
   pm.setUniform('uPowerOff',          controller.powerOff);
+  pm.setUniform('uWiggle',            controller.wiggle);
 };
 
 export { FilterCRT };

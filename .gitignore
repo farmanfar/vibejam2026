@@ -11,6 +11,7 @@ node_modules
 dist
 dist-ssr
 artifacts/captures
+artifacts/release
 reports
 *.local
 .env

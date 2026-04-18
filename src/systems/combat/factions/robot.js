@@ -8,7 +8,7 @@ export const robotFaction = {
     const team = ctx.ownTeamOf(unit);
     const otherRobots = team.slots.filter(
       (u) => u !== unit && u.faction === 'Robot',
-    ).length;
+    ).length + ctx.favorCount(team, 'faction', 'Robot');
     if (otherRobots <= 0) return;
     unit.maxHp += otherRobots;
     unit.hp += otherRobots;

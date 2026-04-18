@@ -11,7 +11,7 @@ export const knightClass = {
     const team = ctx.ownTeamOf(unit);
     const otherKnights = team.slots.filter(
       (u) => u !== unit && u.class === 'Knight',
-    ).length;
+    ).length + ctx.favorCount(team, 'class', 'Knight');
     if (otherKnights <= 0) return;
     unit.flags._staticBonusAtk = (unit.flags._staticBonusAtk || 0) + otherKnights;
     unit.baseAtk += otherKnights;

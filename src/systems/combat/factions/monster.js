@@ -22,7 +22,7 @@ export const monsterFaction = {
     // in the death batch but dying). Spec says +10% per OTHER Monster.
     const otherMonsters = team.slots.filter(
       (u) => u !== unit && u.faction === 'Monster',
-    ).length;
+    ).length + ctx.favorCount(team, 'faction', 'Monster');
     const chance = Math.min(0.5, 0.1 + 0.1 * otherMonsters);
     const proc = ctx.rng.chance(chance);
     ctx.log.push('reanimate_roll', {

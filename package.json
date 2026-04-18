@@ -6,6 +6,7 @@
   "scripts": {
     "dev": "vite",
     "build": "vite build",
+    "release:stage": "node scripts/stage-release.mjs",
     "preview": "vite preview",
     "capture:scene": "node scripts/capture-scene.mjs",
     "units:seed": "node scripts/seed-unit-config.mjs",

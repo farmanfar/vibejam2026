@@ -11,8 +11,11 @@ import { LayoutEditor } from '../systems/LayoutEditor.js'
 import { getUnitPortraitRef } from '../rendering/UnitArt.js'
 import { getAsepriteTagConfigs } from '../rendering/AsepriteAnimations.js'
 import { SceneCrt, startSceneWithCrtPolicy } from '../rendering/SceneCrt.js'
+import { SceneDust } from '../rendering/SceneDust.js'
 import { attachOutlineToSprite } from '../rendering/OutlineController.js'
 import { fitSpriteToPortraitBounds } from '../rendering/SpriteFit.js'
+import { CommanderBadge } from '../widgets/CommanderBadge.js'
+import { getCommanderRule, pickRandomCommanders } from '../config/commanders.js'
 
 // Minimum on-screen height (in display px) for battle-sprite characters.
 // PENUSBMIC atlases vary wildly in how much of the 192x192 frame is actually
@@ -20,7 +23,14 @@ import { fitSpriteToPortraitBounds } from '../rendering/SpriteFit.js'
 // tight bounds, so the shared displayScale=2.5 paints them at 45-60px while
 // a normal unit renders at 150-200px. This floor ensures small characters
 // stay readable in the lineup without shrinking larger ones.
-const MIN_BATTLE_SPRITE_H = 72
+const MIN_BATTLE_SPRITE_H = 80
+
+// Global boost on per-unit art.displayScale. Keep this at 1.0 — the row
+// must hold 5-per-side with _slotSpacing below without overlap, and many
+// units have tight bounds ~50px wide which already render 125px+ at the
+// configured displayScale. Bumping the boost without widening spacing
+// (and shrinking canvas budget for 5 units) causes teams to collide.
+const BATTLE_SCALE_BOOST = 1.0
 
 const FLOAT_TEXT_STYLES = {
   damage: { color: Theme.error, fontSize: 36, prefix: '-' },
@@ -50,6 +60,12 @@ export class BattleScene extends Scene {
     this.leftSet = data.leftSet ?? null
     this.rightSet = data.rightSet ?? null
     this.captureFreeze = data.captureFreeze === true
+    this.shopLocks = Array.isArray(data.shopLocks)
+      ? [0, 1, 2, 3].map(i => !!data.shopLocks[i])
+      : [false, false, false, false]
+    this.shopOffer = Array.isArray(data.shopOffer)
+      ? data.shopOffer.map(w => (w ? { ...w } : null))
+      : null
   }
 
   create() {
@@ -58,6 +74,8 @@ export class BattleScene extends Scene {
 
     // CRT post-process (softGameplay — lighter curvature preserves pointer accuracy)
     SceneCrt.attach(this, 'softGameplay')
+    // Ambient dust — windswept arena grit blowing right-to-left
+    SceneDust.attach(this, 'battle')
 
     // Native lighting (WebGL only) — dim warm-blue ambient, unit sprites lit individually
     if (this.sys.renderer.gl) {
@@ -69,8 +87,11 @@ export class BattleScene extends Scene {
       ? { left: this.leftSet, right: this.rightSet }
       : pickRandomSets()
 
+    // Parallax occupies the top band only (height 260 instead of 360) so the
+    // ground/fighting area is much taller and the fighters aren't dwarfed
+    // by the sky. No empty gap below — ground starts at the same y=260.
     this.parallax = new ParallaxBackground({
-      scene: this, width, height: 360,
+      scene: this, width, height: 260,
       leftSet: left, rightSet: right, scrollSpeed: 3.375,
     })
     this.parallax.create()
@@ -80,12 +101,15 @@ export class BattleScene extends Scene {
     this.add.bitmapText(width - 4, 4, FONT_KEY, `R: ${right}`, 7)
       .setOrigin(1, 0).setTint(0xffff00).setDepth(50).setAlpha(0.8)
 
+    // Ground butts directly against the parallax bottom (y=260) and fills
+    // everything below — no bright gap between the two layers, and the
+    // fighting area is a generous 280px tall.
     const groundGfx = this.add.graphics()
     groundGfx.fillStyle(Theme.panelBg, 1)
-    groundGfx.fillRect(0, 360, width, 180)
+    groundGfx.fillRect(0, 260, width, 280)
     groundGfx.lineStyle(1, Theme.panelBorder, 0.3)
-    for (let x = 0; x < width; x += 32) groundGfx.lineBetween(x, 360, x, 540)
-    for (let y = 360; y < 540; y += 32) groundGfx.lineBetween(0, y, width, y)
+    for (let x = 0; x < width; x += 32) groundGfx.lineBetween(x, 260, x, 540)
+    for (let y = 260; y < 540; y += 32) groundGfx.lineBetween(0, y, width, y)
     groundGfx.setDepth(15)
 
     this.enemyTeam = this.opponent
@@ -93,17 +117,32 @@ export class BattleScene extends Scene {
 
     const useLights = !!this.sys.renderer.gl
 
-    // Front units plant ~one sprite-length (96px) from the center line so
-    // the SAP clash actually has room to breathe. Whole team shifts inward
-    // 124px compared to the old formula. `i=0` is the frontmost unit on
-    // both sides — keep this invariant consistent with _reflowTeam below.
+    // Front units sit 110px off center (220px gap between front fighters
+    // for the clash) and teammates are spaced 90px apart. With 5 units per
+    // side this puts the backmost at x=10 / x=950 — almost edge-to-edge,
+    // so bumping either value means back units clip the canvas. Keep this
+    // invariant consistent with _reflowTeam below.
     const centerX = width / 2
-    this._frontOffset = 96
-    this._slotSpacing = 80
+    this._frontOffset = 110
+    this._slotSpacing = 90
+
+    // Each team lives in its own Phaser Container so F2 can drag the whole
+    // lineup as a single object. Containers start at (0, 0), so child
+    // sprites — whose x/y are absolute world coords from the formulas
+    // below — render at the same screen position they would if they were
+    // scene-direct. Moving a container offsets every sprite & badge in it
+    // uniformly, which is what the user wants. Combat math below (clash,
+    // solo, float-text) uses _spriteWorldX/_spriteWorldY helpers to keep
+    // the clash meeting point visually centered even when the containers
+    // are offset asymmetrically.
+    this.playerTeamContainer = this.add.container(0, 0)
+    this.playerTeamContainer.setDepth(battleDepth)
+    this.enemyTeamContainer = this.add.container(0, 0)
+    this.enemyTeamContainer.setDepth(battleDepth)
 
     this.playerSprites = this.team.map((w, i) => {
       const x = centerX - this._frontOffset - i * this._slotSpacing
-      const y = 320
+      const y = 400
       const ref = getUnitPortraitRef(this, w, 'battle player')
       const scale = w.art?.displayScale ?? 2.5
       const sprite = this.add.sprite(x, y, ref.key, ref.frame)
@@ -114,6 +153,8 @@ export class BattleScene extends Scene {
       if (useLights) sprite.setLighting(true)
       attachOutlineToSprite(sprite)
       this._wireAlphaAnimations(sprite, w, 'player')
+      // Lights stay at scene level — Lights2D can't live inside a container.
+      // Team drag won't shift them, but they illuminate the general area.
       const light = useLights
         ? this.lights.addPointLight(x, y - 16, 0xffddaa, 90, 0.7)
         : null
@@ -122,6 +163,7 @@ export class BattleScene extends Scene {
         hp: w.hp,
       })
       badge.setDepth(battleDepth)
+      this.playerTeamContainer.add([sprite, badge])
       return {
         sprite, badge, light,
         warrior: { ...w, currentHp: w.hp },
@@ -131,7 +173,7 @@ export class BattleScene extends Scene {
 
     this.enemySprites = this.enemyTeam.map((w, i) => {
       const x = centerX + this._frontOffset + i * this._slotSpacing
-      const y = 320
+      const y = 400
       const ref = getUnitPortraitRef(this, w, 'battle enemy')
       const scale = w.art?.displayScale ?? 2.5
       const sprite = this.add.sprite(x, y, ref.key, ref.frame)
@@ -151,12 +193,19 @@ export class BattleScene extends Scene {
         isEnemy: true,
       })
       badge.setDepth(battleDepth)
+      this.enemyTeamContainer.add([sprite, badge])
       return {
         sprite, badge, light,
         warrior: { ...w, currentHp: w.hp },
         instanceId: `e${i}`,
       }
     })
+
+    // Register team containers with the F2 editor so the user can drag each
+    // whole lineup as one object. Default position is (0, 0) because sprite
+    // children already hold absolute world coords.
+    LayoutEditor.register(this, 'playerTeamContainer', this.playerTeamContainer, 0, 0)
+    LayoutEditor.register(this, 'enemyTeamContainer', this.enemyTeamContainer, 0, 0)
 
     // Sprite lookup by stable instance id — adapter emits *InstanceId on
     // every relevant log step, so compaction / death-defy / reanimate no
@@ -166,23 +215,56 @@ export class BattleScene extends Scene {
     this.enemySprites.forEach((s) => this.spriteByInstance.set(s.instanceId, s))
     this._activePopupsByTarget = new Map()
 
-    const yourTeamLabel = new PixelLabel(this, 100, 240, 'YOUR TEAM', {
+    const yourTeamLabel = new PixelLabel(this, 100, 320, 'YOUR TEAM', {
       scale: 2, color: 'accent', align: 'center',
     })
     yourTeamLabel.setDepth(battleDepth)
-    LayoutEditor.register(this, 'yourTeamLabel', yourTeamLabel, 100, 240)
+    LayoutEditor.register(this, 'yourTeamLabel', yourTeamLabel, 100, 320)
 
-    const enemyLabel = new PixelLabel(this, width - 100, 240, 'ENEMY', {
+    const enemyLabel = new PixelLabel(this, width - 100, 320, 'ENEMY', {
       scale: 2, color: 'error', align: 'center',
     })
     enemyLabel.setDepth(battleDepth)
-    LayoutEditor.register(this, 'enemyLabel', enemyLabel, width - 100, 240)
+    LayoutEditor.register(this, 'enemyLabel', enemyLabel, width - 100, 320)
 
-    const vsText = this.add.bitmapText(width / 2, 300, FONT_KEY, 'VS', 35)
+    const vsText = this.add.bitmapText(width / 2, 380, FONT_KEY, 'VS', 35)
       .setOrigin(0.5)
       .setTint(Theme.criticalText)
       .setDepth(battleDepth)
-    LayoutEditor.register(this, 'vsText', vsText, width / 2, 300)
+    LayoutEditor.register(this, 'vsText', vsText, width / 2, 380)
+
+    // ── Commander badge — anchored near the bottom so the commander stands
+    // partially off-screen (feet cut by canvas edge), framing the fight.
+    const COMMANDER_X = 80
+    const COMMANDER_Y = 460
+    if (this.commander) {
+      const commanderBadge = new CommanderBadge(this, COMMANDER_X, COMMANDER_Y, this.commander)
+      commanderBadge.setDepth(battleDepth)
+      this._commanderBadge = commanderBadge
+      LayoutEditor.register(this, 'commanderBadge', commanderBadge, COMMANDER_X, COMMANDER_Y)
+      console.log(`[Layout] Battle.commanderBadge at (${COMMANDER_X}, ${COMMANDER_Y}) — ${this.commander.name}`)
+    } else {
+      console.log('[Battle] No commander in run state — skipping commander badge')
+    }
+
+    // ── Enemy commander — assigned at create() time so the badge renders on
+    // scene entry (GhostManager doesn't persist commanders; the opponent
+    // object is an array coming from ShopScene, so we stamp .commander on it).
+    if (!this.opponent) this.opponent = []
+    if (!this.opponent.commander) {
+      this.opponent.commander = pickRandomCommanders(1)[0]
+      console.log(`[Battle] Enemy commander assigned: ${this.opponent.commander.name} (${this.opponent.commander.rule.description})`)
+    }
+
+    const ENEMY_COMMANDER_X = width - 80
+    const ENEMY_COMMANDER_Y = 460
+    const enemyCommanderBadge = new CommanderBadge(
+      this, ENEMY_COMMANDER_X, ENEMY_COMMANDER_Y, this.opponent.commander,
+    )
+    enemyCommanderBadge.setDepth(battleDepth)
+    this._enemyCommanderBadge = enemyCommanderBadge
+    LayoutEditor.register(this, 'enemyCommanderBadge', enemyCommanderBadge, ENEMY_COMMANDER_X, ENEMY_COMMANDER_Y)
+    console.log(`[Layout] Battle.enemyCommanderBadge at (${ENEMY_COMMANDER_X}, ${ENEMY_COMMANDER_Y}) — ${this.opponent.commander.name}`)
 
     // Scrollable event log — mirrors HammerTime/UI/GameLog.cs style:
     // uppercase entries, muted tint, small m5x7 text, header + divider,
@@ -289,12 +371,27 @@ export class BattleScene extends Scene {
   // stat badge, and point light (all placed at x,y) end up nowhere near it.
   // Shifting origin to the tight-bounds center puts the character back under
   // its UI, the same trick WarriorCard already uses for shop portraits.
+  // Sprite world/local helpers. When a sprite lives inside a team
+  // container, sprite.x/.y are LOCAL to the container; world position is
+  // sprite.x + container.x. Combat math (clash, solo meet points, float
+  // text anchors) must operate in world space to stay visually correct
+  // when the user drags a team container via F2.
+  _spriteWorldX(sprite) {
+    return sprite.x + (sprite.parentContainer?.x ?? 0)
+  }
+  _spriteWorldY(sprite) {
+    return sprite.y + (sprite.parentContainer?.y ?? 0)
+  }
+  _worldToLocalX(sprite, worldX) {
+    return worldX - (sprite.parentContainer?.x ?? 0)
+  }
+
   _adjustBattleSprite(sprite, warrior, ref, side) {
     // Enemy sprites get setFlipX(true) before this call — flipXInvert tells
     // the helper to mirror the origin.x so the anchor lands on the mirrored
     // character instead of the empty right half of the flipped frame.
     fitSpriteToPortraitBounds(this, sprite, ref, {
-      configScale: warrior.art?.displayScale ?? 2.5,
+      configScale: (warrior.art?.displayScale ?? 2.5) * BATTLE_SCALE_BOOST,
       minHeightPx: MIN_BATTLE_SPRITE_H,
       flipXInvert: true,
       logTag: '[Battle]',
@@ -408,8 +505,16 @@ export class BattleScene extends Scene {
     this._activePopupsByTarget.set(slotKey, slot + 1)
 
     const jitterX = ((slot % 3) - 1) * 10
-    const startX = posOverride ? (posOverride.x + jitterX) : (entry.sprite.x + jitterX)
-    const startY = posOverride ? posOverride.y : (entry.sprite.y + 70)
+    // Default popup anchor is above the sprite's head in WORLD space — the
+    // float text itself is a scene-level bitmapText (not parented to a
+    // container), so it must be positioned in world coords even when the
+    // sprite lives inside a team container that may be offset by F2.
+    const startX = posOverride
+      ? (posOverride.x + jitterX)
+      : (this._spriteWorldX(entry.sprite) + jitterX)
+    const startY = posOverride
+      ? posOverride.y
+      : (this._spriteWorldY(entry.sprite) + 70)
 
     const label = this.add.bitmapText(startX, startY, FONT_KEY, resolvedText, config.fontSize)
       .setOrigin(0.5, 1)
@@ -446,9 +551,28 @@ export class BattleScene extends Scene {
   }
 
   _runBattle() {
-    const playerDefs = this.playerSprites.map(s => s.warrior)
-    const enemyDefs = this.enemySprites.map(s => s.warrior)
-    const result = runAlphaBattle(playerDefs, enemyDefs)
+    // Clone defs so commander buffs don't mutate the sprite's source warrior
+    // objects (which are held by Shop/ghost snapshots and next-round rebuilds).
+    const playerDefs = this.playerSprites.map(s => ({ ...s.warrior }))
+    const enemyDefs = this.enemySprites.map(s => ({ ...s.warrior }))
+
+    // Enemy commander was assigned in create() so the badge could render; the
+    // rule is read straight off this.opponent.commander here.
+    const applyCommanderBuff = (defs, rule, teamLabel) => {
+      if (!rule || (!rule.atk && !rule.hp)) return
+      for (const w of defs) {
+        w.atk = (w.atk ?? 0) + (rule.atk ?? 0)
+        w.hp  = (w.hp  ?? 0) + (rule.hp  ?? 0)
+      }
+      console.log(`[Battle] Commander buff (${teamLabel}) +${rule.atk ?? 0}/+${rule.hp ?? 0} applied to ${defs.length} units`)
+    }
+    applyCommanderBuff(playerDefs, getCommanderRule(this.commander),          'player')
+    applyCommanderBuff(enemyDefs,  getCommanderRule(this.opponent.commander), 'enemy')
+
+    const result = runAlphaBattle(playerDefs, enemyDefs, undefined, {
+      playerMerchant: this.merchant,
+      enemyMerchant:  this.opponent?.merchant ?? null,
+    })
     console.log(`[Battle] engine=alpha, ${result.log.length} steps, won=${result.won}`)
 
     this._battleResult = result
@@ -728,17 +852,25 @@ export class BattleScene extends Scene {
 
       const pSprite = pEntry.sprite
       const eSprite = eEntry.sprite
+      // Homes retain as LOCAL x so retreat tweens just snap back to
+      // sprite.x regardless of container offsets.
       const homePX = pSprite.x
       const homeEX = eSprite.x
-      const clashX = Math.round((homePX + homeEX) / 2)
-      const pMeet = clashX - 30
-      const eMeet = clashX + 30
+      // Meeting point is computed in WORLD space so the two fighters visually
+      // meet at the midpoint even when teams are offset via F2. Each sprite
+      // tweens to a LOCAL x that corresponds to that world midpoint (minus
+      // the 30px half-gap) inside its own container.
+      const pHomeWorld = this._spriteWorldX(pSprite)
+      const eHomeWorld = this._spriteWorldX(eSprite)
+      const clashXWorld = Math.round((pHomeWorld + eHomeWorld) / 2)
+      const pMeet = this._worldToLocalX(pSprite, clashXWorld - 30)
+      const eMeet = this._worldToLocalX(eSprite, clashXWorld + 30)
       const prevPDepth = pSprite.depth
       const prevEDepth = eSprite.depth
       pSprite.setDepth(prevPDepth + 1)
       eSprite.setDepth(prevEDepth + 1)
 
-      console.log(`[Battle] clash: ${a.actorInstanceId} (home=${homePX}) <-> ${b.actorInstanceId} (home=${homeEX}) clashX=${clashX}`)
+      console.log(`[Battle] clash: ${a.actorInstanceId} (worldHome=${pHomeWorld}) <-> ${b.actorInstanceId} (worldHome=${eHomeWorld}) clashXWorld=${clashXWorld}`)
 
       let advanceDone = 0
       const onAdvance = () => {
@@ -751,10 +883,10 @@ export class BattleScene extends Scene {
         this._applyStatSnapshot(b)
 
         if (typeof a.damage === 'number') {
-          this._showFloatText(a.targetInstanceId, `${a.damage}`, a.blocked === true ? 'block' : 'damage', { x: clashX, y: 385 })
+          this._showFloatText(a.targetInstanceId, `${a.damage}`, a.blocked === true ? 'block' : 'damage', { x: clashXWorld, y: 360 })
         }
         if (typeof b.damage === 'number') {
-          this._showFloatText(b.targetInstanceId, `${b.damage}`, b.blocked === true ? 'block' : 'damage', { x: clashX, y: 403 })
+          this._showFloatText(b.targetInstanceId, `${b.damage}`, b.blocked === true ? 'block' : 'damage', { x: clashXWorld, y: 378 })
         }
         this._spawnFlavorPops(frame?.flavorEvents)
 
@@ -820,14 +952,20 @@ export class BattleScene extends Scene {
 
       const sprite = attackerEntry.sprite
       const targetSprite = targetEntry.sprite
+      // homeX is LOCAL (for retreat); strike point is computed in WORLD space
+      // and then converted back to the attacker's container-local x so the
+      // strike lands at the target even if the two teams are in different
+      // containers with different offsets.
       const homeX = sprite.x
       const isPlayerAttacker = step.actorInstanceId.startsWith('p')
-      const strikeX = isPlayerAttacker ? (targetSprite.x - 30) : (targetSprite.x + 30)
-      const popupX = Math.round((homeX + targetSprite.x) / 2)
+      const targetWorldX = this._spriteWorldX(targetSprite)
+      const strikeWorldX = isPlayerAttacker ? (targetWorldX - 30) : (targetWorldX + 30)
+      const strikeX = this._worldToLocalX(sprite, strikeWorldX)
+      const popupX = Math.round((this._spriteWorldX(sprite) + targetWorldX) / 2)
       const prevDepth = sprite.depth
       sprite.setDepth(prevDepth + 1)
 
-      console.log(`[Battle] solo: ${step.actorInstanceId} -> ${step.targetInstanceId} strike=${strikeX} home=${homeX}`)
+      console.log(`[Battle] solo: ${step.actorInstanceId} -> ${step.targetInstanceId} strikeWorld=${strikeWorldX} strikeLocal=${strikeX} homeLocal=${homeX}`)
 
       this.tweens.add({
         targets: sprite,
@@ -838,7 +976,7 @@ export class BattleScene extends Scene {
           this._playActorAnim(step.actorInstanceId, 'attack')
           this._applyStatSnapshot(step)
           if (typeof step.damage === 'number') {
-            this._showFloatText(step.targetInstanceId, `${step.damage}`, step.blocked === true ? 'block' : 'damage', { x: popupX, y: 390 })
+            this._showFloatText(step.targetInstanceId, `${step.damage}`, step.blocked === true ? 'block' : 'damage', { x: popupX, y: 365 })
           }
           this._spawnFlavorPops(step.flavorEvents)
           this.cameras.main.shake(100, 0.005)
@@ -1030,6 +1168,8 @@ export class BattleScene extends Scene {
           runId: this.runId,
           commander: this.commander,
           merchant: this.merchant,
+          shopLocks: this.shopLocks.slice(),
+          shopOffer: this.shopLocks.some(Boolean) ? this.shopOffer : null,
         })
       } else {
         const newLosses = this.losses + 1
@@ -1052,6 +1192,8 @@ export class BattleScene extends Scene {
           runId: this.runId,
           commander: this.commander,
           merchant: this.merchant,
+          shopLocks: this.shopLocks.slice(),
+          shopOffer: this.shopLocks.some(Boolean) ? this.shopOffer : null,
         })
       }
     })

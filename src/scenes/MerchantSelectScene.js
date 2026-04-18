@@ -1,13 +1,17 @@
 import { Scene } from 'phaser'
-import { Theme } from '../ui/index.js'
+import { Theme, PixelLabel } from '../ui/index.js'
 import { finalizeCaptureScene } from '../systems/CaptureSupport.js'
+import { LayoutEditor } from '../systems/LayoutEditor.js'
 import {
   getMerchants,
   pickRandomMerchants,
   getMerchantIdleAnimKey,
+  getMerchantFavorLabel,
+  getMerchantFavorTooltip,
 } from '../config/merchants.js'
 import { SelectionMenuWidget } from '../widgets/SelectionMenuWidget.js'
 import { SceneCrt } from '../rendering/SceneCrt.js'
+import { SceneDust } from '../rendering/SceneDust.js'
 
 /**
  * MerchantSelectScene — second consumer of SelectionMenuWidget.
@@ -18,8 +22,12 @@ import { SceneCrt } from '../rendering/SceneCrt.js'
  * no left/right panels, no preview — the widget's hidden-layer options gate
  * navigation so input can't land on empty views.
  *
- * Gameplay consequences (shop pool weighting, etc.) are not wired yet — this
- * pass is purely visual.
+ * Each merchant has a `favors` class or faction rendered as a persistent
+ * "FAVORS X" label on the card plus a bottom-of-screen tooltip on hover/focus.
+ * The favor is plumbed into CombatCore (via BattleSceneAdapter) and grants
+ * the favored set a phantom +1 member at battle start — threshold synergies
+ * trigger with one fewer actual unit and scaling synergies earn an extra tier.
+ * See `src/config/merchants.js` (MERCHANT_FAVORS) and class/faction hooks.
  */
 export class MerchantSelectScene extends Scene {
   constructor() {
@@ -43,9 +51,22 @@ export class MerchantSelectScene extends Scene {
 
     // CRT post-process (softGameplay — interactive scene)
     SceneCrt.attach(this, 'softGameplay')
+    // Ambient dust — gold glints floating upward (bazaar/incense feel)
+    SceneDust.attach(this, 'merchantSelect')
 
     const choices = this._fixedMerchants ?? pickRandomMerchants(3)
     console.log(`[Merchant] Featured: ${choices.map(m => m.name).join(', ')}`)
+
+    // Persistent tooltip label near the bottom of the screen. Empty until a
+    // merchant card is hovered/focused — we reuse this single label instead
+    // of allocating one per card so layout stays predictable.
+    const { width, height } = this.cameras.main
+    this._tooltipLabel = new PixelLabel(this, width / 2, height - 48, '', {
+      scale: 1, tint: Theme.fantasyGold, align: 'center',
+    })
+    this._tooltipLabel.setDepth(22)
+    this._tooltipLabel.setAlpha(0)
+    LayoutEditor.register(this, 'merchantFavorTooltip', this._tooltipLabel, width / 2, height - 48)
 
     this._widget = new SelectionMenuWidget(this, {
       items: {
@@ -66,6 +87,9 @@ export class MerchantSelectScene extends Scene {
         textureKeyForItem: (item) => item.spriteKey,
         labelForItem:      (item) => item.name.toUpperCase(),
         subtitleForItem:   (item) => item.id,
+        // Persistent "FAVORS X" line rendered below the nameplate by the
+        // featured layer builder (abilityForItem hook).
+        abilityForItem:    (item) => getMerchantFavorLabel(item),
         spriteScale:       2,
         // Featured sprite hook: start the global `<spriteKey>-idle` anim that
         // BootScene registered on load. See `_wireMerchantSprite` below.
@@ -76,9 +100,16 @@ export class MerchantSelectScene extends Scene {
       actions: {
         onSelectionChange: (item) => {
           console.log(`[Merchant] Focus: ${item.name}`)
+          this._showFavorTooltip(item)
+        },
+        onFeaturedHoverEnter: (_index, item) => {
+          this._showFavorTooltip(item)
+        },
+        onFeaturedHoverLeave: () => {
+          this._hideFavorTooltip()
         },
         onConfirm: (item) => {
-          console.log(`[Merchant] Confirmed: ${item.name} (${item.id})`)
+          console.log(`[Merchant] Confirmed: ${item.name} (${item.id}) favors=${item.favors?.name ?? 'none'}`)
           this.scene.start('Shop', {
             stage:     this._stage,
             wins:      this._wins,
@@ -104,6 +135,20 @@ export class MerchantSelectScene extends Scene {
     })
 
     finalizeCaptureScene('MerchantSelect')
+  }
+
+  _showFavorTooltip(merchant) {
+    const text = getMerchantFavorTooltip(merchant)
+    if (!this._tooltipLabel) return
+    if (!text) { this._hideFavorTooltip(); return }
+    this._tooltipLabel.setText(text)
+    this._tooltipLabel.setAlpha(1)
+    console.log(`[Merchant] Tooltip: ${text}`)
+  }
+
+  _hideFavorTooltip() {
+    if (!this._tooltipLabel) return
+    this._tooltipLabel.setAlpha(0)
   }
 
   /**

@@ -1,6 +1,7 @@
 import { Scene } from 'phaser'
 import {
   Theme, FONT_KEY, PixelButton, PixelLabel, PixelPanel, WarriorCard,
+  pillShades,
 } from '../ui/index.js'
 import { ShopManager } from '../systems/ShopManager.js'
 import { GhostManager } from '../systems/GhostManager.js'
@@ -10,10 +11,13 @@ import { finalizeCaptureScene } from '../systems/CaptureSupport.js'
 import { LayoutEditor } from '../systems/LayoutEditor.js'
 import { logShopRound, logShopBuy, logShopSell, logShopReroll, logShopCombine } from '../systems/PlaytestLogger.js'
 import { SceneCrt } from '../rendering/SceneCrt.js'
+import { SceneDust } from '../rendering/SceneDust.js'
 import { getMerchantIdleAnimKey } from '../config/merchants.js'
 import { pulseLevelUp, pulseStarLevelUp } from '../rendering/OutlineController.js'
 import { SynergyChipStrip } from '../widgets/SynergyChipStrip.js'
 import { SynergyTooltip } from '../widgets/SynergyTooltip.js'
+import { CommanderBadge } from '../widgets/CommanderBadge.js'
+import { LockToggle } from '../widgets/LockToggle.js'
 
 // Team card row
 const TEAM_Y        = 122
@@ -40,6 +44,8 @@ const DIVIDER_Y     = 276
 // Game rules
 const MAX_STARS       = 3
 const MAX_BENCH_SLOTS = 5
+const TEAM_ANCHOR_BASE_DEPTH = 9
+const TEAM_ANCHOR_HOVER_DEPTH = 10
 
 export class ShopScene extends Scene {
   constructor() {
@@ -56,6 +62,13 @@ export class ShopScene extends Scene {
     this.commander = data.commander ?? null
     this.merchant = data.merchant ?? null
 
+    // Per-card lock state — one boolean per shop slot (4). Locked slots preserve
+    // their card across manual rerolls AND round transitions. Lock auto-clears
+    // when a card is bought out from under it.
+    this.shopLocks = Array.isArray(data.shopLocks)
+      ? [0, 1, 2, 3].map(i => !!data.shopLocks[i])
+      : [false, false, false, false]
+
     // Sparse 5-slot model for shop UI. BattleScene and external systems only see this.team (dense).
     this.teamSlots = new Array(5).fill(null)
     const incomingTeam = Array.isArray(data.team) ? data.team.map(w => ({ ...w })) : []
@@ -64,9 +77,23 @@ export class ShopScene extends Scene {
 
     this.availableWarriors = getEnabledWarriors()
     this.shop = new ShopManager(this.availableWarriors, this.stage)
-    this.shopOffer = Array.isArray(data.shopOffer)
-      ? data.shopOffer.map(w => (w ? { ...w } : null))
-      : this.shop.roll()
+
+    // Build the opening offer: if a prior offer was handed through (returning
+    // from battle with locked cards), keep the locked slots and roll the rest.
+    // Otherwise roll fresh for all 4.
+    if (Array.isArray(data.shopOffer)) {
+      const incoming = data.shopOffer.map(w => (w ? { ...w } : null))
+      const fresh = this.shop.roll()
+      this.shopOffer = [0, 1, 2, 3].map(i => {
+        if (this.shopLocks[i] && incoming[i]) return incoming[i]
+        // Not locked (or locked-but-empty): take fresh and clear the lock.
+        this.shopLocks[i] = false
+        return fresh[i] ? { ...fresh[i] } : null
+      })
+    } else {
+      this.shopOffer = this.shop.roll()
+      this.shopLocks = [false, false, false, false]
+    }
 
     this.goldLabel = null
     this.cards = null
@@ -83,6 +110,59 @@ export class ShopScene extends Scene {
 
   _countFilledSlots() {
     return this.teamSlots.filter(Boolean).length
+  }
+
+  _getTeamVisualIndex(slotIndex) {
+    return (MAX_BENCH_SLOTS - 1) - slotIndex
+  }
+
+  _getTeamAnchor(slotIndex) {
+    return this._teamAnchors?.[this._getTeamVisualIndex(slotIndex)] ?? null
+  }
+
+  _getTeamAnchorBaseDepth(visualIdx) {
+    // Preserve the previous left-to-right stacking deterministically:
+    // rightmost anchors sit slightly above leftmost anchors at rest.
+    return TEAM_ANCHOR_BASE_DEPTH + visualIdx * 0.001
+  }
+
+  _restackTeamAnchors(activeSlot = null) {
+    if (!this._teamAnchors) return
+    const activeVisualIdx = activeSlot === null ? null : this._getTeamVisualIndex(activeSlot)
+    this._teamAnchors.forEach((anchor, visualIdx) => {
+      if (!anchor) return
+      anchor.setDepth(
+        visualIdx === activeVisualIdx
+          ? TEAM_ANCHOR_HOVER_DEPTH
+          : this._getTeamAnchorBaseDepth(visualIdx),
+      )
+    })
+
+    // Depth is not enough on its own when sibling containers share the same
+    // band; make the display-list order explicit so rightmost team cards sit
+    // above left neighbors at rest, and the actively hovered slot wins last.
+    this._teamAnchors.forEach((anchor) => {
+      if (anchor) this.children.bringToTop(anchor)
+    })
+    if (activeVisualIdx !== null) {
+      const activeAnchor = this._teamAnchors[activeVisualIdx]
+      if (activeAnchor) this.children.bringToTop(activeAnchor)
+    }
+  }
+
+  // Called when a shop slot empties (buy / combine): clear its lock state
+  // so the next dealt card is unlocked, and hide the padlock UI until then.
+  _clearShopLock(shopIndex) {
+    if (!this.shopLocks) return
+    if (this.shopLocks[shopIndex]) {
+      console.log(`[Shop] slot ${shopIndex} bought — clearing lock`)
+      this.shopLocks[shopIndex] = false
+    }
+    const toggle = this.lockToggles?.[shopIndex]
+    if (toggle) {
+      toggle.setLocked(false, { animate: false })
+      toggle.setVisible(false)
+    }
   }
 
   _findMatchingSlot(warrior) {
@@ -104,6 +184,8 @@ export class ShopScene extends Scene {
     // CRT post-process (softGameplay — interactive scene)
     const crtController = SceneCrt.attach(this, 'softGameplay')
     this._installCrtPointerTransform(crtController)
+    // Ambient dust — warm shop haze drifting left
+    SceneDust.attach(this, 'shop')
 
     // ── Header ───────────────────────────────────────────────
     const headerPanel = new PixelPanel(this, 0, 0, width, 32, {
@@ -134,7 +216,7 @@ export class ShopScene extends Scene {
     this._teamAnchors = TEAM_CARD_XS.map((x, visualIdx) => {
       const slotIndex = (MAX_BENCH_SLOTS - 1) - visualIdx  // slot 0=rightmost=visualIdx 4
       const anchor = this.add.container(x, TEAM_Y)
-      anchor.setDepth(7)
+      anchor.setDepth(this._getTeamAnchorBaseDepth(visualIdx))
       LayoutEditor.register(this, `teamCard_${slotIndex}`, anchor, x, TEAM_Y)
       return anchor
     })
@@ -155,6 +237,26 @@ export class ShopScene extends Scene {
     // ── Shop cards ────────────────────────────────────────────
     this.cards = []
     this._drawShopCards()
+
+    // ── Per-card lock toggles (one tiny 3D padlock above each shop card) ─
+    // Low rest alpha so the row of 4 doesn't pull attention from the cards.
+    // Clicking a padlock preserves that card across REROLL and round transitions.
+    // Hidden when the underlying slot is empty (card bought).
+    const LOCK_Y = 292
+    this.lockToggles = SHOP_CARD_XS.map((cardX, i) => {
+      const toggle = new LockToggle(this, cardX, LOCK_Y, {
+        locked: this.shopLocks[i],
+        onToggle: (locked) => {
+          this.shopLocks[i] = locked
+          console.log(`[Shop] shop lock slot ${i} → ${locked ? 'LOCKED' : 'UNLOCKED'}`)
+        },
+      })
+      toggle.setDepth(7)
+      if (!this.shopOffer[i]) toggle.setVisible(false)
+      LayoutEditor.register(this, `shopLockToggle_${i}`, toggle, cardX, LOCK_Y)
+      console.log(`[Layout] Shop.shopLockToggle_${i} at (${cardX}, ${LOCK_Y}) locked=${this.shopLocks[i]}`)
+      return toggle
+    })
 
     // ── Merchant strip ────────────────────────────────────────
     const merchantStrip = this.add.container(MERCHANT_X, MERCHANT_Y)
@@ -193,6 +295,20 @@ export class ShopScene extends Scene {
       console.log(`[Shop] Merchant slot: no NPC yet (pre win-3); vault handles sell affordance`)
     }
 
+    // ── Commander badge (left column, mirrors merchant strip on the right) ─
+    const COMMANDER_X = 90
+    const COMMANDER_Y = 160
+    if (this.commander) {
+      const commanderBadge = new CommanderBadge(this, COMMANDER_X, COMMANDER_Y, this.commander)
+      commanderBadge.setDepth(0)
+      console.log(`[Shop] Commander badge depth=0 (below cards) to avoid alpha-space click blocking`)
+      this._commanderBadge = commanderBadge
+      LayoutEditor.register(this, 'commanderBadge', commanderBadge, COMMANDER_X, COMMANDER_Y)
+      console.log(`[Layout] Shop.commanderBadge at (${COMMANDER_X}, ${COMMANDER_Y}) — ${this.commander.name}`)
+    } else {
+      console.log('[Shop] No commander in run state — skipping commander badge')
+    }
+
     this.merchantQuote = new PixelLabel(this, width / 2, DIVIDER_Y + 14, merchantQuoteText, {
       scale: 1, color: 'muted', align: 'center',
     })
@@ -213,6 +329,22 @@ export class ShopScene extends Scene {
     this.rerollBtn = new PixelButton(this, 0, -40, 'REROLL', () => {
       // Slot-machine spin, then actually roll. Scene restart wipes the button,
       // so the spin reads as the lead-in to the new shop row materialising.
+      // Out-of-credits path still plays the spin, but crashes into a red
+      // "NO FUNDS" pill instead of rolling — the slot machine refuses to pay out.
+      // Locked slots are preserved through the roll; unlocked slots refresh.
+      if (this.gold < 1) {
+        console.log('[Shop] reroll clicked — no funds, spinning to NO FUNDS')
+        this.rerollBtn.btnBg = Theme.error
+        this.rerollBtn._redrawBg(Theme.error)
+        this.rerollBtn.spin(() => {
+          // If credits returned mid-spin (e.g. user sold a unit while reels
+          // were rolling), flip back to REROLL instead of stamping the lie in.
+          // Otherwise re-assert red in case hover state crept in.
+          if (this.gold >= 1) this._updateRerollButtonState()
+          else this.rerollBtn._redrawBg(Theme.error)
+        }, { settleLabel: 'NO FUNDS' })
+        return
+      }
       console.log('[Shop] reroll clicked — spinning before roll')
       this.rerollBtn.spin(() => this._reroll())
     }, { style: 'filled', scale: 3, bg: Theme.accentDim, pill: true, width: 160, height: 40 })
@@ -231,9 +363,11 @@ export class ShopScene extends Scene {
     LayoutEditor.register(this, 'fightAnchor', fightAnchor, FIGHT_ANCHOR_X, FIGHT_ANCHOR_Y)
     console.log(`[Layout] Shop.fightAnchor at (${FIGHT_ANCHOR_X}, ${FIGHT_ANCHOR_Y})`)
 
+    // cornerRadius > 0 routes the fill through drawPill3D (same SNES-Start bump
+     // as REROLL/SELL), but a small radius keeps it reading as a rectangle.
     this.fightBtn = new PixelButton(this, 0, 0, 'FIGHT!', () => {
       this._startBattle()
-    }, { style: 'filled', scale: 3, bg: Theme.accent, width: 160, height: 40 })
+    }, { style: 'filled', scale: 3, bg: Theme.accentDim, width: 160, height: 44, cornerRadius: 4 })
     fightAnchor.add(this.fightBtn)
 
     // ── Drag layer (floats above everything during card drag) ─────────────────
@@ -266,6 +400,22 @@ export class ShopScene extends Scene {
     if (!this.fightBtn) return
     if (this.gold <= 0) this._startFightUrgency()
     else this._stopFightUrgency()
+    this._updateRerollButtonState()
+  }
+
+  // Restore REROLL/accentDim once the player can afford a reroll again. The
+  // out-of-credits click flips the button to a red "NO FUNDS" pill via spin —
+  // this is the inverse, fired any time credits change so the button never
+  // lies about its current affordability.
+  _updateRerollButtonState() {
+    const btn = this.rerollBtn
+    if (!btn || btn._spinning) return
+    if (this.gold >= 1 && btn.label !== 'REROLL') {
+      console.log('[Shop] reroll button reset → REROLL (credits restored)')
+      btn.btnBg = Theme.accentDim
+      btn._redrawBg(Theme.accentDim)
+      btn.setLabel('REROLL')
+    }
   }
 
   _startFightUrgency() {
@@ -352,11 +502,11 @@ export class ShopScene extends Scene {
   _drawTeamRow() {
     this._teamAnchors.forEach(a => a.removeAll(true))
     this._teamCards = new Array(5).fill(null)
+    this._restackTeamAnchors()
 
     for (let slotIndex = 0; slotIndex < 5; slotIndex++) {
       const unit = this.teamSlots[slotIndex]
-      const visualIdx = (MAX_BENCH_SLOTS - 1) - slotIndex  // 0=slot4, 4=slot0
-      const anchor = this._teamAnchors[visualIdx]
+      const anchor = this._getTeamAnchor(slotIndex)
 
       if (unit) {
         const card = new WarriorCard(this, 0, 0, unit, { draggable: true, teamCard: true })
@@ -528,6 +678,7 @@ export class ShopScene extends Scene {
       this.goldLabel.setText(`CREDITS: ${this.gold}`)
       this._updateFightUrgency()
       this.shopOffer[shopIndex] = null
+      this._clearShopLock(shopIndex)
       occupant.stars = (occupant.stars ?? 1) + 1
       occupant.hp  += 1
       occupant.atk += 1
@@ -537,6 +688,7 @@ export class ShopScene extends Scene {
       // otherwise float over the newly-drawn team card ("double vision").
       // _drawShopCards() rebuilds the shop row on the next reroll.
       this._dragLayer.remove(card, true)
+      this.cards[shopIndex] = null
       const hostCard = this._teamCards[target]
       if (hostCard?.sprite) pulseLevelUp(this, hostCard.sprite)
       if (hostCard) pulseStarLevelUp(this, hostCard)
@@ -552,11 +704,13 @@ export class ShopScene extends Scene {
       this.goldLabel.setText(`CREDITS: ${this.gold}`)
       this._updateFightUrgency()
       this.shopOffer[shopIndex] = null
+      this._clearShopLock(shopIndex)
       this.teamSlots[target] = { ...warrior, stars: warrior.stars ?? 1 }
       this._syncDenseTeamFromSlots()
       this._drawTeamRow()
       // Destroy the dragged shop card — see buy-combine note above.
       this._dragLayer.remove(card, true)
+      this.cards[shopIndex] = null
       console.log(`[Shop] drop resolution=buy-empty source=shop from=${shopIndex} to=${target}`)
       logShopBuy({ scene: this, unit: warrior, cost: warrior.cost, creditsAfter: this.gold, starLevel: warrior.stars ?? 1 })
 
@@ -571,10 +725,21 @@ export class ShopScene extends Scene {
   // ── Team card drag ────────────────────────────────────────────────────────
 
   _bindTeamCardDrag(card, slotIndex) {
+    card.hitZone.on('pointerover', () => {
+      if (card._isHeld || card._isCelebrating) return
+      this._restackTeamAnchors(slotIndex)
+    })
+
+    card.hitZone.on('pointerout', () => {
+      if (card._isHeld) return
+      this._restackTeamAnchors()
+    })
+
     card.hitZone.on('dragstart', (pointer) => {
       if (this._sellInProgress) { card._sellBlocked = true; return }
       if (card._isCelebrating) { card._sellBlocked = true; return }
       card._sellBlocked = false
+      this._restackTeamAnchors()
       this._beginCardDrag(card, 'team', slotIndex, pointer)
       // Arm vault: brighten anchor, doors stay closed until hover
       this.tweens.killTweensOf(this.sellAnchor)
@@ -764,20 +929,22 @@ export class ShopScene extends Scene {
     // Left door half — object origin at outer LEFT edge (parent x=-W/2),
     // shape extends right to the seam at parent x=0.
     this.leftDoor = this.add.graphics()
-    this._drawPillDoorHalf(this.leftDoor, 'left', W, H, R, Theme.accent)
+    this._drawPillDoorHalf(this.leftDoor, 'left', W, H, R, Theme.accentDim)
     this.leftDoor.x = -W / 2
     this.sellAnchor.add(this.leftDoor)
 
     // Right door half — mirror of left, hinge at outer RIGHT edge.
     this.rightDoor = this.add.graphics()
-    this._drawPillDoorHalf(this.rightDoor, 'right', W, H, R, Theme.accent)
+    this._drawPillDoorHalf(this.rightDoor, 'right', W, H, R, Theme.accentDim)
     this.rightDoor.x = W / 2
     this.sellAnchor.add(this.rightDoor)
 
     // Face label — "SELL" sits on top of the closed pill, fades as doors open.
-    // y=-7 centres a scale-2 glyph in the 40-tall pill (label origin is top).
-    this.sellFaceLabel = new PixelLabel(this, 0, -7, 'SELL', {
-      scale: 2, color: 'critical', align: 'center',
+    // Scale 3 matches REROLL/FIGHT's PixelButton label rendering so the three
+    // buttons read as a unified set. y=-10 centres a scale-3 glyph (21px) in
+    // the 40-tall pill (label origin is top-left).
+    this.sellFaceLabel = new PixelLabel(this, 0, -10, 'SELL', {
+      scale: 3, color: 'critical', align: 'center',
     })
     this.sellAnchor.add(this.sellFaceLabel)
 
@@ -790,34 +957,69 @@ export class ShopScene extends Scene {
 
     // Tooltip line below the pill — reinforces the payout so the player can
     // price the decision without opening the vault.
-    this.sellIdleHint = new PixelLabel(this, 0, H / 2 + 10, '+1c REFUND', {
+    this.sellIdleHint = new PixelLabel(this, 0, H / 2 + 10, 'DRAG HERE FOR 1c REFUND', {
       scale: 1, color: 'muted', align: 'center',
     })
     this.sellAnchor.add(this.sellIdleHint)
   }
 
   /**
-   * Pill-half graphics. Origin (0,0) of the graphics object sits at the
-   * outer hinge edge of the pill so scaleX → 0 collapses the half edge-on,
-   * mimicking a vault door swinging open.
+   * Pill-half graphics. Origin (0,0) sits at the outer hinge edge so scaleX → 0
+   * collapses the half edge-on like a vault door. At rest (scaleX = 1) the two
+   * halves tile seamlessly at the seam (parent x = 0) into a single 3D pill —
+   * same rim/under/body/highlight/specular ramp as PixelButton's pill bump.
+   *
+   * Local geometry:
+   *   'left'  — spans local x in [0, W/2]; outer cap at x = 0,    seam at x = W/2.
+   *   'right' — spans local x in [-W/2, 0]; outer cap at x = 0,   seam at x = -W/2.
+   *
+   * Each layer is a rounded-rect scoped to the half, with corner radii set to 0
+   * on the seam side so the two halves butt together without a visible seam.
    */
   _drawPillDoorHalf(gfx, side, W, H, R, color) {
-    gfx.fillStyle(color, 1)
-    if (side === 'left') {
-      // Shape covers object-local x ∈ [0, W/2]; rounded cap at the outer edge.
-      gfx.fillCircle(R, 0, R)
-      gfx.fillRect(R, -H / 2, W / 2 - R, H)
-      // Gold lock pin near the seam (object x = W/2)
-      gfx.fillStyle(Theme.fantasyBorderGold, 1)
-      gfx.fillRect(W / 2 - 6, -5, 2, 2)
-      gfx.fillRect(W / 2 - 6,  3, 2, 2)
-    } else {
-      // Shape covers object-local x ∈ [-W/2, 0]; rounded cap at outer edge.
-      gfx.fillRect(-W / 2, -H / 2, W / 2 - R, H)
-      gfx.fillCircle(-R, 0, R)
-      gfx.fillStyle(Theme.fantasyBorderGold, 1)
-      gfx.fillRect(-W / 2 + 4, -5, 2, 2)
-      gfx.fillRect(-W / 2 + 4,  3, 2, 2)
+    gfx.clear()
+    const shades = pillShades(color)
+    const halfW = W / 2
+
+    const drawHalfLayer = (insetOuter, insetTop, insetBot, fill, customR) => {
+      const r = customR ?? Math.max(1, R - insetOuter)
+      const rw = halfW - insetOuter
+      if (rw <= 0) return
+      const ry = -H / 2 + insetTop
+      const rh = H - insetTop - insetBot
+      if (rh <= 0) return
+      gfx.fillStyle(fill, 1)
+      if (side === 'left') {
+        // Cap on LEFT (local x = 0), seam on RIGHT (local x = halfW).
+        gfx.fillRoundedRect(insetOuter, ry, rw, rh,
+          { tl: r, bl: r, tr: 0, br: 0 })
+      } else {
+        // Cap on RIGHT (local x = 0), seam on LEFT (local x = -halfW).
+        gfx.fillRoundedRect(-halfW, ry, rw, rh,
+          { tl: 0, bl: 0, tr: r, br: r })
+      }
+    }
+
+    // Layer 1 — outer rim, full half-pill (doubles as outline).
+    drawHalfLayer(0, 0, 0, shades.rim)
+    // Layer 2 — under-shadow, 4px shorter at bottom → exposes a 4px rim crescent.
+    // Matches the taller arcade-pedestal geometry in drawPill3D (rest state).
+    drawHalfLayer(1, 1, 4, shades.under)
+    // Layer 3 — body cap, 3px shorter than under at bottom → exposes a 3px
+    // under-shadow band. Total pedestal visible = 7px, matching REROLL/FIGHT.
+    drawHalfLayer(1, 1, 7, shades.body)
+    // Layer 4 — top highlight, shallow pill occupying the top ~45%.
+    const hlInset = 4
+    const hlH = Math.max(4, Math.floor(H * 0.45))
+    const hlR = Math.min(Math.max(1, R - hlInset), Math.floor(hlH / 2))
+    drawHalfLayer(hlInset, 2, H - 2 - hlH, shades.bright, hlR)
+    // Layer 5 — 1px specular streak near the top.
+    const specInset = Math.max(hlInset + 4, 10)
+    const specW = halfW - specInset
+    if (specW > 0) {
+      gfx.fillStyle(shades.spec, 1)
+      const specX = side === 'left' ? specInset : -halfW
+      gfx.fillRect(specX, -H / 2 + 3, specW, 1)
     }
   }
 
@@ -1039,12 +1241,144 @@ export class ShopScene extends Scene {
 
   _reroll() {
     if (this.gold < 1) return
+    if (this._rerollAnimating) return
+
+    // Which slots actually refresh? Locked-with-card slots stay put; the rest
+    // sweep+redeal. If every slot is either locked or already dealt and none
+    // would change (pathological case: all 4 locked), refuse with a shake
+    // rather than silently charging a credit.
+    const slotsToRoll = [0, 1, 2, 3].filter(i => !(this.shopLocks[i] && this.shopOffer[i]))
+    if (slotsToRoll.length === 0) {
+      console.log('[Shop] reroll refused — all slots locked, nothing to refresh')
+      return
+    }
+
+    this._rerollAnimating = true
     this.gold -= 1
-    this.shopOffer = this.shop.roll()
+    this.goldLabel.setText(`CREDITS: ${this.gold}`)
+    this._updateFightUrgency()
     logShopReroll({ scene: this, cost: 1, creditsAfter: this.gold, rolled: null })
-    this.scene.restart({
-      stage: this.stage, gold: this.gold, wins: this.wins, losses: this.losses,
-      team: this.team, runId: this.runId, commander: this.commander, merchant: this.merchant,
+    console.log(`[Shop] reroll — refreshing slots [${slotsToRoll.join(',')}], preserving [${[0,1,2,3].filter(i => !slotsToRoll.includes(i)).join(',') || 'none'}]`)
+
+    // Texas hold'em flop: old cards swept off toward the dealer (muck),
+    // new cards tossed from the deck to each slot in succession.
+    const OUT_DUR     = 160
+    const OUT_STAGGER = 40
+    const IN_DUR      = 180
+    const IN_STAGGER  = 90
+    const GAP         = 30
+
+    // "Deck" origin — reroll button sits at LEFT_COL_X=90, y=360. We deal
+    // from just above it so cards skim onto the shelf.
+    const DECK_X = LEFT_COL_X - 20
+    const DECK_Y = 340
+
+    // Phase 1: sweep ONLY unlocked slot cards off toward the deck (muck).
+    const outgoing = slotsToRoll
+      .map(i => this.cards[i])
+      .filter((c) => c && c.scene)
+    outgoing.forEach((card, i) => {
+      if (card.hitZone?.scene) card.hitZone.disableInteractive()
+      card.setDepth(2)
+      this.tweens.killTweensOf(card)
+      this.tweens.add({
+        targets: card,
+        x: DECK_X,
+        y: DECK_Y,
+        angle: -18,
+        alpha: 0,
+        scaleX: 0.8, scaleY: 0.8,
+        delay: i * OUT_STAGGER,
+        duration: OUT_DUR,
+        ease: 'Cubic.easeIn',
+        onComplete: () => card.destroy(),
+      })
+    })
+
+    const outTotal = outgoing.length
+      ? (outgoing.length - 1) * OUT_STAGGER + OUT_DUR
+      : 0
+
+    this.time.delayedCall(outTotal + GAP, () => {
+      // Phase 2: deal from the deck into the unlocked slots only. Preserve
+      // the locked cards and their lock UI; reset the rest from a fresh roll.
+      const fresh = this.shop.roll()
+      slotsToRoll.forEach(i => {
+        this.shopOffer[i] = fresh[i] ? { ...fresh[i] } : null
+        this.cards[i] = null
+      })
+      let dealt = 0
+      slotsToRoll.forEach(i => {
+        const warrior = this.shopOffer[i]
+        // Keep the lock UI visibility in sync with whether there's a card here.
+        const lockToggle = this.lockToggles?.[i]
+        if (lockToggle) lockToggle.setVisible(!!warrior)
+        if (!warrior) return
+        const x = SHOP_CARD_XS[i]
+        const y = SHOP_Y
+
+        const card = new WarriorCard(this, x, y, warrior, { draggable: true })
+        LayoutEditor.register(this, `card_${i}`, card, x, y)
+        card.captureRestPosition()
+        // LayoutEditor overrides may have moved rest position — anchor the
+        // tween target to that, not the hardcoded SHOP_CARD_XS/SHOP_Y.
+        const restX = card.x
+        const restY = card.y
+
+        // Start at the deck with a slight in-flight tilt; depth=3 so the
+        // flying card rides above already-dealt cards for a clean stack read.
+        card.setDepth(3)
+        card.x = DECK_X
+        card.y = DECK_Y
+        card.setAngle(-14)
+        card.setAlpha(0.9)
+        this.cards[i] = card
+        this._bindShopCardDrag(card, i)
+
+        // Suppress hover/drag until the card lands. WarriorCard.pointerover
+        // calls killTweensOf(this), which would freeze the deal tween the
+        // instant the cursor crossed an in-flight card — sticking it to the
+        // pointer. Re-enable in onComplete.
+        if (card.hitZone?.scene) card.hitZone.disableInteractive()
+
+        const delay = dealt * IN_STAGGER
+        this.tweens.add({
+          targets: card,
+          x: restX,
+          y: restY,
+          angle: 0,
+          alpha: 1,
+          delay,
+          duration: IN_DUR,
+          ease: 'Cubic.easeOut',
+          onComplete: () => {
+            card.setDepth(1)
+            if (card.hitZone?.scene) {
+              card.hitZone.setInteractive({ useHandCursor: true, draggable: true })
+            }
+          },
+        })
+        // Landing tap — quick scale punch as the card hits the felt.
+        this.tweens.add({
+          targets: card,
+          scaleX: 1.05, scaleY: 1.05,
+          delay: delay + IN_DUR - 30,
+          duration: 70,
+          ease: 'Sine.easeOut',
+          yoyo: true,
+        })
+        dealt++
+      })
+
+      const inTotal = dealt
+        ? (dealt - 1) * IN_STAGGER + IN_DUR
+        : 0
+      this.time.delayedCall(inTotal + 20, () => {
+        this._rerollAnimating = false
+        console.log('[Shop] reroll — deal animation complete')
+      })
+
+      logShopRound({ scene: this, rolled: this.shopOffer })
     })
   }
 
@@ -1063,6 +1397,8 @@ export class ShopScene extends Scene {
       this.scene.start('Battle', {
         stage: this.stage, wins: this.wins, losses: this.losses,
         team: this.team, runId: this.runId, commander: this.commander, merchant: this.merchant, opponent,
+        shopLocks: this.shopLocks.slice(),
+        shopOffer: this.shopLocks.some(Boolean) ? this.shopOffer : null,
       })
     } catch (e) {
       console.error('[Shop] Ghost matchmaking failed, using AI opponent:', e)
@@ -1070,6 +1406,8 @@ export class ShopScene extends Scene {
       this.scene.start('Battle', {
         stage: this.stage, wins: this.wins, losses: this.losses,
         team: this.team, runId: this.runId, commander: this.commander, merchant: this.merchant, opponent,
+        shopLocks: this.shopLocks.slice(),
+        shopOffer: this.shopLocks.some(Boolean) ? this.shopOffer : null,
       })
     }
   }

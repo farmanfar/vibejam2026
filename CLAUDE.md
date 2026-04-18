@@ -58,3 +58,12 @@ Claude is weak at spatial layout — the user positions UI visually via F2 drag 
 - Each scene hooks `this.events.once('shutdown', () => LayoutEditor.unregisterScene(this.scene.key))`.
 - Load priority: **localStorage > `src/config/layout-overrides.json` > hardcoded defaults.** For publish, commit overrides and clear localStorage.
 - Hotkeys (edit mode): **F2** toggle · **[ / ]** scale · **G** grid snap · **R** reset · **Esc** deselect. Console: `LayoutEditor.exportJSON()`, `LayoutEditor.clearAll()`.
+
+## Debug Capture (F9 / F10)
+
+Claude is blind to canvas pixels — these hotkeys close that gap. Wired in `src/systems/DebugCapture.js`.
+
+- **F9** — screenshot active scene to PNG (downloads `{sceneKey}-{timestamp}.png`). Drag into chat so Claude can see the layout.
+- **F10** — toggle annotated overlay: cyan bounds + `id (x,y) WxH` label on every registered element. Combine with F9 for a labelled screenshot.
+- Read-only (no input/gameplay changes). Overlay auto-clears on scene shutdown.
+- Self-test: `await DebugCapture.runSelfTest()` in console — exercises F9/F10 and reports `[SelfTest] ✓/✗` per check.

@@ -3,6 +3,7 @@ import { Theme, FONT_KEY, PixelLabel, PixelButton } from '../ui/index.js';
 import { finalizeCaptureScene } from '../systems/CaptureSupport.js';
 import { LayoutEditor } from '../systems/LayoutEditor.js';
 import { SceneCrt } from '../rendering/SceneCrt.js';
+import { SceneDust } from '../rendering/SceneDust.js';
 
 export class SettingsScene extends Scene {
   constructor() {
@@ -14,6 +15,8 @@ export class SettingsScene extends Scene {
 
     // CRT post-process (strongUi preset — menus/UI screens)
     SceneCrt.attach(this, 'strongUi');
+    // Ambient dust — neutral cool motes, sparse
+    SceneDust.attach(this, 'settings');
 
     const title = new PixelLabel(this, width / 2, height * 0.25, 'SETTINGS', {
       scale: 5, color: 'accent', align: 'center',

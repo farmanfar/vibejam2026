@@ -59,6 +59,17 @@ function CrtController(camera, presetKey) {
   this.vignetteAmount    = preset.vignetteAmount;
   /** 0 = normal, 1 = fully off. Tweened by SceneCrt.playPowerOff(). */
   this.powerOff          = 0;
+
+  /**
+   * Current CRT wiggle intensity (0..~1). Brief random bursts make the picture
+   * shiver like a TV with a bad signal. Managed inside advance().
+   */
+  this.wiggle            = 0;
+  this._wiggleStart      = 0;
+  this._wiggleEnd        = 0;
+  this._wigglePeak       = 0;
+  // First wiggle lands a few seconds in so the scene reads as "calm, then twitch".
+  this._nextWiggleAt     = 2.5 + Math.random() * 5.5;
 }
 
 CrtController.prototype = Object.create(PhaserController.prototype);
@@ -70,6 +81,29 @@ CrtController.prototype.constructor = CrtController;
  */
 CrtController.prototype.advance = function (delta) {
   this.time += delta * 0.001;
+
+  // Schedule the next wiggle when idle and the timer has elapsed.
+  if (this.time >= this._wiggleEnd && this.time >= this._nextWiggleAt) {
+    const dur = 0.10 + Math.random() * 0.28;   // 100–380 ms burst
+    this._wiggleStart = this.time;
+    this._wiggleEnd   = this.time + dur;
+    this._wigglePeak  = 0.25 + Math.random() * 0.45;
+    // Next burst lands 4–16 s later — infrequent, feels like a glitch,
+    // not constant noise.
+    this._nextWiggleAt = this._wiggleEnd + 4 + Math.random() * 12;
+    // Rare jackpot: occasional stronger burst for variety.
+    if (Math.random() < 0.1) this._wigglePeak = Math.min(1.0, this._wigglePeak + 0.3);
+  }
+
+  // Triangle envelope: fast attack, slower decay.
+  if (this.time < this._wiggleEnd) {
+    const span = this._wiggleEnd - this._wiggleStart;
+    const t = span > 0 ? (this.time - this._wiggleStart) / span : 1;
+    const env = t < 0.25 ? (t / 0.25) : (1 - (t - 0.25) / 0.75);
+    this.wiggle = this._wigglePeak * Math.max(0, env);
+  } else {
+    this.wiggle = 0;
+  }
 };
 
 export { CrtController };

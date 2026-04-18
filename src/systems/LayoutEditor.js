@@ -6,6 +6,7 @@ const GAME_W = 960
 const GAME_H = 540
 const GRID_SIZES = [0, 8, 16, 32]  // 0 = off
 const SCALE_FACTOR = 1.1            // 10% per step
+const MAX_F2_HIT_SIZE = 48          // cap F2 hit/selection box so big elements (cards, panels) don't dominate the screen
 
 /**
  * F2 Layout Editor — runtime debug tool for repositioning and scaling UI elements.
@@ -42,6 +43,11 @@ export class LayoutEditor {
   static _onMove = null
   static _onUp = null
   static _onKey = null
+  static _pausedSceneKey = null  // scene key paused on edit-mode enter (for resume on exit)
+  // Scene keys where F2 edit mode should freeze the gameplay timeline. Battle
+  // runs tweens/timers continuously, so dragging elements is unusable unless
+  // the scene is paused; menu/shop are static and are fine to edit live.
+  static PAUSE_ON_EDIT_SCENES = new Set(['Battle'])
 
   /**
    * Initialize the layout editor. Call once after new Game().
@@ -183,6 +189,21 @@ export class LayoutEditor {
     scene.input.enabled = false
     console.log(`[Editor] Scene '${scene.scene.key}' input DISABLED`)
 
+    // Freeze gameplay timeline for scenes like Battle that run tweens/timers.
+    // Pausing halts update(), tweens, anims, and time events — drags still
+    // work because pointer handlers are attached at window level. Scene
+    // remains rendered so overlays and selection highlights stay visible.
+    this._pausedSceneKey = null
+    if (this.PAUSE_ON_EDIT_SCENES.has(scene.scene.key)) {
+      try {
+        scene.scene.pause()
+        this._pausedSceneKey = scene.scene.key
+        console.log(`[Editor] Scene '${scene.scene.key}' PAUSED (tweens/anims/timers frozen)`)
+      } catch (e) {
+        console.error(`[Editor] Failed to pause scene '${scene.scene.key}':`, e)
+      }
+    }
+
     // Show position overlays on all registered elements
     for (const [key, entry] of this._registry) {
       this._showOverlay(key, entry.element, entry.scene)
@@ -210,6 +231,18 @@ export class LayoutEditor {
 
   static _exitEditMode() {
     console.log('[Editor] ═══ EDIT MODE OFF ═══')
+
+    // Resume paused scene FIRST so it returns to the active scene list and
+    // _getActiveScene() can find it for input re-enable + overlay cleanup.
+    if (this._pausedSceneKey && this._game) {
+      try {
+        this._game.scene.resume(this._pausedSceneKey)
+        console.log(`[Editor] Scene '${this._pausedSceneKey}' RESUMED`)
+      } catch (e) {
+        console.error(`[Editor] Failed to resume scene '${this._pausedSceneKey}':`, e)
+      }
+      this._pausedSceneKey = null
+    }
 
     // Re-enable scene input
     const scene = this._getActiveScene()
@@ -540,6 +573,26 @@ export class LayoutEditor {
   // ── Bounds Detection ──────────────────────────────────────────────────
 
   static _getElementBounds(element) {
+    const natural = this._getNaturalBounds(element)
+    if (natural.width <= MAX_F2_HIT_SIZE && natural.height <= MAX_F2_HIT_SIZE) return natural
+
+    // Clamp large elements to a compact hit box anchored at their natural
+    // position. Preserving the origin ratio keeps the box centered on the
+    // element's anchor (center-origin cards stay centered; top-left panels
+    // stay anchored at their top-left).
+    const w = Math.min(natural.width, MAX_F2_HIT_SIZE)
+    const h = Math.min(natural.height, MAX_F2_HIT_SIZE)
+    const leftRatio = natural.width > 0 ? (element.x - natural.x) / natural.width : 0.5
+    const topRatio = natural.height > 0 ? (element.y - natural.y) / natural.height : 0.5
+    return {
+      x: Math.round(element.x - w * leftRatio),
+      y: Math.round(element.y - h * topRatio),
+      width: w,
+      height: h,
+    }
+  }
+
+  static _getNaturalBounds(element) {
     const sx = element.scaleX ?? 1
     const sy = element.scaleY ?? 1
 
@@ -877,7 +930,15 @@ export class LayoutEditor {
     if (!this._game) return null
     try {
       const scenes = this._game.scene.getScenes(true)
-      return scenes.length > 0 ? scenes[0] : null
+      if (scenes.length > 0) return scenes[0]
+      // Edit mode pauses Battle, which removes it from the active list.
+      // Fall back to the scene we paused so grid / selection / overlay
+      // operations still resolve a valid target.
+      if (this._pausedSceneKey) {
+        const paused = this._game.scene.getScene(this._pausedSceneKey)
+        if (paused) return paused
+      }
+      return null
     } catch (e) {
       console.error('[Editor] Could not get active scene:', e)
       return null

@@ -7,7 +7,8 @@ export const berserkerClass = {
 
   initialize(ctx, unit) {
     const team = ctx.ownTeamOf(unit);
-    const berserkerCount = team.slots.filter((u) => u.class === 'Berserker').length;
+    const berserkerCount = team.slots.filter((u) => u.class === 'Berserker').length
+      + ctx.favorCount(team, 'class', 'Berserker');
     if (berserkerCount < 3) return;
     unit.baseAtk += 3;
     unit.atk = unit.baseAtk + (unit.resonanceStacks || 0);

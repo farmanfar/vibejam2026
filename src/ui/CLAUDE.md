@@ -26,6 +26,7 @@ Key color groups: screen/panel backgrounds, 4-tier text hierarchy (critical → 
 | **WarriorCard** | Shop card: sprite, name, ATK/HP stats, cost badge, faction tag. Hover lift + scale, click effects. | `new WarriorCard(scene, x, y, warrior, opts)` |
 | **PixelTypewriter** | Animated typewriter text with message pool rotation | `new PixelTypewriter(scene, x, y, messages, opts)` |
 | **PixelTextInput** | Text input with char filter, max length, placeholder | `new PixelTextInput(scene, x, y, opts)` |
+| **PixelList** | Vertical uniform-scale menu list (one Container, one scale for every row). Hover: slide + focus band. Ported from TorchWars. | `new PixelList(scene, x, y, items, opts)` where `items: [{ label, onClick }]` |
 
 All components extend `GameObjects.Container` and call `scene.add.existing(this)`. Exception: PixelLabel extends BitmapText directly.
 

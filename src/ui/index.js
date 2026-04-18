@@ -1,4 +1,4 @@
-export { Theme, brighten, lerpColor, colorToCSS } from './Theme.js';
+export { Theme, brighten, lerpColor, colorToCSS, pillShades, drawPill3D } from './Theme.js';
 export { PixelFont, FONT_KEY } from './PixelFont.js';
 export { PixelPanel } from './PixelPanel.js';
 export { PixelButton } from './PixelButton.js';
@@ -9,3 +9,4 @@ export { WarriorCard } from './WarriorCard.js';
 export { PixelTypewriter } from './PixelTypewriter.js';
 export { PixelTextInput } from './PixelTextInput.js';
 export { UnitStatBadge } from './UnitStatBadge.js';
+export { PixelList } from './PixelList.js';
