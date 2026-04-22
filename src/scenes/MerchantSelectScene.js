@@ -42,8 +42,11 @@ export class MerchantSelectScene extends Scene {
     this._team      = Array.isArray(data.team) ? data.team : []
     this._commander = data.commander ?? null
     this._fixedMerchants = data.merchants ?? null
+    this._shopLocks = Array.isArray(data.shopLocks) ? data.shopLocks.slice() : null
+    this._shopOffer = Array.isArray(data.shopOffer) ? data.shopOffer : null
     this._widget    = null
     console.log(`[Merchant] Init — wins: ${this._wins}, losses: ${this._losses}, team: ${this._team.length}, commander: ${this._commander?.name ?? 'none'}`)
+    console.log(`[Merchant] Carrying shop state — locks: ${this._shopLocks ? this._shopLocks.filter(Boolean).length : 0}, offer: ${this._shopOffer ? 'preserved' : 'none'}`)
   }
 
   create() {
@@ -118,6 +121,8 @@ export class MerchantSelectScene extends Scene {
             runId:     this._runId,
             commander: this._commander,
             merchant:  item,
+            shopLocks: this._shopLocks ?? undefined,
+            shopOffer: this._shopOffer ?? undefined,
           })
         },
         // onBack intentionally omitted — widget renders no back button

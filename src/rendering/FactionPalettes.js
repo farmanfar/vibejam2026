@@ -52,6 +52,24 @@ export function pickRandomSets() {
   return { left, right }
 }
 
+/** Mountain-city palette variants — same scene composition, four color points. */
+export const MOUNTAIN_CITY_IDS = ['mountain-city-1', 'mountain-city-2', 'mountain-city-3', 'mountain-city-4']
+
+/**
+ * Pick two different mountain-city palette variants (guaranteed distinct).
+ * Used by BattleScene so every fight stages on the same stable scene.
+ * @returns {{ left: string, right: string }}
+ */
+export function pickMountainCitySets() {
+  const leftIdx = Math.floor(Math.random() * MOUNTAIN_CITY_IDS.length)
+  let rightIdx = Math.floor(Math.random() * (MOUNTAIN_CITY_IDS.length - 1))
+  if (rightIdx >= leftIdx) rightIdx++
+  const left = MOUNTAIN_CITY_IDS[leftIdx]
+  const right = MOUNTAIN_CITY_IDS[rightIdx]
+  console.log(`[Parallax] Picked mountain-city sets: left=${left} (${MANIFEST[left].length} layers) right=${right} (${MANIFEST[right].length} layers)`)
+  return { left, right }
+}
+
 /**
  * Get all texture keys + paths for preloading every parallax set.
  * @returns {{ key: string, path: string }[]}

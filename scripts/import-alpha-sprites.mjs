@@ -13,12 +13,16 @@
 //   ASEPRITE_CLI   — absolute path to aseprite.exe (optional; defaults to
 //                    C:/Program Files/Aseprite/aseprite.exe on Windows).
 //
-// Zero npm dependencies — plain Node ESM.
+// The baker runs in warn-only mode: if a suspicious layer is detected by the
+// name heuristic but is not in ignoreLayers, a warning is printed but the
+// bake still completes. Run `npm run alpha:lint-sprites` for strict enforcement.
 
 import { execFileSync } from 'node:child_process';
 import { existsSync, mkdirSync, readFileSync, writeFileSync, statSync } from 'node:fs';
 import { dirname, join, resolve } from 'node:path';
-import { fileURLToPath } from 'node:url';
+import { fileURLToPath, pathToFileURL } from 'node:url';
+import { resolveAseprite, runAseprite } from './lib/aseprite-cli.mjs';
+import { listAutoIgnoreLayers } from './lib/layer-detectors.mjs';
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const REPO_ROOT = resolve(__dirname, '..');
@@ -27,9 +31,6 @@ const MAPPING_PATH = join(REPO_ROOT, 'src', 'config', 'alpha-sprite-mapping.json
 const MANIFEST_PATH = join(REPO_ROOT, 'src', 'config', 'alpha-art.generated.json');
 const OUT_DIR = join(REPO_ROOT, 'public', 'assets', 'warriors', 'alpha');
 const REPORTS_DIR = join(REPO_ROOT, 'reports');
-
-const DEFAULT_ASEPRITE_WIN = 'C:/Program Files/Aseprite/aseprite.exe';
-const SHADOW_LAYER_RE = /shadow/i;
 
 function log(msg) {
   console.log(`[AlphaSprites] ${msg}`);
@@ -51,92 +52,6 @@ function readJson(path) {
 
 function ensureDir(path) {
   if (!existsSync(path)) mkdirSync(path, { recursive: true });
-}
-
-function resolveAseprite() {
-  const envPath = process.env.ASEPRITE_CLI;
-  if (envPath && existsSync(envPath)) return envPath;
-  if (existsSync(DEFAULT_ASEPRITE_WIN)) return DEFAULT_ASEPRITE_WIN;
-  die(
-    'Aseprite CLI not found. Install Aseprite or set ASEPRITE_CLI to the ' +
-      'absolute path of aseprite.exe. Default tried: ' +
-      DEFAULT_ASEPRITE_WIN,
-  );
-  return null;
-}
-
-function listShadowLayers(cli, absSource) {
-  let stdout = '';
-  try {
-    stdout = execFileSync(
-      cli,
-      ['--batch', '--list-layer-hierarchy', absSource],
-      { encoding: 'utf8', stdio: ['ignore', 'pipe', 'pipe'], windowsHide: true },
-    );
-  } catch (e) {
-    throw new Error(
-      `Failed to list layers for ${absSource} (exit ${e.status ?? '?'}): ${e.stderr?.toString?.() ?? e.message}`,
-    );
-  }
-
-  const matched = [];
-  const seen = new Set();
-  const groupStack = [];
-
-  for (const rawLine of stdout.split(/\r?\n/)) {
-    if (!rawLine.trim()) continue;
-
-    const indent = rawLine.match(/^\s*/)?.[0].length ?? 0;
-    const trimmed = rawLine.trim();
-    const isGroup = trimmed.endsWith('/');
-    const name = isGroup ? trimmed.slice(0, -1).trim() : trimmed;
-    if (!name) continue;
-
-    while (groupStack.length && indent <= groupStack[groupStack.length - 1].indent) {
-      groupStack.pop();
-    }
-
-    const parentPath = groupStack.length ? groupStack[groupStack.length - 1].fullPath : '';
-    const fullPath = parentPath ? `${parentPath}/${name}` : name;
-
-    if (SHADOW_LAYER_RE.test(name)) {
-      for (const candidate of [fullPath, name]) {
-        if (seen.has(candidate)) continue;
-        seen.add(candidate);
-        matched.push(candidate);
-      }
-    }
-
-    if (isGroup) {
-      groupStack.push({ indent, fullPath });
-    }
-  }
-
-  return matched;
-}
-
-function runAseprite(cli, absSource, pngOut, jsonOut, { ignoreLayers = [], trim = false } = {}) {
-  const args = [
-    '--batch',
-    '--sheet', pngOut,
-    '--data', jsonOut,
-    '--format', 'json-array',
-    '--list-tags',
-    '--sheet-pack',
-  ];
-  for (const layer of ignoreLayers) {
-    args.push('--ignore-layer', layer);
-  }
-  if (trim) {
-    args.push('--trim');
-  }
-  args.push(absSource);
-  try {
-    const stdout = execFileSync(cli, args, { encoding: 'utf8', stdio: ['ignore', 'pipe', 'pipe'] });
-    return stdout ?? '';
-  } catch (e) {
-    throw new Error(`Aseprite CLI failed (exit ${e.status ?? '?'}): ${e.stderr?.toString?.() ?? e.message}`);
-  }
 }
 
 function parseSidecar(path) {
@@ -163,6 +78,12 @@ function main() {
   if (!existsSync(artRoot)) die(`hammertimeArtRoot does not exist: ${artRoot}`);
 
   const cli = resolveAseprite();
+  if (!cli) {
+    die(
+      'Aseprite CLI not found. Install Aseprite or set ASEPRITE_CLI to the ' +
+        'absolute path of aseprite.exe. Default tried: C:/Program Files/Aseprite/aseprite.exe',
+    );
+  }
   log(`Aseprite CLI: ${cli}`);
 
   ensureDir(OUT_DIR);
@@ -196,8 +117,20 @@ function main() {
 
     let mergedIgnore = [];
     try {
-      const shadowLayers = listShadowLayers(cli, absSource);
-      mergedIgnore = [...new Set([...(entry.ignoreLayers ?? []), ...shadowLayers])];
+      const autoIgnored = listAutoIgnoreLayers(cli, absSource);
+      const manualIgnore = entry.ignoreLayers ?? [];
+      mergedIgnore = [...new Set([...manualIgnore, ...autoIgnored])];
+
+      // Warn about layers auto-detected that weren't already in the mapping
+      const newAutoDetected = autoIgnored.filter((l) => !manualIgnore.includes(l));
+      if (newAutoDetected.length > 0) {
+        console.warn(
+          `[AlphaSprites] WARN ${unitId}: auto-detected suspicious layer(s) not in ignoreLayers: ` +
+            newAutoDetected.join(', ') +
+            ' — run `npm run alpha:lint-sprites` for a full pixel-sample audit',
+        );
+      }
+
       log(`${unitId} ignoring layers: ${mergedIgnore.join(', ') || '(none)'}`);
       runAseprite(cli, absSource, pngOut, jsonOut, {
         ignoreLayers: mergedIgnore,
@@ -263,7 +196,6 @@ function main() {
   };
   const tmp = `${MANIFEST_PATH}.tmp`;
   writeFileSync(tmp, JSON.stringify(manifest, null, 2), 'utf8');
-  // Atomic-ish on Windows: write then rename.
   writeFileSync(MANIFEST_PATH, readFileSync(tmp), 'utf8');
   try { execFileSync('node', ['-e', `require('fs').unlinkSync(${JSON.stringify(tmp)})`]); } catch {}
   log(`Manifest written -> ${MANIFEST_PATH} (${Object.keys(entries).length} entries)`);
@@ -286,4 +218,7 @@ function main() {
   log(`Done — ${ok} unit(s) baked successfully.`);
 }
 
-main();
+// Guard: importing this module does NOT run the baker. Only direct execution does.
+if (import.meta.url === pathToFileURL(process.argv[1]).href) {
+  main();
+}

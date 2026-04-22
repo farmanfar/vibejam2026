@@ -32,7 +32,7 @@ export const OUTLINE_ENABLED = true;
  */
 export const OUTLINE_DEFAULTS = {
   color:          [0.0, 0.0, 0.0],
-  thickness:      0.5,
+  thickness:      2.5,
   alphaThreshold: 0.5,
 };
 

@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-04-15T22:07:34.126Z",
+  "generatedAt": "2026-04-21T14:25:56.696Z",
   "entries": {
     "archer": {
       "spriteKey": "alpha-archer",
@@ -24,6 +24,7 @@
         "death": "Death"
       },
       "ignoreLayers": [
+        "Layer 1",
         "Shadow"
       ]
     },
@@ -67,7 +68,7 @@
       "dataPath": "assets/warriors/alpha/dagger_mush.json",
       "displayScale": 2.5,
       "defaultTag": "Idle",
-      "portraitFrame": 0,
+      "portraitFrame": 1,
       "tags": [
         "Idle",
         "Air attack",
@@ -110,11 +111,15 @@
       ],
       "frameCount": 153,
       "atlasWidth": 2304,
-      "atlasHeight": 2304,
+      "atlasHeight": 2112,
       "animTagOverrides": {
         "idle": "Idle",
         "attack": "Laser"
-      }
+      },
+      "ignoreLayers": [
+        "Layer 1",
+        "Flattened"
+      ]
     },
     "assassin": {
       "spriteKey": "alpha-assassin",
@@ -297,7 +302,10 @@
         "idle": "Idle",
         "attack": "Prep Explode",
         "death": "Explode "
-      }
+      },
+      "ignoreLayers": [
+        "Flattened"
+      ]
     },
     "minion_003": {
       "spriteKey": "alpha-minion_003",
@@ -371,7 +379,10 @@
       "animTagOverrides": {
         "idle": "walk",
         "attack": "attack low"
-      }
+      },
+      "ignoreLayers": [
+        "bg"
+      ]
     },
     "electrocutioner": {
       "spriteKey": "alpha-electrocutioner",
@@ -493,7 +504,10 @@
         "idle": "Idle",
         "attack": "Attack 1",
         "death": "Death"
-      }
+      },
+      "ignoreLayers": [
+        "BG"
+      ]
     },
     "dagger_bandit": {
       "spriteKey": "alpha-dagger_bandit",

@@ -6,7 +6,7 @@ import { runAlphaBattle } from '../systems/combat/BattleSceneAdapter.js'
 import { logBattle } from '../systems/PlaytestLogger.js'
 import { finalizeCaptureScene } from '../systems/CaptureSupport.js'
 import { ParallaxBackground } from '../rendering/ParallaxBackground.js'
-import { pickRandomSets } from '../rendering/FactionPalettes.js'
+import { pickMountainCitySets } from '../rendering/FactionPalettes.js'
 import { LayoutEditor } from '../systems/LayoutEditor.js'
 import { getUnitPortraitRef } from '../rendering/UnitArt.js'
 import { getAsepriteTagConfigs } from '../rendering/AsepriteAnimations.js'
@@ -77,45 +77,15 @@ export class BattleScene extends Scene {
     // Ambient dust — windswept arena grit blowing right-to-left
     SceneDust.attach(this, 'battle')
 
-    // Native lighting (WebGL only) — dim warm-blue ambient, unit sprites lit individually
-    if (this.sys.renderer.gl) {
-      this.lights.enable().setAmbientColor(0xffffff)
-      console.log('[Battle] Lighting enabled — ambient 0xffffff (full bright), maxLights 12')
-    }
-
-    const { left, right } = (this.leftSet && this.rightSet)
-      ? { left: this.leftSet, right: this.rightSet }
-      : pickRandomSets()
-
-    // Parallax occupies the top band only (height 260 instead of 360) so the
-    // ground/fighting area is much taller and the fighters aren't dwarfed
-    // by the sky. No empty gap below — ground starts at the same y=260.
-    this.parallax = new ParallaxBackground({
-      scene: this, width, height: 260,
-      leftSet: left, rightSet: right, scrollSpeed: 3.375,
-    })
-    this.parallax.create()
-
-    this.add.bitmapText(4, 4, FONT_KEY, `L: ${left}`, 7)
-      .setTint(0xffff00).setDepth(50).setAlpha(0.8)
-    this.add.bitmapText(width - 4, 4, FONT_KEY, `R: ${right}`, 7)
-      .setOrigin(1, 0).setTint(0xffff00).setDepth(50).setAlpha(0.8)
-
-    // Ground butts directly against the parallax bottom (y=260) and fills
-    // everything below — no bright gap between the two layers, and the
-    // fighting area is a generous 280px tall.
-    const groundGfx = this.add.graphics()
-    groundGfx.fillStyle(Theme.panelBg, 1)
-    groundGfx.fillRect(0, 260, width, 280)
-    groundGfx.lineStyle(1, Theme.panelBorder, 0.3)
-    for (let x = 0; x < width; x += 32) groundGfx.lineBetween(x, 260, x, 540)
-    for (let y = 260; y < 540; y += 32) groundGfx.lineBetween(0, y, width, y)
-    groundGfx.setDepth(15)
+    // TEMP: flat tan background for layout review — swap back to parallax when ready
+    const tempBg = this.add.graphics()
+    tempBg.fillStyle(0xC4A882, 1)
+    tempBg.fillRect(0, 0, width, height)
+    tempBg.setDepth(0)
+    this.parallax = null
 
     this.enemyTeam = this.opponent
     const battleDepth = 20
-
-    const useLights = !!this.sys.renderer.gl
 
     // Front units sit 110px off center (220px gap between front fighters
     // for the clash) and teammates are spaced 90px apart. With 5 units per
@@ -149,15 +119,8 @@ export class BattleScene extends Scene {
         .setScale(scale)
         .setDepth(battleDepth)
       this._adjustBattleSprite(sprite, w, ref, 'player')
-      // Enable normal-map lighting on unit sprites only (not labels/health bars)
-      if (useLights) sprite.setLighting(true)
       attachOutlineToSprite(sprite)
       this._wireAlphaAnimations(sprite, w, 'player')
-      // Lights stay at scene level — Lights2D can't live inside a container.
-      // Team drag won't shift them, but they illuminate the general area.
-      const light = useLights
-        ? this.lights.addPointLight(x, y - 16, 0xffddaa, 90, 0.7)
-        : null
       const badge = new UnitStatBadge(this, x, y + 55, {
         atk: w.atk,
         hp: w.hp,
@@ -165,7 +128,7 @@ export class BattleScene extends Scene {
       badge.setDepth(battleDepth)
       this.playerTeamContainer.add([sprite, badge])
       return {
-        sprite, badge, light,
+        sprite, badge,
         warrior: { ...w, currentHp: w.hp },
         instanceId: `p${i}`,
       }
@@ -181,12 +144,8 @@ export class BattleScene extends Scene {
         .setFlipX(true)
         .setDepth(battleDepth)
       this._adjustBattleSprite(sprite, w, ref, 'enemy')
-      if (useLights) sprite.setLighting(true)
       attachOutlineToSprite(sprite)
       this._wireAlphaAnimations(sprite, w, 'enemy')
-      const light = useLights
-        ? this.lights.addPointLight(x, y - 16, 0xffddaa, 90, 0.7)
-        : null
       const badge = new UnitStatBadge(this, x, y + 55, {
         atk: w.atk,
         hp: w.hp,
@@ -195,7 +154,7 @@ export class BattleScene extends Scene {
       badge.setDepth(battleDepth)
       this.enemyTeamContainer.add([sprite, badge])
       return {
-        sprite, badge, light,
+        sprite, badge,
         warrior: { ...w, currentHp: w.hp },
         instanceId: `e${i}`,
       }
@@ -215,6 +174,7 @@ export class BattleScene extends Scene {
     this.enemySprites.forEach((s) => this.spriteByInstance.set(s.instanceId, s))
     this._activePopupsByTarget = new Map()
 
+    /*
     const yourTeamLabel = new PixelLabel(this, 100, 320, 'YOUR TEAM', {
       scale: 2, color: 'accent', align: 'center',
     })
@@ -226,6 +186,7 @@ export class BattleScene extends Scene {
     })
     enemyLabel.setDepth(battleDepth)
     LayoutEditor.register(this, 'enemyLabel', enemyLabel, width - 100, 320)
+    */
 
     const vsText = this.add.bitmapText(width / 2, 380, FONT_KEY, 'VS', 35)
       .setOrigin(0.5)
@@ -266,12 +227,15 @@ export class BattleScene extends Scene {
     LayoutEditor.register(this, 'enemyCommanderBadge', enemyCommanderBadge, ENEMY_COMMANDER_X, ENEMY_COMMANDER_Y)
     console.log(`[Layout] Battle.enemyCommanderBadge at (${ENEMY_COMMANDER_X}, ${ENEMY_COMMANDER_Y}) — ${this.opponent.commander.name}`)
 
-    // Scrollable event log — mirrors HammerTime/UI/GameLog.cs style:
-    // uppercase entries, muted tint, small m5x7 text, header + divider,
-    // mouse-wheel scrollback with a scrollbar thumb.
+    // Event log state kept so _addLogEntry / _renderLog remain safe no-ops
+    // while the visual box is commented out below.
     this._logHistory = []
     this._logScrollOffset = 0 // lines from bottom (0 = pinned to newest)
 
+    /*
+    // Scrollable event log — mirrors HammerTime/UI/GameLog.cs style:
+    // uppercase entries, muted tint, small m5x7 text, header + divider,
+    // mouse-wheel scrollback with a scrollbar thumb.
     const logBoxW = 900
     const logBoxH = 100
     const logBoxX = width / 2 - logBoxW / 2
@@ -337,6 +301,7 @@ export class BattleScene extends Scene {
     })
 
     LayoutEditor.register(this, 'logText', this.logText, logBoxX + logPad, logTextY)
+    */
 
     this.events.once('shutdown', () => {
       console.log('[Battle] Shutdown - cleaning up')
@@ -469,7 +434,7 @@ export class BattleScene extends Scene {
         ? centerX - frontOffset - i * spacing
         : centerX + frontOffset + i * spacing
       positions.push(newX)
-      const targets = [s.sprite, s.badge, s.light].filter(Boolean)
+      const targets = [s.sprite, s.badge].filter(Boolean)
       if (targets.length === 0) return
       this.tweens.add({
         targets,
@@ -1032,13 +997,8 @@ export class BattleScene extends Scene {
         cleanedUp = true
         if (entry.sprite) entry.sprite.destroy()
         if (entry.badge) entry.badge.destroy()
-        if (entry.light) {
-          entry.light.setActive(false)
-          entry.light.setVisible(false)
-        }
         entry.sprite = null
         entry.badge = null
-        entry.light = null
         this._reflowTeam(side)
         // Wait one reflow duration (_reflowTeam uses 400ms Cubic.Out at
         // L248) before resolving, so the next clash frame captures the
@@ -1093,13 +1053,8 @@ export class BattleScene extends Scene {
           cleanedUp = true
           if (entry.sprite) entry.sprite.destroy()
           if (entry.badge) entry.badge.destroy()
-          if (entry.light) {
-            entry.light.setActive(false)
-            entry.light.setVisible(false)
-          }
           entry.sprite = null
           entry.badge = null
-          entry.light = null
           resolveAnim()
         }
 
@@ -1155,6 +1110,8 @@ export class BattleScene extends Scene {
             team: this.team,
             runId: this.runId,
             commander: this.commander,
+            shopLocks: this.shopLocks.slice(),
+            shopOffer: this.shopLocks.some(Boolean) ? this.shopOffer : null,
           })
           return
         }

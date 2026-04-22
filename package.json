@@ -16,10 +16,12 @@
     "sim": "node scripts/sim-battle.mjs",
     "sim:balance": "node scripts/sim-battle.mjs --fixture fixtures/all-t1-mirror.json --bulk 1000 --report",
     "alpha:generate": "node scripts/generate-alpha-units.mjs",
-    "alpha:sprites": "node scripts/import-alpha-sprites.mjs"
+    "alpha:sprites": "node scripts/import-alpha-sprites.mjs",
+    "alpha:lint-sprites": "node scripts/lint-aseprite-layers.mjs"
   },
   "devDependencies": {
     "playwright": "^1.59.1",
+    "pngjs": "^7.0.0",
     "vite": "^8.0.4",
     "vitest": "^4.1.4"
   },

@@ -6,6 +6,7 @@
       "displayScale": 2.5,
       "defaultTag": "IDle",
       "portraitFrame": 0,
+      "ignoreLayers": ["Layer 1", "Shadow"],
       "animTagOverrides": { "idle": "IDle", "death": "Death" }
     },
     "blood_king": {
@@ -28,6 +29,7 @@
       "displayScale": 2.5,
       "defaultTag": "Idle",
       "portraitFrame": 0,
+      "ignoreLayers": ["Layer 1", "Flattened"],
       "animTagOverrides": { "idle": "Idle", "attack": "Laser" }
     },
     "assassin": {
@@ -56,6 +58,7 @@
       "displayScale": 2.5,
       "defaultTag": "Idle Move",
       "portraitFrame": 0,
+      "ignoreLayers": ["Shadow"],
       "animTagOverrides": { "idle": "Idle Move", "attack": "Attack", "death": "Death" }
     },
     "snipper": {
@@ -77,6 +80,7 @@
       "displayScale": 2.5,
       "defaultTag": "idle",
       "portraitFrame": 0,
+      "ignoreLayers": ["Shadow"],
       "animTagOverrides": { "attack": "Attack", "death": "Death" }
     },
     "minion_002": {
@@ -84,6 +88,7 @@
       "displayScale": 4.0,
       "defaultTag": "Idle",
       "portraitFrame": 1,
+      "ignoreLayers": ["Flattened"],
       "animTagOverrides": { "idle": "Idle", "attack": "Prep Explode", "death": "Explode " }
     },
     "minion_003": {
@@ -98,6 +103,7 @@
       "displayScale": 2.5,
       "defaultTag": "Idle",
       "portraitFrame": 0,
+      "ignoreLayers": ["Relic Guardian 3/Shadow", "Shadow"],
       "animTagOverrides": { "idle": "Idle", "attack": "Cast Sword", "death": "Death" }
     },
     "dark_mec": {
@@ -105,6 +111,7 @@
       "displayScale": 2.5,
       "defaultTag": "walk",
       "portraitFrame": 0,
+      "ignoreLayers": ["bg"],
       "animTagOverrides": { "idle": "walk", "attack": "attack low" }
     },
     "electrocutioner": {
@@ -112,7 +119,7 @@
       "displayScale": 2.5,
       "defaultTag": "Idle",
       "portraitFrame": 0,
-      "ignoreLayers": ["Flattened", "bg"],
+      "ignoreLayers": ["Flattened", "bg", "shadow"],
       "animTagOverrides": { "idle": "Idle", "attack": "Attack", "death": "Death" }
     },
     "glitch_samurai": {
@@ -120,7 +127,7 @@
       "displayScale": 2.5,
       "defaultTag": "Idle",
       "portraitFrame": 0,
-      "ignoreLayers": ["Layer 1"],
+      "ignoreLayers": ["Layer 1", "Glitch Shadow"],
       "animTagOverrides": { "idle": "Idle", "attack": "Gltich Attack", "death": "Death Frame" }
     },
     "colossal_boss": {
@@ -135,6 +142,7 @@
       "displayScale": 2.5,
       "defaultTag": "Idle",
       "portraitFrame": 0,
+      "ignoreLayers": ["BG"],
       "animTagOverrides": { "idle": "Idle", "attack": "Attack 1", "death": "Death" }
     },
     "dagger_bandit": {
@@ -156,7 +164,7 @@
       "displayScale": 2.5,
       "defaultTag": "Idle",
       "portraitFrame": 0,
-      "ignoreLayers": ["bg"],
+      "ignoreLayers": ["bg", "Shadow"],
       "animTagOverrides": { "idle": "Idle" }
     }
   }

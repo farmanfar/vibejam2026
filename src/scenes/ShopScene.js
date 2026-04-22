@@ -619,6 +619,31 @@ export class ShopScene extends Scene {
     console.log(`[Shop] drag-return id=${card.warrior?.id} parent=scene depth=1`)
   }
 
+  // Briefly floats a rejection reason above a shop card, then self-destructs.
+  _showRejectionHint(card, msg) {
+    const label = new PixelLabel(this, card.x, card.y - 90, msg, {
+      scale: 1, color: 'warning', align: 'center',
+    })
+    label.setDepth(20)
+    label.setAlpha(0)
+    this.tweens.add({
+      targets: label,
+      alpha: 1,
+      duration: 200,
+      ease: 'Cubic.easeOut',
+      onComplete: () => {
+        this.tweens.add({
+          targets: label,
+          alpha: 0,
+          duration: 400,
+          delay: 700,
+          ease: 'Cubic.easeIn',
+          onComplete: () => label.destroy(),
+        })
+      },
+    })
+  }
+
   // ── Shop card drag ────────────────────────────────────────────────────────
 
   _bindShopCardDrag(card, shopIndex) {
@@ -639,6 +664,7 @@ export class ShopScene extends Scene {
         card.shake()
         const reason = !creditsOk ? 'reject-no-credits' : 'reject-full-team'
         console.log(`[Shop] drop resolution=${reason} source=shop from=${shopIndex} to=none`)
+        this._showRejectionHint(card, !creditsOk ? 'Need more credits' : 'Team full')
         return
       }
       _rejected = false

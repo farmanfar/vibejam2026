@@ -116,3 +116,40 @@ BattleScene.create()
 - Always resolve semantic anim names through `animTagOverrides` before calling `sprite.anims.play(...)`.
 - Preserve one-warning-per-unit fallback behavior.
 - Merchants follow the same local-manager rule, but their metadata path is `src/config/merchants.js`, not `alpha-art.generated.json`.
+
+## Background-layer filtering
+
+The baker (`import-alpha-sprites.mjs`) and the linter (`lint-aseprite-layers.mjs`) both use two complementary checks to detect layers that should be stripped before baking.
+
+**Check A — name heuristic** (`scripts/lib/layer-detectors.mjs → BACKGROUND_NAME_RE`):
+
+```
+/^(bg|background|backdrop|sky|ground|floor|flattened)$/i
+```
+
+Plus `/shadow/i` (separate). Intentionally narrow — `Layer N`, `frame`, `border` are NOT auto-detected because they are Aseprite's default layer names and commonly hold character art (e.g. `assassin.aseprite` ships with `Layer 1`..`Layer 6` as the actual character; auto-stripping them broke the atlas).
+
+**Check B — pixel sampling** (linter only, not the baker): exports a single-frame probe PNG via the Aseprite CLI, then checks four metrics:
+
+| Metric | Threshold | What it detects |
+|---|---|---|
+| density (opaque/total) | ≥ 0.50 | Most of canvas is filled |
+| bboxCoverage (bbox area/total) | ≥ 0.80 | Opaque pixels span the canvas |
+| rectangularity (opaque-in-bbox/bbox) | ≥ 0.95 | Solid rectangle, not a character |
+| distinctColors | ≤ 32 | Very few colors — not character art |
+
+All four must hold simultaneously.
+
+**Enforcement posture:**
+- Baker: warn-only. Bake still runs; auto-detected layers print a `[AlphaSprites] WARN` line and go through `--ignore-layer` automatically for smooth iteration.
+- Linter (`npm run alpha:lint-sprites`): strict. Emits JSON to stdout; unsuppressed findings are non-zero-exit. The vitest at `src/rendering/__tests__/AsepriteLayerLint.test.js` runs the linter and fails CI on any unsuppressed finding.
+
+**Suppression rule (strict):** a suspicious finding is only "suppressed" when listed in `ignoreLayers` in `alpha-sprite-mapping.json` (`suppressionSource: "mapping"`). **Name-heuristic hits do NOT auto-pass.** This is intentional: a bad regex change (e.g. matching `Layer N`) must surface as a CI failure, not silently rewrite atlases. If the linter flags a `bg` or `Shadow` layer, add it to the mapping — don't rely on the regex for suppression.
+
+**Pixel-probe errors** (`reason: "pixel-probe-error"`) are tooling failures (Aseprite CLI crash, missing pngjs, PNG decode error). They cannot be suppressed and always fail lint. Fix the tool; don't edit the mapping.
+
+**Debugging a false positive:** if the pixel sampler flags a legitimate character layer (e.g. a solid-color armor piece), add it to `ignoreLayers` in `alpha-sprite-mapping.json` for that unit. Do not adjust the thresholds — they are calibrated for the current asset packs. Run `npm run alpha:lint-sprites -- --pretty` for a human-readable breakdown of the metrics.
+
+## Commander portraits
+
+Static PNGs at `public/assets/commanders/sprites/Sprite{1..27}.png`. `BootScene.js` loads them with `this.load.image()`. No pipeline, no Aseprite, nothing to bake. If a portrait needs updating, replace the PNG directly.

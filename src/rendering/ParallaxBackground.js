@@ -87,9 +87,12 @@ export class ParallaxBackground {
       const texH = srcImage.height
       const texW = srcImage.width
 
-      // Scale texture so its height fills display height exactly (no vertical tiling).
-      // Use uniform scale to maintain aspect ratio — only horizontal tiling occurs.
-      const scale = this.height / texH
+      // Crop to the bottom half of each source: scale so texH maps to 2× the
+      // display height, then offset tilePositionY by texH/2 so the window into
+      // the source starts at its vertical middle. Uniform scale preserves the
+      // pixel-art aspect ratio (horizontal zoom is also 2× as a side effect).
+      const scale = (this.height * 2) / texH
+      const tileOffsetY = texH / 2
 
       const tile = this.scene.add.tileSprite(
         xCenter, this.height / 2,
@@ -98,12 +101,13 @@ export class ParallaxBackground {
       )
       tile.setOrigin(0.5)
       tile.setTileScale(scale, scale)
+      tile.tilePositionY = tileOffsetY
       tile.setDepth(1 + i)
 
       tilesArray.push(tile)
       this.gameObjects.push(tile)
 
-      console.log(`[Parallax] Layer ${side}_${i}: tex=${texKey} ${texW}x${texH} scale=${scale.toFixed(2)} at (${xCenter}, ${this.height / 2})`)
+      console.log(`[Parallax] Layer ${side}_${i}: tex=${texKey} ${texW}x${texH} scale=${scale.toFixed(2)} tilePosY=${tileOffsetY} at (${xCenter}, ${this.height / 2})`)
     }
   }
 

@@ -1,6 +1,6 @@
 { "frames": [
    {
-    "filename": "Dark Mec 0.aseprite",
+    "filename": "Dark Mec (mech) 0.aseprite",
     "frame": { "x": 0, "y": 0, "w": 32, "h": 39 },
     "rotated": false,
     "trimmed": false,
@@ -9,7 +9,7 @@
     "duration": 100
    },
    {
-    "filename": "Dark Mec 1.aseprite",
+    "filename": "Dark Mec (mech) 1.aseprite",
     "frame": { "x": 32, "y": 0, "w": 32, "h": 39 },
     "rotated": false,
     "trimmed": false,
@@ -18,7 +18,7 @@
     "duration": 100
    },
    {
-    "filename": "Dark Mec 2.aseprite",
+    "filename": "Dark Mec (mech) 2.aseprite",
     "frame": { "x": 64, "y": 0, "w": 32, "h": 39 },
     "rotated": false,
     "trimmed": false,
@@ -27,7 +27,7 @@
     "duration": 100
    },
    {
-    "filename": "Dark Mec 3.aseprite",
+    "filename": "Dark Mec (mech) 3.aseprite",
     "frame": { "x": 96, "y": 0, "w": 32, "h": 39 },
     "rotated": false,
     "trimmed": false,
@@ -36,7 +36,7 @@
     "duration": 100
    },
    {
-    "filename": "Dark Mec 4.aseprite",
+    "filename": "Dark Mec (mech) 4.aseprite",
     "frame": { "x": 128, "y": 0, "w": 32, "h": 39 },
     "rotated": false,
     "trimmed": false,
@@ -45,7 +45,7 @@
     "duration": 100
    },
    {
-    "filename": "Dark Mec 5.aseprite",
+    "filename": "Dark Mec (mech) 5.aseprite",
     "frame": { "x": 0, "y": 39, "w": 32, "h": 39 },
     "rotated": false,
     "trimmed": false,
@@ -54,7 +54,7 @@
     "duration": 100
    },
    {
-    "filename": "Dark Mec 6.aseprite",
+    "filename": "Dark Mec (mech) 6.aseprite",
     "frame": { "x": 32, "y": 39, "w": 32, "h": 39 },
     "rotated": false,
     "trimmed": false,
@@ -63,7 +63,7 @@
     "duration": 100
    },
    {
-    "filename": "Dark Mec 7.aseprite",
+    "filename": "Dark Mec (mech) 7.aseprite",
     "frame": { "x": 64, "y": 39, "w": 32, "h": 39 },
     "rotated": false,
     "trimmed": false,
@@ -72,7 +72,7 @@
     "duration": 100
    },
    {
-    "filename": "Dark Mec 8.aseprite",
+    "filename": "Dark Mec (mech) 8.aseprite",
     "frame": { "x": 64, "y": 39, "w": 32, "h": 39 },
     "rotated": false,
     "trimmed": false,
@@ -81,7 +81,7 @@
     "duration": 100
    },
    {
-    "filename": "Dark Mec 9.aseprite",
+    "filename": "Dark Mec (mech) 9.aseprite",
     "frame": { "x": 96, "y": 39, "w": 32, "h": 39 },
     "rotated": false,
     "trimmed": false,
@@ -90,7 +90,7 @@
     "duration": 100
    },
    {
-    "filename": "Dark Mec 10.aseprite",
+    "filename": "Dark Mec (mech) 10.aseprite",
     "frame": { "x": 128, "y": 39, "w": 32, "h": 39 },
     "rotated": false,
     "trimmed": false,
@@ -99,7 +99,7 @@
     "duration": 100
    },
    {
-    "filename": "Dark Mec 11.aseprite",
+    "filename": "Dark Mec (mech) 11.aseprite",
     "frame": { "x": 64, "y": 39, "w": 32, "h": 39 },
     "rotated": false,
     "trimmed": false,
@@ -108,7 +108,7 @@
     "duration": 100
    },
    {
-    "filename": "Dark Mec 12.aseprite",
+    "filename": "Dark Mec (mech) 12.aseprite",
     "frame": { "x": 0, "y": 78, "w": 32, "h": 39 },
     "rotated": false,
     "trimmed": false,
@@ -117,7 +117,7 @@
     "duration": 100
    },
    {
-    "filename": "Dark Mec 13.aseprite",
+    "filename": "Dark Mec (mech) 13.aseprite",
     "frame": { "x": 32, "y": 78, "w": 32, "h": 39 },
     "rotated": false,
     "trimmed": false,
@@ -126,7 +126,7 @@
     "duration": 100
    },
    {
-    "filename": "Dark Mec 14.aseprite",
+    "filename": "Dark Mec (mech) 14.aseprite",
     "frame": { "x": 64, "y": 78, "w": 32, "h": 39 },
     "rotated": false,
     "trimmed": false,
@@ -135,7 +135,7 @@
     "duration": 100
    },
    {
-    "filename": "Dark Mec 15.aseprite",
+    "filename": "Dark Mec (mech) 15.aseprite",
     "frame": { "x": 96, "y": 78, "w": 32, "h": 39 },
     "rotated": false,
     "trimmed": false,
@@ -144,7 +144,7 @@
     "duration": 100
    },
    {
-    "filename": "Dark Mec 16.aseprite",
+    "filename": "Dark Mec (mech) 16.aseprite",
     "frame": { "x": 128, "y": 78, "w": 32, "h": 39 },
     "rotated": false,
     "trimmed": false,
@@ -153,7 +153,7 @@
     "duration": 100
    },
    {
-    "filename": "Dark Mec 17.aseprite",
+    "filename": "Dark Mec (mech) 17.aseprite",
     "frame": { "x": 0, "y": 117, "w": 32, "h": 39 },
     "rotated": false,
     "trimmed": false,
@@ -162,7 +162,7 @@
     "duration": 100
    },
    {
-    "filename": "Dark Mec 18.aseprite",
+    "filename": "Dark Mec (mech) 18.aseprite",
     "frame": { "x": 32, "y": 117, "w": 32, "h": 39 },
     "rotated": false,
     "trimmed": false,
@@ -171,7 +171,7 @@
     "duration": 100
    },
    {
-    "filename": "Dark Mec 19.aseprite",
+    "filename": "Dark Mec (mech) 19.aseprite",
     "frame": { "x": 64, "y": 117, "w": 32, "h": 39 },
     "rotated": false,
     "trimmed": false,
@@ -180,7 +180,7 @@
     "duration": 100
    },
    {
-    "filename": "Dark Mec 20.aseprite",
+    "filename": "Dark Mec (mech) 20.aseprite",
     "frame": { "x": 96, "y": 117, "w": 32, "h": 39 },
     "rotated": false,
     "trimmed": false,
@@ -189,7 +189,7 @@
     "duration": 100
    },
    {
-    "filename": "Dark Mec 21.aseprite",
+    "filename": "Dark Mec (mech) 21.aseprite",
     "frame": { "x": 128, "y": 117, "w": 32, "h": 39 },
     "rotated": false,
     "trimmed": false,
@@ -198,7 +198,7 @@
     "duration": 100
    },
    {
-    "filename": "Dark Mec 22.aseprite",
+    "filename": "Dark Mec (mech) 22.aseprite",
     "frame": { "x": 128, "y": 117, "w": 32, "h": 39 },
     "rotated": false,
     "trimmed": false,
@@ -207,7 +207,7 @@
     "duration": 100
    },
    {
-    "filename": "Dark Mec 23.aseprite",
+    "filename": "Dark Mec (mech) 23.aseprite",
     "frame": { "x": 128, "y": 117, "w": 32, "h": 39 },
     "rotated": false,
     "trimmed": false,
@@ -216,7 +216,7 @@
     "duration": 100
    },
    {
-    "filename": "Dark Mec 24.aseprite",
+    "filename": "Dark Mec (mech) 24.aseprite",
     "frame": { "x": 96, "y": 78, "w": 32, "h": 39 },
     "rotated": false,
     "trimmed": false,
@@ -225,7 +225,7 @@
     "duration": 100
    },
    {
-    "filename": "Dark Mec 25.aseprite",
+    "filename": "Dark Mec (mech) 25.aseprite",
     "frame": { "x": 64, "y": 78, "w": 32, "h": 39 },
     "rotated": false,
     "trimmed": false,
@@ -234,7 +234,7 @@
     "duration": 100
    },
    {
-    "filename": "Dark Mec 26.aseprite",
+    "filename": "Dark Mec (mech) 26.aseprite",
     "frame": { "x": 32, "y": 78, "w": 32, "h": 39 },
     "rotated": false,
     "trimmed": false,
@@ -243,7 +243,7 @@
     "duration": 100
    },
    {
-    "filename": "Dark Mec 27.aseprite",
+    "filename": "Dark Mec (mech) 27.aseprite",
     "frame": { "x": 0, "y": 78, "w": 32, "h": 39 },
     "rotated": false,
     "trimmed": false,
@@ -252,7 +252,7 @@
     "duration": 100
    },
    {
-    "filename": "Dark Mec 28.aseprite",
+    "filename": "Dark Mec (mech) 28.aseprite",
     "frame": { "x": 64, "y": 39, "w": 32, "h": 39 },
     "rotated": false,
     "trimmed": false,
@@ -261,7 +261,7 @@
     "duration": 100
    },
    {
-    "filename": "Dark Mec 29.aseprite",
+    "filename": "Dark Mec (mech) 29.aseprite",
     "frame": { "x": 0, "y": 156, "w": 32, "h": 39 },
     "rotated": false,
     "trimmed": false,
@@ -270,7 +270,7 @@
     "duration": 100
    },
    {
-    "filename": "Dark Mec 30.aseprite",
+    "filename": "Dark Mec (mech) 30.aseprite",
     "frame": { "x": 0, "y": 78, "w": 32, "h": 39 },
     "rotated": false,
     "trimmed": false,
@@ -279,7 +279,7 @@
     "duration": 100
    },
    {
-    "filename": "Dark Mec 31.aseprite",
+    "filename": "Dark Mec (mech) 31.aseprite",
     "frame": { "x": 32, "y": 78, "w": 32, "h": 39 },
     "rotated": false,
     "trimmed": false,
@@ -288,7 +288,7 @@
     "duration": 100
    },
    {
-    "filename": "Dark Mec 32.aseprite",
+    "filename": "Dark Mec (mech) 32.aseprite",
     "frame": { "x": 64, "y": 78, "w": 32, "h": 39 },
     "rotated": false,
     "trimmed": false,
@@ -297,7 +297,7 @@
     "duration": 100
    },
    {
-    "filename": "Dark Mec 33.aseprite",
+    "filename": "Dark Mec (mech) 33.aseprite",
     "frame": { "x": 32, "y": 156, "w": 32, "h": 39 },
     "rotated": false,
     "trimmed": false,
@@ -306,7 +306,7 @@
     "duration": 100
    },
    {
-    "filename": "Dark Mec 34.aseprite",
+    "filename": "Dark Mec (mech) 34.aseprite",
     "frame": { "x": 64, "y": 156, "w": 32, "h": 39 },
     "rotated": false,
     "trimmed": false,
@@ -315,7 +315,7 @@
     "duration": 100
    },
    {
-    "filename": "Dark Mec 35.aseprite",
+    "filename": "Dark Mec (mech) 35.aseprite",
     "frame": { "x": 64, "y": 156, "w": 32, "h": 39 },
     "rotated": false,
     "trimmed": false,
@@ -324,7 +324,7 @@
     "duration": 100
    },
    {
-    "filename": "Dark Mec 36.aseprite",
+    "filename": "Dark Mec (mech) 36.aseprite",
     "frame": { "x": 96, "y": 156, "w": 32, "h": 39 },
     "rotated": false,
     "trimmed": false,
@@ -333,7 +333,7 @@
     "duration": 100
    },
    {
-    "filename": "Dark Mec 37.aseprite",
+    "filename": "Dark Mec (mech) 37.aseprite",
     "frame": { "x": 64, "y": 156, "w": 32, "h": 39 },
     "rotated": false,
     "trimmed": false,
