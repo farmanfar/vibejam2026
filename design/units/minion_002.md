@@ -29,28 +29,27 @@ From AnimTester readout (tag — frame count):
 ## Abilities
 
 **Volatile Payload (unique unit ability, `on_faint`).** On death, Minion
-#002 detonates in both directions with explicit slot-distance semantics:
+#002 hurls her payload forward and deals **2 damage to the opponent's
+frontmost alive unit**. Single target — no friendly fire, no
+multi-slot blast, no backward splash.
 
-- **Forward blast:** deals 2 damage to every enemy in slots 0..range-1 of
-  the opposing team, where range = 2. ("Forward" = toward the enemy side;
-  after compaction, the frontmost 2 enemies.)
-- **Backward blast:** deals 2 damage to every allied unit at slot-distance
-  ≤ 2 behind Minion #002's own slot at the moment she died. "Backward" =
-  toward her own team's back slots, i.e., slot indices higher than hers,
-  within a 2-slot radius. Friendly fire is intentional.
-
-Both blasts resolve as part of the same damage batch. Any new deaths
-caused by either blast are appended to the SAME death batch queue and
-fire their own `on_faint` handlers in slot-order before compaction. This
-means Minion #002's blast can chain into Starter Warrior's Sacrifice
-Pass, Blood King's Heart Slam, another Minion #002's Volatile Payload,
-etc. — one batch, one compaction at the end.
+If the blast is lethal, the killed target is appended to the SAME death
+batch queue and fires its own `on_faint` handler in slot order before
+compaction. This means Minion #002's blast can still chain into Starter
+Warrior's Sacrifice Pass, Blood King's Heart Slam, another Minion #002's
+Volatile Payload, etc. — one batch, one compaction at the end.
 
 The `prep_explode` animation (4F) plays as the death wind-up; then the
-separate `minion_2_parent` explosion sprite spawns at her slot position.
+separate `minion_2_parent` explosion sprite spawns on the enemy front
+unit to sell the hit.
 
-Synergizes with expendable strategies (Folk sacrifice buffs, high-churn
-compositions).
+If there is no living enemy at the moment Minion #002 dies (e.g. she
+died to a poison tick after her last opponent fell), the ability fizzles
+— the log records the attempt but no damage is applied.
+
+Synergizes with chip-damage compositions that want to pop a fat
+frontliner: her death shaves 2 off the enemy tank regardless of how
+many allies are left standing.
 
 ## Rendering Notes
 

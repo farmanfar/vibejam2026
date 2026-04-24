@@ -2,9 +2,9 @@ import { describe, test, expect } from 'vitest';
 import { makeUnit, runBattle } from './testHelpers.js';
 
 describe('Phase A — volatile_payload (Minion #002)', () => {
-  test('death fires forward and backward blasts', () => {
-    // Minion in slot 0 with a big enemy behind a fragile enemy — forces the
-    // minion to die by returning fire, then blast hits the row.
+  test('death deals 2 damage to the opponent front unit', () => {
+    // Minion in slot 0 with a beefy ally behind. Frontline enemy counterattacks
+    // and kills the minion, whose on_faint hits the same frontline for 2.
     const result = runBattle({
       player: [
         makeUnit('m002', {
@@ -24,10 +24,13 @@ describe('Phase A — volatile_payload (Minion #002)', () => {
     });
     const start = result.log.ofKind('volatile_payload_start');
     expect(start.length).toBe(1);
-    const forward = result.log
+    expect(start[0].target).toBe('frontline');
+    const blast = result.log
       .ofKind('damage')
-      .filter((e) => e.damageKind === 'volatile_payload_forward');
-    expect(forward.length).toBeGreaterThan(0);
+      .filter((e) => e.damageKind === 'volatile_payload');
+    expect(blast.length).toBe(1);
+    expect(blast[0].target).toBe('frontline');
+    expect(blast[0].requested).toBe(2);
   });
 });
 

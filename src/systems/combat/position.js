@@ -54,8 +54,9 @@ export function highestSlotAliveEnemy(attacker, ctx) {
   return null;
 }
 
-// Used by Minion #002's backward blast: allies at slot-distance <= range
-// behind the source unit's current slot index. Filters dying.
+// Slot helper: allies at slot-distance <= range behind the source unit's
+// current slot index. Filters dying. (Previously used by Minion #002's
+// backward blast; retained as a general utility for future back-row AoE.)
 export function alliesBehindWithinRange(source, range, ctx) {
   const ownTeam = ctx.ownTeamOf(source);
   const out = [];
@@ -68,8 +69,10 @@ export function alliesBehindWithinRange(source, range, ctx) {
   return out;
 }
 
-// Used by Minion #002's forward blast: enemies at slot-distance <= range
-// from slot 0 forward. Same as enemiesWithinRange, aliased for clarity.
+// Slot helper: enemies at slot-distance <= range from slot 0 forward.
+// Same as enemiesWithinRange, aliased for clarity for multi-slot forward
+// AoE abilities. Minion #002 no longer uses this (single-target now) but
+// the helper stays available.
 export function enemiesWithinForwardRange(source, range, ctx) {
   return enemiesWithinRange(source, range, ctx);
 }

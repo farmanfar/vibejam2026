@@ -66,7 +66,7 @@ const RULES_TEXT = {
   electrocutioner: 'Attacks pierce the first 2 enemies in line.',
   gnat: 'On attack, 50% chance to apply 5 poison instead of 1.',
   hog_knight: 'When any enemy dies, fires a 1-damage shot at the next enemy.',
-  minion_002: 'On death, explodes: 2 damage to nearby allies and frontmost 2 enemies.',
+  minion_002: 'On death, deals 2 damage to the opponent front unit.',
   minion_003: 'Ranged attacker. Lobs single-target bolts up to 3 tiles away.',
   relic_guardian_3: 'When another allied Robot dies, gain +1 ATK permanently.',
   starter_warrior: 'On death, grants +1 ATK to the unit directly behind.',

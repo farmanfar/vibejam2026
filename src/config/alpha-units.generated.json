@@ -277,7 +277,7 @@
       "atk": 1,
       "range": 1,
       "ability_id": "volatile_payload",
-      "rules_text": "On death, explodes: 2 damage to nearby allies and frontmost 2 enemies.",
+      "rules_text": "On death, deals 2 damage to the opponent front unit.",
       "skipBasicAttack": false,
       "art_status": "ok"
     },
