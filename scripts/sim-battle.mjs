@@ -81,7 +81,7 @@ const allResults = [];
 const startSeed = seedArg;
 for (let i = 0; i < bulk; i++) {
   const seed = startSeed + i;
-  const core = new CombatCore({ registry, seed });
+  const core = new CombatCore({ registry, seed, verbose: verbose || bulk === 1 });
   const result = core.run({ player: [...playerDefs], enemy: [...enemyDefs] });
 
   if (result.winner === 'player') wins++;

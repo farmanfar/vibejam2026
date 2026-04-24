@@ -44,9 +44,10 @@ const MAX_ROUNDS = 200;
 const DEATH_BATCH_WARN = 100;
 
 export class CombatCore {
-  constructor({ registry, seed = 0 } = {}) {
+  constructor({ registry, seed = 0, verbose = false } = {}) {
     if (!registry) throw new Error('[CombatCore] registry required');
     this.registry = registry;
+    this.verbose = verbose;
     this.rng = new RNG(seed);
     this.log = new CombatLog();
     this.teams = null;
@@ -271,7 +272,7 @@ export class CombatCore {
     const eFront = this.teams.enemy.slots.find((u) => u.alive && !u.dying) ?? null;
     if (!pFront || !eFront) return;
 
-    console.log(
+    if (this.verbose) console.log(
       `[CombatCore] tick ${this.round} start — p_front=${pFront.unitId}(hp=${pFront.hp}/atk=${pFront.atk}) e_front=${eFront.unitId}(hp=${eFront.hp}/atk=${eFront.atk})`,
     );
 
@@ -319,7 +320,7 @@ export class CombatCore {
         }
       }
 
-      console.log(
+      if (this.verbose) console.log(
         `[CombatCore] tick ${this.round} kill queue drained after ${drainRounds} round(s)`,
       );
     } finally {
@@ -332,13 +333,13 @@ export class CombatCore {
     // death events, Toxic Cascade, and final removal + compaction.
     const dying = this._collectDying();
     if (dying.length) {
-      console.log(
+      if (this.verbose) console.log(
         `[CombatCore] tick ${this.round} resolving ${dying.length} dying: [${dying.map((u) => u.instanceId ?? u.unitId).join(', ')}]`,
       );
       this._resolveDeathBatch(dying);
     }
 
-    console.log(
+    if (this.verbose) console.log(
       `[CombatCore] tick ${this.round} end — p alive=${aliveCount(this.teams.player)} e alive=${aliveCount(this.teams.enemy)}`,
     );
   }
@@ -732,7 +733,11 @@ export class CombatCore {
       instanceId: unit.instanceId ?? null,
       slot: unit.slot,
       team: unit.team,
+      tier: unit.def.tier ?? null,
+      class: unit.class,
+      faction: unit.faction,
       hp: unit.hp,
+      maxHp: unit.maxHp,
       atk: unit.atk,
       alive: unit.alive,
       poison: unit.statuses.poison || 0,
