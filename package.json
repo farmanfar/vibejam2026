@@ -14,7 +14,7 @@
     "test": "vitest run --config vitest.config.js",
     "test:watch": "vitest --config vitest.config.js",
     "sim": "node scripts/sim-battle.mjs",
-    "sim:balance": "node scripts/sim-battle.mjs --fixture fixtures/all-t1-mirror.json --bulk 1000 --report",
+    "sim:balance": "node scripts/sim-balance.mjs",
     "alpha:generate": "node scripts/generate-alpha-units.mjs",
     "alpha:sprites": "node scripts/import-alpha-sprites.mjs",
     "alpha:lint-sprites": "node scripts/lint-aseprite-layers.mjs"
