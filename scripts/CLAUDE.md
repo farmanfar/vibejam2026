@@ -61,6 +61,42 @@ Only unsuppressed findings cause CI to fail.
 - Aseprite CLI not found — set `ASEPRITE_CLI` env var
 - False positive on a character layer — add it to `ignoreLayers` in the mapping; do not change the thresholds
 
+### `npm run sim:balance` → `scripts/sim-balance.mjs`
+
+Headless balance-analysis suite. Runs thousands of seeded battles and writes reports to `reports/balance/<timestamp>-<sub>/`.
+
+| | |
+|---|---|
+| **Unit data** | `src/config/alpha-units.generated.json` (run `npm run alpha:generate` first) |
+| **Output** | `reports/balance/<ts>-full/` — `summary.md`, 5 report files, `raw-runs.jsonl` |
+| **Golden** | `reports/balance/golden/summary.md` — committed baseline |
+
+**Subcommands:**
+```
+npm run sim:balance                                              # full run (default)
+npm run sim:balance -- per-unit        [--reps N]               # mirror-match telemetry per unit
+npm run sim:balance -- matchup-matrix  [--reps N] [--tier 1,2]  # NxN win-rate matrix
+npm run sim:balance -- class-synergy   [--reps N]               # themed vs mixed, side-swapped
+npm run sim:balance -- faction-synergy [--reps N]
+npm run sim:balance -- merchant-impact [--reps N]
+npm run sim:balance -- --seed 0 --out reports/balance/golden    # regenerate golden
+```
+
+**Seed ranges** (non-overlapping, reproducible across runs):
+- `per-unit`: `[0 .. 200_000)`
+- `matchup-matrix`: `[200_000 .. 500_000)`
+- `class-synergy`: `[500_000 .. 600_000)`
+- `faction-synergy`: `[600_000 .. 700_000)`
+- `merchant-impact`: `[700_000 .. 800_000)`
+
+**Throughput:** ~10,600 battles/sec on the dev laptop. Full run (~85K battles) completes in ~8 seconds.
+
+**Maintenance:** when adding a new ability, update `ABILITY_FIRE_WHITELIST` in `scripts/lib/battle-telemetry.mjs`.
+
+**Common failures:**
+- `unit pool is empty` — check `--tier` values; tiers start at 1 in the current pool
+- `Expected battle_init at index 0` — the engine log was empty; likely a registry build failure
+
 ## Shared libraries (`scripts/lib/`)
 
 ### `scripts/lib/aseprite-cli.mjs`

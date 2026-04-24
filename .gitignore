@@ -13,6 +13,10 @@ dist-ssr
 artifacts/captures
 artifacts/release
 reports
+!reports/balance/
+!reports/balance/golden/
+reports/balance/golden/*
+!reports/balance/golden/summary.md
 *.local
 .env
 
