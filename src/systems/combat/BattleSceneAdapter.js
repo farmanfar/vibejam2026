@@ -427,6 +427,7 @@ function translateLog(rawEntries, playerTeamStamped, enemyTeamStamped) {
         const reviveStep = {
           message: `${nameOf(entry.instanceId ?? entry.unit)} - death defying!`,
           revivedInstanceId: entry.instanceId ?? null,
+          reviveKind: 'death_defy',
           flavorEvents: [{
             type: 'buff',
             targetInstanceId: entry.instanceId ?? null,
@@ -449,10 +450,11 @@ function translateLog(rawEntries, playerTeamStamped, enemyTeamStamped) {
         const reviveStep = {
           message: `${nameOf(entry.instanceId ?? entry.unit)} reanimates!`,
           revivedInstanceId: entry.instanceId ?? null,
+          reviveKind: 'reanimate',
           flavorEvents: [{
             type: 'buff',
             targetInstanceId: entry.instanceId ?? null,
-            text: 'REANIMATE',
+            text: 'REANIMATED',
           }],
           ...snapshotStats(),
         };

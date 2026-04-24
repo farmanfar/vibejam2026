@@ -18,14 +18,18 @@ Each warrior: `{ id, name, atk, hp, cost, tier, faction, enabled, spriteKey, has
 
 ## Synergy Schema
 
-`SYNERGIES[faction][threshold]` → `{ atk?, hp? }`. Thresholds: 2, 3, 4+. Highest met threshold wins (no stacking).
+**Source of truth is `src/systems/combat/` — not this directory.** Faction mechanics live in `src/systems/combat/factions/*.js`, class mechanics in `src/systems/combat/classes/*.js`. They run inside `CombatCore` and are not stat-threshold bonuses.
 
-Current values:
-- Robot: HP-focused (2: +1hp, 3: +2hp/+1atk, 4: +3hp/+2atk)
-- Undead: ATK-focused (2: +1atk, 3: +2atk, 4: +3atk/+1hp)
-- Beast: Pure HP (2: +2hp, 3: +4hp, 4: +6hp)
-- Fantasy: Balanced (2: +1/+1, 3: +2/+2, 4: +3/+3)
-- Tribal: Mixed (2: +1atk, 3: +1atk/+2hp, 4: +2atk/+3hp)
+Live factions (alpha pool only carries these three):
+- **Folk** — on any Folk death, a random surviving Folk ally gains +1 ATK.
+- **Monster** — on death, reanimate at full HP. 10% base, +10% per other Monster (cap 50%).
+- **Robot** — each Robot gains +1 HP per other Robot on team (battle-start).
+
+Tooltip / rules-screen copy for the above lives in `src/config/synergy-icons.js` as `FACTION_ICONS[tag].description`. Keep that file in sync with `src/systems/combat/factions/*.js` when mechanics change.
+
+### Legacy `SYNERGIES` table (dead data)
+
+`SYNERGIES` in `units.js` is the pre-alpha stat-threshold table (Undead/Beast/Fantasy/Tribal). **Nothing applies it at runtime** — the old `BattleEngine.js` now imports an empty `SYNERGIES` from `alpha-units.js`, and even that path is superseded by `BattleSceneAdapter.runAlphaBattle`. The four entries still exist only because `RulesScene` iterates the table to render tiles for those dead tags; no alpha unit carries those factions. Safe to delete once the Rules screen stops listing them.
 
 ## Upcoming
 

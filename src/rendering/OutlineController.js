@@ -21,7 +21,7 @@ const PhaserController = Filters.Controller;
 // ─── Tuning ─────────────────────────────────────────────────────────────────
 
 /** Master kill switch. Flip to false to disable outlines globally. */
-export const OUTLINE_ENABLED = true;
+export const OUTLINE_ENABLED = false;
 
 /**
  * Default outline parameters. Adjust here and let Vite HMR push the change.
@@ -32,7 +32,7 @@ export const OUTLINE_ENABLED = true;
  */
 export const OUTLINE_DEFAULTS = {
   color:          [0.0, 0.0, 0.0],
-  thickness:      2.5,
+  thickness:      0.6,
   alphaThreshold: 0.5,
 };
 
@@ -136,6 +136,50 @@ export function pulseLevelUp(scene, sprite) {
       {
         r: origColor[0], g: origColor[1], b: origColor[2], t: origThick,
         duration: 165, ease: 'Sine.In',
+        onUpdate: () => { ctrl.color = [proxy.r, proxy.g, proxy.b]; ctrl.thickness = proxy.t; },
+        onComplete: () => { ctrl.color = origColor; ctrl.thickness = origThick; },
+      },
+    ],
+  });
+}
+
+/**
+ * Brief cyan outline pulse on a combatant during a clash. Mirrors
+ * pulseLevelUp's structure but uses the DarkTech accent colour and a
+ * shorter envelope so it can fire every clash without feeling heavy.
+ *
+ * Color: cyan-white pulse (matches Theme.accent / Theme.hover).
+ * Thickness: original → 4.0 → original over ~440ms.
+ *
+ * @param {Phaser.Scene} scene
+ * @param {Phaser.GameObjects.GameObject} sprite - must have sprite._outlineCtrl set
+ */
+export function pulseFocus(scene, sprite) {
+  const ctrl = sprite?._outlineCtrl;
+  if (!ctrl) return;
+  const origColor = [...ctrl.color];
+  const origThick = ctrl.thickness;
+  const CYAN  = [0.49, 0.81, 1.0];   // ≈ Theme.accent #7cceff
+  const WHITE = [0.80, 0.92, 1.0];   // ≈ Theme.hover  #ccebff
+
+  const proxy = { r: origColor[0], g: origColor[1], b: origColor[2], t: origThick };
+
+  scene.tweens.chain({
+    targets: proxy,
+    tweens: [
+      {
+        r: CYAN[0], g: CYAN[1], b: CYAN[2], t: 4.0,
+        duration: 140, ease: 'Sine.Out',
+        onUpdate: () => { ctrl.color = [proxy.r, proxy.g, proxy.b]; ctrl.thickness = proxy.t; },
+      },
+      {
+        r: WHITE[0], g: WHITE[1], b: WHITE[2], t: 3.2,
+        duration: 140, ease: 'Sine.InOut',
+        onUpdate: () => { ctrl.color = [proxy.r, proxy.g, proxy.b]; ctrl.thickness = proxy.t; },
+      },
+      {
+        r: origColor[0], g: origColor[1], b: origColor[2], t: origThick,
+        duration: 160, ease: 'Sine.In',
         onUpdate: () => { ctrl.color = [proxy.r, proxy.g, proxy.b]; ctrl.thickness = proxy.t; },
         onComplete: () => { ctrl.color = origColor; ctrl.thickness = origThick; },
       },

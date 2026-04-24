@@ -25,15 +25,18 @@ import { getCommanderRule, pickRandomCommanders } from '../config/commanders.js'
 // stay readable in the lineup without shrinking larger ones.
 const MIN_BATTLE_SPRITE_H = 80
 
-// Global boost on per-unit art.displayScale. Keep this at 1.0 — the row
-// must hold 5-per-side with _slotSpacing below without overlap, and many
-// units have tight bounds ~50px wide which already render 125px+ at the
-// configured displayScale. Bumping the boost without widening spacing
-// (and shrinking canvas budget for 5 units) causes teams to collide.
-const BATTLE_SCALE_BOOST = 1.0
+// Global boost on per-unit art.displayScale. 0.9 shrinks sprites ~10% so
+// the row sits more comfortably in the middle of the canvas without
+// bumping neighbours. Do not raise back above ~1.0 without widening
+// _slotSpacing — many units have tight bounds ~50px wide which render
+// 125px+ at full displayScale and would collide at 5-per-side.
+const BATTLE_SCALE_BOOST = 0.9
 
 const FLOAT_TEXT_STYLES = {
   damage: { color: Theme.error, fontSize: 36, prefix: '-' },
+  // damageStamp = oversized rotating "−N" used by chip-bump beat. Played
+  // through _showFloatText's `motion: 'stamp'` branch.
+  damageStamp: { color: Theme.error, fontSize: 44, prefix: '-', motion: 'stamp' },
   block: { color: Theme.mutedText, fontSize: 28, defaultText: 'BLOCK' },
   heal: { color: Theme.success, fontSize: 32 },
   buff: { color: Theme.warning, fontSize: 28 },
@@ -42,6 +45,13 @@ const FLOAT_TEXT_STYLES = {
   armor: { color: Theme.accent, fontSize: 28, defaultText: 'ARMORED' },
   resonance: { color: Theme.fantasyGoldBright, fontSize: 28 },
 }
+
+// Clash timing constants. Both attackers swing simultaneously, damage
+// resolves after the swing peak, then defenders react. Badges stay anchored
+// to their unit — no chip sliding, just in-place shake + tick-down.
+const SWING_LEAD_MS = 220   // wait after triggering attack anim before damage lands
+const HIT_HOLD_MS   = 260   // hold so badge tick-down + stamp can read
+const REACT_MS      = 240   // window for defender hit anim before frame ends
 
 export class BattleScene extends Scene {
   constructor() {
@@ -88,13 +98,14 @@ export class BattleScene extends Scene {
     const battleDepth = 20
 
     // Front units sit 110px off center (220px gap between front fighters
-    // for the clash) and teammates are spaced 90px apart. With 5 units per
-    // side this puts the backmost at x=10 / x=950 — almost edge-to-edge,
-    // so bumping either value means back units clip the canvas. Keep this
-    // invariant consistent with _reflowTeam below.
+    // for the clash) and teammates are spaced 95px apart. With 5 units per
+    // side and BATTLE_SCALE_BOOST=0.9 this puts the backmost at x=-10 /
+    // x=970 — the shrunken sprites leave enough slack that the character
+    // pixels still read on-canvas. Bumping either value further risks
+    // clipping. Keep this invariant consistent with _reflowTeam below.
     const centerX = width / 2
     this._frontOffset = 110
-    this._slotSpacing = 90
+    this._slotSpacing = 95
 
     // Each team lives in its own Phaser Container so F2 can drag the whole
     // lineup as a single object. Containers start at (0, 0), so child
@@ -112,7 +123,7 @@ export class BattleScene extends Scene {
 
     this.playerSprites = this.team.map((w, i) => {
       const x = centerX - this._frontOffset - i * this._slotSpacing
-      const y = 400
+      const y = 320
       const ref = getUnitPortraitRef(this, w, 'battle player')
       const scale = w.art?.displayScale ?? 2.5
       const sprite = this.add.sprite(x, y, ref.key, ref.frame)
@@ -136,7 +147,7 @@ export class BattleScene extends Scene {
 
     this.enemySprites = this.enemyTeam.map((w, i) => {
       const x = centerX + this._frontOffset + i * this._slotSpacing
-      const y = 400
+      const y = 320
       const ref = getUnitPortraitRef(this, w, 'battle enemy')
       const scale = w.art?.displayScale ?? 2.5
       const sprite = this.add.sprite(x, y, ref.key, ref.frame)
@@ -188,11 +199,11 @@ export class BattleScene extends Scene {
     LayoutEditor.register(this, 'enemyLabel', enemyLabel, width - 100, 320)
     */
 
-    const vsText = this.add.bitmapText(width / 2, 380, FONT_KEY, 'VS', 35)
+    const vsText = this.add.bitmapText(width / 2, 300, FONT_KEY, 'VS', 35)
       .setOrigin(0.5)
       .setTint(Theme.criticalText)
       .setDepth(battleDepth)
-    LayoutEditor.register(this, 'vsText', vsText, width / 2, 380)
+    LayoutEditor.register(this, 'vsText', vsText, width / 2, 300)
 
     // ── Commander badge — anchored near the bottom so the commander stands
     // partially off-screen (feet cut by canvas edge), framing the fight.
@@ -372,6 +383,16 @@ export class BattleScene extends Scene {
       const configs = getAsepriteTagConfigs(warrior.spriteKey, asepriteData)
       if (configs.length > 0) {
         configs.forEach((config) => sprite.anims.create(config))
+        // Bake a reversed-death anim for Monster reanimate rise VFX.
+        const deathKey = warrior.art?.animTagOverrides?.death ?? 'death'
+        const deathConfig = configs.find(c => c.key === deathKey)
+        if (deathConfig?.frames?.length) {
+          sprite.anims.create({
+            key: deathKey + '_reverse',
+            frames: [...deathConfig.frames].reverse(),
+            duration: deathConfig.duration,
+          })
+        }
       } else {
         // Fallback for atlases whose cached data is missing or malformed.
         // Passing `sprite` as 3rd arg routes createFromAseprite to the
@@ -464,7 +485,11 @@ export class BattleScene extends Scene {
       ? `${config.prefix}${rawText.replace(/^[+-]/, '')}`
       : rawText
 
-    console.log(`[Battle] float text: instanceId=${targetInstanceId ?? 'NONE'} style=${style} text=${resolvedText}${posOverride ? ` override=(${posOverride.x},${posOverride.y})` : ''}`)
+    // anchor: 'top' makes the text grow DOWNWARD from posOverride.y (used
+    // for damage numbers anchored under the badge so they sit beneath the
+    // unit's feet). Default 'bottom' grows upward from the anchor.
+    const dropMode = posOverride?.anchor === 'top'
+    console.log(`[Battle] float text: instanceId=${targetInstanceId ?? 'NONE'} style=${style} text=${resolvedText}${posOverride ? ` override=(${posOverride.x},${posOverride.y})${dropMode ? ' drop' : ''}` : ''}`)
 
     const slot = this._activePopupsByTarget.get(slotKey) ?? 0
     this._activePopupsByTarget.set(slotKey, slot + 1)
@@ -480,13 +505,44 @@ export class BattleScene extends Scene {
     const startY = posOverride
       ? posOverride.y
       : (this._spriteWorldY(entry.sprite) + 70)
+    const dir = dropMode ? 1 : -1
 
     const label = this.add.bitmapText(startX, startY, FONT_KEY, resolvedText, config.fontSize)
-      .setOrigin(0.5, 1)
+      .setOrigin(0.5, dropMode ? 0 : 1)
       .setTint(config.color)
       .setDepth(1000)
       .setAlpha(0)
       .setScale(0.4)
+
+    const releaseSlot = () => {
+      const remaining = (this._activePopupsByTarget.get(slotKey) ?? 1) - 1
+      if (remaining <= 0) this._activePopupsByTarget.delete(slotKey)
+      else this._activePopupsByTarget.set(slotKey, remaining)
+    }
+
+    if (config.motion === 'stamp') {
+      // Oversized rotating "−N" stamp ported from the SAP-readability mock.
+      // Lands BIG and tilted, settles, holds, drifts + fades. Total ~700ms.
+      // dir = -1 drifts upward (default head-anchored), +1 drifts downward
+      // (drop mode anchored beneath the unit's badge / feet).
+      label.setScale(2.0)
+      label.setRotation(-0.10) // ≈ -6deg
+      label.setY(startY + 14 * dir)
+      this.tweens.chain({
+        targets: label,
+        tweens: [
+          { alpha: 1, scaleX: 1.45, scaleY: 1.45, rotation: -0.05, y: startY + 24 * dir, duration: 80,  ease: 'Quad.Out' },
+          { scaleX: 1.15, scaleY: 1.15, rotation: 0,               y: startY + 26 * dir, duration: 110, ease: 'Quad.Out' },
+          { rotation: 0.035,                                                              duration: 320, ease: 'Sine.InOut' },
+          { alpha: 0, scaleX: 0.95, scaleY: 0.95, rotation: 0.075, y: startY + 44 * dir, duration: 200, ease: 'Cubic.In' },
+        ],
+        onComplete: () => {
+          label.destroy()
+          releaseSlot()
+        },
+      })
+      return
+    }
 
     this.tweens.add({
       targets: label,
@@ -505,12 +561,7 @@ export class BattleScene extends Scene {
       ease: 'Cubic.Out',
       onComplete: () => {
         label.destroy()
-        const remaining = (this._activePopupsByTarget.get(slotKey) ?? 1) - 1
-        if (remaining <= 0) {
-          this._activePopupsByTarget.delete(slotKey)
-        } else {
-          this._activePopupsByTarget.set(slotKey, remaining)
-        }
+        releaseSlot()
       },
     })
   }
@@ -695,6 +746,11 @@ export class BattleScene extends Scene {
         deathCount++
         continue
       }
+      if (step.revivedInstanceId) {
+        frames.push({ type: 'revive', step })
+        flavorCount++
+        continue
+      }
       frames.push({
         type: 'flavor',
         step: {
@@ -751,6 +807,7 @@ export class BattleScene extends Scene {
       case 'flavor': return this._playFlavor(frame.step)
       case 'death': return this._playDeath(frame.step)
       case 'death_batch': return this._playDeathBatch(frame.step)
+      case 'revive': return this._playRevive(frame.step)
       default:
         console.warn(`[Battle] unknown frame type: ${frame.type}`)
         return Promise.resolve()
@@ -797,170 +854,156 @@ export class BattleScene extends Scene {
     })
   }
 
-  _playClash(a, b, frame) {
-    return new Promise((resolve) => {
-      const pEntry = this.spriteByInstance?.get(a.actorInstanceId)
-      const eEntry = this.spriteByInstance?.get(b.actorInstanceId)
-      if (!pEntry?.sprite || !eEntry?.sprite) {
-        console.warn(`[Battle] clash aborted — missing sprite (p=${!!pEntry?.sprite} e=${!!eEntry?.sprite}), falling back to solos`)
-        // Fallback: play both as solo attacks sequentially.
-        this._playSoloAttack(a)
-          .then(() => this._playSoloAttack(b))
-          .then(resolve)
-        return
-      }
+  // ─── Simultaneous-swing clash ──────────────────────────────────────────
+  // Both attackers play their attack animation at the same time, damage
+  // resolves at the swing peak, defenders play hit (or fall to death_batch
+  // for kills). Badges stay anchored to their unit — on damage they shake
+  // in place and the HP digit ticks down with a per-tick red flash.
+  async _playClash(a, b, frame) {
+    const aEntry = this.spriteByInstance?.get(a.actorInstanceId)
+    const aTarget = this.spriteByInstance?.get(a.targetInstanceId)
+    const bEntry = this.spriteByInstance?.get(b.actorInstanceId)
+    const bTarget = this.spriteByInstance?.get(b.targetInstanceId)
 
-      const flavor = frame?.flavorMessages ?? []
-      const headLine = `${a.message}. ${b.message}`
-      const flavorLine = flavor.length ? `  [${flavor.join(' | ')}]` : ''
-      this._addLogEntry(headLine + flavorLine)
+    if (!aEntry?.sprite || !aTarget?.sprite || !bEntry?.sprite || !bTarget?.sprite) {
+      console.warn(`[Battle] clash aborted — missing sprite (aSrc=${!!aEntry?.sprite} aTgt=${!!aTarget?.sprite} bSrc=${!!bEntry?.sprite} bTgt=${!!bTarget?.sprite}); falling back to solos`)
+      await this._playSoloAttack(a)
+      await this._playSoloAttack(b)
+      return
+    }
 
-      const pSprite = pEntry.sprite
-      const eSprite = eEntry.sprite
-      // Homes retain as LOCAL x so retreat tweens just snap back to
-      // sprite.x regardless of container offsets.
-      const homePX = pSprite.x
-      const homeEX = eSprite.x
-      // Meeting point is computed in WORLD space so the two fighters visually
-      // meet at the midpoint even when teams are offset via F2. Each sprite
-      // tweens to a LOCAL x that corresponds to that world midpoint (minus
-      // the 30px half-gap) inside its own container.
-      const pHomeWorld = this._spriteWorldX(pSprite)
-      const eHomeWorld = this._spriteWorldX(eSprite)
-      const clashXWorld = Math.round((pHomeWorld + eHomeWorld) / 2)
-      const pMeet = this._worldToLocalX(pSprite, clashXWorld - 30)
-      const eMeet = this._worldToLocalX(eSprite, clashXWorld + 30)
-      const prevPDepth = pSprite.depth
-      const prevEDepth = eSprite.depth
-      pSprite.setDepth(prevPDepth + 1)
-      eSprite.setDepth(prevEDepth + 1)
+    const flavor = frame?.flavorMessages ?? []
+    const headLine = `${a.message}. ${b.message}`
+    const flavorLine = flavor.length ? `  [${flavor.join(' | ')}]` : ''
+    this._addLogEntry(headLine + flavorLine)
+    console.log(`[Battle] clash: ${a.actorInstanceId} <-> ${b.actorInstanceId} (dmg ${a.damage} / ${b.damage})`)
 
-      console.log(`[Battle] clash: ${a.actorInstanceId} (worldHome=${pHomeWorld}) <-> ${b.actorInstanceId} (worldHome=${eHomeWorld}) clashXWorld=${clashXWorld}`)
+    // Both attackers swing at once.
+    this._playActorAnim(a.actorInstanceId, a.animTag ?? 'attack')
+    this._playActorAnim(b.actorInstanceId, b.animTag ?? 'attack')
+    this.cameras.main.shake(180, 0.006)
 
-      let advanceDone = 0
-      const onAdvance = () => {
-        advanceDone++
-        if (advanceDone < 2) return
-        // Both arrived. Swing.
-        this._playActorAnim(a.actorInstanceId, 'attack')
-        this._playActorAnim(b.actorInstanceId, 'attack')
-        this._applyStatSnapshot(a)
-        this._applyStatSnapshot(b)
+    await this._wait(SWING_LEAD_MS)
 
-        if (typeof a.damage === 'number') {
-          this._showFloatText(a.targetInstanceId, `${a.damage}`, a.blocked === true ? 'block' : 'damage', { x: clashXWorld, y: 360 })
-        }
-        if (typeof b.damage === 'number') {
-          this._showFloatText(b.targetInstanceId, `${b.damage}`, b.blocked === true ? 'block' : 'damage', { x: clashXWorld, y: 378 })
-        }
-        this._spawnFlavorPops(frame?.flavorEvents)
+    // Damage lands on both defenders simultaneously.
+    this._resolveHit(aTarget, a.damage, a.blocked, a.targetInstanceId)
+    this._resolveHit(bTarget, b.damage, b.blocked, b.targetInstanceId)
+    // Reconcile to engine snapshot (catches flavor-driven HP/ATK we didn't
+    // model in _resolveHit — armor procs, resonance, etc.). Idempotent
+    // because setHp/setAtk early-out on equality.
+    this._applyStatSnapshot(a)
+    this._applyStatSnapshot(b)
+    this._spawnFlavorPops(frame?.flavorEvents)
 
-        this.cameras.main.shake(120, 0.006)
+    await this._wait(HIT_HOLD_MS)
 
-        this.time.delayedCall(240, () => {
-          let retreatDone = 0
-          const onRetreat = () => {
-            retreatDone++
-            if (retreatDone < 2) return
-            pSprite.setDepth(prevPDepth)
-            eSprite.setDepth(prevEDepth)
-            resolve()
-          }
-          this.tweens.add({
-            targets: pSprite,
-            x: homePX,
-            duration: 150,
-            ease: 'Cubic.In',
-            onComplete: onRetreat,
-          })
-          this.tweens.add({
-            targets: eSprite,
-            x: homeEX,
-            duration: 150,
-            ease: 'Cubic.In',
-            onComplete: onRetreat,
-          })
-        })
-      }
+    // React: surviving defenders play hit anim or hit-pop. Fallen units stay
+    // static — death_batch frame fires next and owns death anim/cleanup.
+    this._playDefenderReact(aTarget)
+    this._playDefenderReact(bTarget)
 
-      this.tweens.add({
-        targets: pSprite,
-        x: pMeet,
-        duration: 130,
-        ease: 'Cubic.Out',
-        onComplete: onAdvance,
-      })
-      this.tweens.add({
-        targets: eSprite,
-        x: eMeet,
-        duration: 130,
-        ease: 'Cubic.Out',
-        onComplete: onAdvance,
-      })
+    await this._wait(REACT_MS)
+  }
+
+  async _playSoloAttack(step) {
+    const attackerEntry = this.spriteByInstance?.get(step.actorInstanceId)
+    const targetEntry = this.spriteByInstance?.get(step.targetInstanceId)
+    if (!attackerEntry?.sprite || !targetEntry?.sprite) {
+      console.warn(`[Battle] solo aborted — missing sprite actor=${step.actorInstanceId} target=${step.targetInstanceId}`)
+      this._applyStatSnapshot(step)
+      this._addLogEntry(step.message ?? '')
+      this._spawnFlavorPops(step.flavorEvents)
+      return
+    }
+
+    this._addLogEntry(step.message ?? '')
+    console.log(`[Battle] solo: ${step.actorInstanceId} -> ${step.targetInstanceId} (dmg ${step.damage})`)
+
+    this._playActorAnim(step.actorInstanceId, step.animTag ?? 'attack')
+    this.cameras.main.shake(140, 0.005)
+
+    await this._wait(SWING_LEAD_MS)
+
+    this._resolveHit(targetEntry, step.damage, step.blocked, step.targetInstanceId)
+    this._applyStatSnapshot(step)
+    this._spawnFlavorPops(step.flavorEvents)
+
+    await this._wait(HIT_HOLD_MS)
+
+    this._playDefenderReact(targetEntry)
+
+    await this._wait(REACT_MS)
+  }
+
+  // Apply damage to a defender: shake the badge, drop a "−N" stamp above
+  // the HP chip, tick the HP number down digit-by-digit. Updates running
+  // currentHp so the death_batch frame can detect kills.
+  _resolveHit(defenderEntry, dmg, blocked, targetInstanceId) {
+    if (!defenderEntry?.badge) return
+    if (typeof dmg !== 'number') return
+
+    if (blocked) {
+      this._showFloatText(targetInstanceId ?? null, 'BLOCK', 'block')
+      defenderEntry.badge.shake(2, 200)
+      return
+    }
+
+    const prevHp = defenderEntry.warrior?.currentHp ?? defenderEntry.warrior?.hp ?? 0
+    const newHp = Math.max(0, prevHp - dmg)
+    defenderEntry.warrior.currentHp = newHp
+    console.log(`[Battle] hit ${defenderEntry.instanceId} hp ${prevHp} -> ${newHp} (-${dmg})`)
+
+    // Anchor the "−N" stamp BELOW the badge so it appears beneath the
+    // unit's feet (the badge already sits below the sprite at +55). Badge
+    // preset 'small' is 22px tall; +15 = half-height (11) + ~4px padding
+    // clears the chip border. anchor: 'top' makes the text grow + drift
+    // downward from this point so it never overlaps the unit or the badge.
+    const hpWorld = defenderEntry.badge.getWorldTransformMatrix()
+    this._showFloatText(
+      targetInstanceId ?? null,
+      `${dmg}`, 'damageStamp',
+      { x: hpWorld.tx + 8, y: hpWorld.ty + 15, anchor: 'top' },
+    )
+    defenderEntry.badge.shake(3, 240)
+    defenderEntry.badge.tickDownHp(prevHp, newHp, 420)
+  }
+
+  // Defender's own animation reaction. If their atlas has a 'hit' tag,
+  // play it; otherwise do a small scale pop. Fallen units (hp=0) stay
+  // static — death_batch fires immediately after this clash and plays the
+  // 'death' anim with proper cleanup.
+  _playDefenderReact(defenderEntry) {
+    if (!defenderEntry?.sprite || defenderEntry.died) return
+    const hp = defenderEntry.warrior?.currentHp ?? defenderEntry.warrior?.hp ?? 0
+    if (hp <= 0) {
+      console.log(`[Battle] react: ${defenderEntry.instanceId} fell — leaving for death_batch`)
+      return
+    }
+    const playedTag = this._playActorAnim(defenderEntry.instanceId, 'hit')
+    if (!playedTag) {
+      // No hit animation defined — fall back to scale pop so SOMETHING
+      // confirms they got hit.
+      this._hitPop(defenderEntry.sprite)
+    }
+  }
+
+  _hitPop(sprite) {
+    if (!sprite) return
+    const baseX = sprite.scaleX
+    const baseY = sprite.scaleY
+    this.tweens.add({
+      targets: sprite,
+      scaleX: baseX * 1.15,
+      scaleY: baseY * 1.15,
+      yoyo: true,
+      duration: 90,
+      ease: 'Quad.Out',
+      onComplete: () => sprite.setScale(baseX, baseY),
     })
   }
 
-  _playSoloAttack(step) {
-    return new Promise((resolve) => {
-      const attackerEntry = this.spriteByInstance?.get(step.actorInstanceId)
-      const targetEntry = this.spriteByInstance?.get(step.targetInstanceId)
-      if (!attackerEntry?.sprite || !targetEntry?.sprite) {
-        console.warn(`[Battle] solo aborted — missing sprite actor=${step.actorInstanceId} target=${step.targetInstanceId}`)
-        this._applyStatSnapshot(step)
-        this._addLogEntry(step.message ?? '')
-        this._spawnFlavorPops(step.flavorEvents)
-        resolve()
-        return
-      }
-
-      this._addLogEntry(step.message ?? '')
-
-      const sprite = attackerEntry.sprite
-      const targetSprite = targetEntry.sprite
-      // homeX is LOCAL (for retreat); strike point is computed in WORLD space
-      // and then converted back to the attacker's container-local x so the
-      // strike lands at the target even if the two teams are in different
-      // containers with different offsets.
-      const homeX = sprite.x
-      const isPlayerAttacker = step.actorInstanceId.startsWith('p')
-      const targetWorldX = this._spriteWorldX(targetSprite)
-      const strikeWorldX = isPlayerAttacker ? (targetWorldX - 30) : (targetWorldX + 30)
-      const strikeX = this._worldToLocalX(sprite, strikeWorldX)
-      const popupX = Math.round((this._spriteWorldX(sprite) + targetWorldX) / 2)
-      const prevDepth = sprite.depth
-      sprite.setDepth(prevDepth + 1)
-
-      console.log(`[Battle] solo: ${step.actorInstanceId} -> ${step.targetInstanceId} strikeWorld=${strikeWorldX} strikeLocal=${strikeX} homeLocal=${homeX}`)
-
-      this.tweens.add({
-        targets: sprite,
-        x: strikeX,
-        duration: 130,
-        ease: 'Cubic.Out',
-        onComplete: () => {
-          this._playActorAnim(step.actorInstanceId, 'attack')
-          this._applyStatSnapshot(step)
-          if (typeof step.damage === 'number') {
-            this._showFloatText(step.targetInstanceId, `${step.damage}`, step.blocked === true ? 'block' : 'damage', { x: popupX, y: 365 })
-          }
-          this._spawnFlavorPops(step.flavorEvents)
-          this.cameras.main.shake(100, 0.005)
-
-          this.time.delayedCall(200, () => {
-            this.tweens.add({
-              targets: sprite,
-              x: homeX,
-              duration: 150,
-              ease: 'Cubic.In',
-              onComplete: () => {
-                sprite.setDepth(prevDepth)
-                resolve()
-              },
-            })
-          })
-        },
-      })
-    })
+  _wait(ms) {
+    return new Promise(r => this.time.delayedCall(ms, r))
   }
 
   _playFlavor(step) {
@@ -1075,6 +1118,105 @@ export class BattleScene extends Scene {
           resolve()
         })
       })
+    })
+  }
+
+  _playRevive(step) {
+    return new Promise((resolve) => {
+      const id = step.revivedInstanceId
+      this._addLogEntry(step.message ?? '')
+
+      const side = id?.startsWith('p') ? 'player' : 'enemy'
+      const arr = side === 'player' ? this.playerSprites : this.enemySprites
+      const entry = this.spriteByInstance?.get(id)
+
+      if (!entry || entry.died) {
+        console.warn(`[Battle] revive: entry missing or died for ${id} — skipping reorder`)
+        this._applyStatSnapshot(step)
+        this._spawnFlavorPops(step.flavorEvents)
+        this.time.delayedCall(200, resolve)
+        return
+      }
+
+      const spliceToBack = () => {
+        const idx = arr.indexOf(entry)
+        if (idx === -1) { console.warn(`[Battle] revive: ${id} not found in ${side}Sprites`); return }
+        arr.splice(idx, 1)
+        arr.push(entry)
+        console.log(`[Battle] revive: moved ${id} to back of ${side}Sprites (new index ${arr.length - 1})`)
+      }
+
+      // ── Death-Defy: quick slide to back + popup ──
+      if (step.reviveKind !== 'reanimate') {
+        spliceToBack()
+        this._applyStatSnapshot(step)
+        this._spawnFlavorPops(step.flavorEvents)
+        this._reflowTeam(side)
+        this.time.delayedCall(450, () => {
+          console.log(`[Battle] revive (death-defy) resolved for ${id}`)
+          resolve()
+        })
+        return
+      }
+
+      // ── Monster Reanimate: die → slide to back → rise → REANIMATED popup ──
+      const warrior = entry.warrior
+      const deathKey = warrior.art?.animTagOverrides?.death ?? 'death'
+      const reverseKey = deathKey + '_reverse'
+      const defaultTag = warrior.art?.defaultTag ?? 'idle'
+
+      // 1. Play death anim (don't destroy sprite — unit survived)
+      const hasDeath = entry.sprite.anims.exists(deathKey)
+      if (hasDeath) entry.sprite.anims.play({ key: deathKey, repeat: 0 })
+      console.log(`[Battle] reanimate ${id}: death anim=${hasDeath ? deathKey : 'NONE'}`)
+
+      // 2. After death anim (or short pause), splice to back and slide
+      let deathDone = false
+      const onDeathComplete = () => {
+        if (deathDone) return
+        deathDone = true
+        spliceToBack()
+        this._reflowTeam(side)
+
+        // 3. After slide settles: apply HP snapshot, play rise anim, spawn popup
+        this.time.delayedCall(450, () => {
+          this._applyStatSnapshot(step)
+          const hasReverse = entry.sprite.anims.exists(reverseKey)
+          console.log(`[Battle] reanimate ${id}: rise anim=${hasReverse ? reverseKey : 'NONE'}`)
+          if (hasReverse) {
+            entry.sprite.anims.play({ key: reverseKey, repeat: 0 })
+            let riseDone = false
+            const onRiseComplete = () => {
+              if (riseDone) return
+              riseDone = true
+              if (entry.sprite.anims.exists(defaultTag)) {
+                entry.sprite.anims.play({ key: defaultTag, repeat: -1 })
+              }
+              this._spawnFlavorPops(step.flavorEvents)
+              console.log(`[Battle] reanimate resolved for ${id}`)
+              resolve()
+            }
+            entry.sprite.once('animationcomplete', onRiseComplete)
+            this.time.delayedCall(1200, onRiseComplete)
+          } else {
+            if (entry.sprite.anims.exists(defaultTag)) {
+              entry.sprite.anims.play({ key: defaultTag, repeat: -1 })
+            }
+            this._spawnFlavorPops(step.flavorEvents)
+            this.time.delayedCall(200, () => {
+              console.log(`[Battle] reanimate resolved for ${id} (no rise anim)`)
+              resolve()
+            })
+          }
+        })
+      }
+
+      if (hasDeath) {
+        entry.sprite.once('animationcomplete', onDeathComplete)
+        this.time.delayedCall(1200, onDeathComplete) // watchdog if anim event misfires
+      } else {
+        this.time.delayedCall(300, onDeathComplete)
+      }
     })
   }
 

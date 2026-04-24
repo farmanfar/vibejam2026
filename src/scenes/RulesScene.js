@@ -271,8 +271,6 @@ export class RulesScene extends Scene {
 
     if (row.kind === 'overview') {
       this._renderOverview(row.id);
-    } else if (row.tag === 'Folk' || row.tag === 'Monster') {
-      this._renderNoSynergy();
     } else {
       const tiers = getSynergyTiers(row.tag);
       if (tiers.length > 0) {
@@ -280,6 +278,7 @@ export class RulesScene extends Scene {
       } else {
         const desc = SYNERGY_ICONS[row.tag]?.description;
         if (desc) this._renderDescription(desc);
+        else this._renderNoSynergy();
       }
     }
   }

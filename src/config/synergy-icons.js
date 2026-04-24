@@ -3,17 +3,36 @@ import { SYNERGIES } from './units.js';
 const FALLBACK_TEXTURE_KEY = 'syn-icon-default';
 const FALLBACK_FILE = 'tag-default.png';
 
-// Faction icons — display rules sourced from SYNERGIES (threshold-based tiers).
-// Folk and Monster are present in alpha-units data but have no SYNERGIES entries
-// yet, so their chips render the icon + raw count only (no /N tier hint).
+// Faction icons. Folk/Monster/Robot descriptions mirror the real alpha-engine
+// mechanics in src/systems/combat/factions/*.js. Undead/Beast/Fantasy/Tribal
+// are legacy tags — no alpha unit carries them; kept here so stale references
+// don't crash, but they render with no description.
 const FACTION_ICONS = {
-  Robot:   { textureKey: 'syn-icon-faction-robot',   file: 'faction-robot.png',   displayName: 'Robot',   kind: 'faction' },
+  Robot:   {
+    textureKey: 'syn-icon-faction-robot',
+    file: 'faction-robot.png',
+    displayName: 'Robot',
+    kind: 'faction',
+    description: 'Each Robot gains +1 HP per other Robot on team.',
+  },
   Undead:  { textureKey: 'syn-icon-faction-undead',  file: 'faction-undead.png',  displayName: 'Undead',  kind: 'faction' },
   Beast:   { textureKey: 'syn-icon-faction-beast',   file: 'faction-beast.png',   displayName: 'Beast',   kind: 'faction' },
   Fantasy: { textureKey: 'syn-icon-faction-fantasy', file: 'faction-fantasy.png', displayName: 'Fantasy', kind: 'faction' },
   Tribal:  { textureKey: 'syn-icon-faction-tribal',  file: 'faction-tribal.png',  displayName: 'Tribal',  kind: 'faction' },
-  Folk:    { textureKey: 'syn-icon-faction-folk',    file: 'faction-folk.png',    displayName: 'Folk',    kind: 'faction' },
-  Monster: { textureKey: 'syn-icon-faction-monster', file: 'faction-monster.png', displayName: 'Monster', kind: 'faction' },
+  Folk:    {
+    textureKey: 'syn-icon-faction-folk',
+    file: 'faction-folk.png',
+    displayName: 'Folk',
+    kind: 'faction',
+    description: 'On any Folk death, a random surviving Folk ally gains +1 ATK.',
+  },
+  Monster: {
+    textureKey: 'syn-icon-faction-monster',
+    file: 'faction-monster.png',
+    displayName: 'Monster',
+    kind: 'faction',
+    description: 'On death, reanimate at full HP. 10% base, +10% per other Monster (cap 50%).',
+  },
 };
 
 // Class icons — display rules are per-class freeform (not all class mechanics

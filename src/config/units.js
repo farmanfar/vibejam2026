@@ -4,8 +4,15 @@ import generatedCatalog from './unit-catalog.generated.json';
 
 const DRAFT_STORAGE_KEY = 'hired_swords_unit_definitions_draft_v1';
 
+// Legacy per-threshold stat tiers from the pre-alpha BattleEngine. The alpha
+// combat engine (src/systems/combat/factions/*.js) owns the real faction
+// mechanics now, and none of them are stat-threshold bonuses — so nothing in
+// this table is applied at runtime. Left non-empty only because RulesScene
+// still iterates it; Robot is intentionally absent so its tooltip falls
+// through to the description in synergy-icons.js instead of showing stale
+// tier numbers. Undead/Beast/Fantasy/Tribal entries remain for the dead
+// legacy tiles — no alpha unit carries those tags.
 export const SYNERGIES = {
-  Robot:   { 2: { hp: 1 },           3: { hp: 2, atk: 1 },    4: { hp: 3, atk: 2 } },
   Undead:  { 2: { atk: 1 },          3: { atk: 2 },           4: { atk: 3, hp: 1 } },
   Beast:   { 2: { hp: 2 },           3: { hp: 4 },            4: { hp: 6 } },
   Fantasy: { 2: { atk: 1, hp: 1 },   3: { atk: 2, hp: 2 },    4: { atk: 3, hp: 3 } },

@@ -8,6 +8,15 @@ const SIZE_PRESETS = {
   large: { w: 30, h: 26, gap: 5, radius: 7, fontSize: 11 },
 };
 
+// ─── In-place value-change motion constants (BattleScene clash) ────────────
+// Badges stay anchored to their unit. On a damage hit, the HP chip ticks
+// down number-by-number and the badge does a small horizontal shake so the
+// change is unmistakable in peripheral vision.
+const TICK_STEP_MS = 36;
+const TICK_FLASH_MS = 90;
+const SHAKE_AMP_PX = 3;
+const SHAKE_STEP_MS = 28;
+
 export class UnitStatBadge extends GameObjects.Container {
   constructor(scene, x, y, {
     atk,
@@ -38,6 +47,7 @@ export class UnitStatBadge extends GameObjects.Container {
     this._atkActiveDelta = null;
     this._hpActiveDelta = null;
     this._deltaNodes = new Set();
+    this._tickHpInterval = null;
 
     const centerOffset = (this._preset.w + this._preset.gap) / 2;
     this.atkBadge = this._createBadgePart(
@@ -244,7 +254,85 @@ export class UnitStatBadge extends GameObjects.Container {
     this._pulseFill(this.hpBadge, this.hpBaseColor, flashColor, '_hpFlashTween');
   }
 
+  // ─── In-place clash feedback (BattleScene clash readability) ────────────
+  // Badges stay anchored. On a hit they shake horizontally, the HP digits
+  // tick down one-by-one with a per-tick flash, and the chip fill pulses red.
+
+  // Small horizontal wobble in place. Used on damage to call attention to
+  // the badge whose value just changed without sliding it across the scene.
+  shake(amplitudePx = SHAKE_AMP_PX, totalMs = 240) {
+    if (!this.scene) return;
+    const homeX = this.x;
+    this.scene.tweens.killTweensOf(this);
+    this.scene.tweens.chain({
+      targets: this,
+      tweens: [
+        { x: homeX + amplitudePx,     duration: SHAKE_STEP_MS, ease: 'Quad.Out' },
+        { x: homeX - amplitudePx,     duration: SHAKE_STEP_MS, ease: 'Quad.InOut' },
+        { x: homeX + amplitudePx * 0.6, duration: SHAKE_STEP_MS, ease: 'Quad.InOut' },
+        { x: homeX - amplitudePx * 0.4, duration: SHAKE_STEP_MS, ease: 'Quad.InOut' },
+        { x: homeX,                   duration: Math.max(40, totalMs - SHAKE_STEP_MS * 4), ease: 'Sine.InOut' },
+      ],
+      onComplete: () => { this.x = homeX; },
+    });
+  }
+
+  // Per-step decrement on the HP chip text with brief red flash per tick.
+  // Reads as subtraction happening rather than a smooth state change.
+  tickDownHp(from, to, totalMs = 420) {
+    const part = this.hpBadge;
+    if (!part?.text || !this.scene) return Promise.resolve();
+    const steps = Math.max(1, Math.abs(from - to));
+    const perStep = Math.max(TICK_STEP_MS, Math.floor(totalMs / steps));
+    const dir = to < from ? -1 : 1;
+    let cur = from;
+    part.text.setText(`${cur}`);
+    this.hp = to;
+    if (this._tickHpInterval) {
+      try { this.scene.time.removeEvent(this._tickHpInterval); } catch (e) { /* ok */ }
+      this._tickHpInterval = null;
+    }
+
+    return new Promise((resolve) => {
+      const flashColor = dir < 0 ? Theme.error : Theme.success;
+      const stepOnce = () => {
+        if (cur === to) {
+          this._tickHpInterval = null;
+          this._pulseFill(this.hpBadge, this.hpBaseColor, flashColor, '_hpFlashTween');
+          resolve();
+          return;
+        }
+        cur += dir;
+        part.text.setText(`${cur}`);
+        try {
+          part.text.setTint(flashColor);
+          this.scene.tweens.add({
+            targets: part.text,
+            scaleX: 1.4,
+            scaleY: 1.4,
+            duration: TICK_FLASH_MS / 2,
+            yoyo: true,
+            ease: 'Quad.Out',
+            onComplete: () => {
+              part.text.setScale(1);
+              part.text.setTint(Theme.criticalText);
+            },
+          });
+        } catch (e) {
+          console.error('[StatBadge] tick flash failed:', e);
+        }
+        this._tickHpInterval = this.scene.time.delayedCall(perStep, stepOnce);
+      };
+      this._tickHpInterval = this.scene.time.delayedCall(perStep, stepOnce);
+    });
+  }
+
   destroy(fromScene) {
+    if (this._tickHpInterval) {
+      try { this.scene?.time.removeEvent(this._tickHpInterval); } catch (e) { /* ok */ }
+      this._tickHpInterval = null;
+    }
+    this.scene?.tweens.killTweensOf(this);
     this.scene?.tweens.killTweensOf(this.atkBadge?.root);
     this.scene?.tweens.killTweensOf(this.hpBadge?.root);
     if (this._atkFlashTween) this._atkFlashTween.remove();
