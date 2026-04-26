@@ -9,15 +9,16 @@
 //   node scripts/sim-balance.mjs <subcommand> [flags]
 //   node scripts/sim-balance.mjs help
 //
-// Subcommands: per-unit | matchup-matrix | class-synergy | faction-synergy | merchant-impact | full
+// Subcommands: per-unit | matchup-matrix | class-synergy | faction-synergy | merchant-impact | archetype-matrix | full
 // Flags: --reps N   --seed N   --tier 0,1   --out <dir>
 //
 // Seed ranges (non-overlapping, reproducible):
-//   per-unit:        [0 .. 200_000)
-//   matchup-matrix:  [200_000 .. 500_000)
-//   class-synergy:   [500_000 .. 600_000)
-//   faction-synergy: [600_000 .. 700_000)
-//   merchant-impact: [700_000 .. 800_000)
+//   per-unit:         [0 .. 200_000)
+//   matchup-matrix:   [200_000 .. 500_000)
+//   class-synergy:    [500_000 .. 600_000)
+//   faction-synergy:  [600_000 .. 700_000)
+//   merchant-impact:  [700_000 .. 800_000)
+//   archetype-matrix: [800_000 .. 1_000_000)
 //
 // Future: worker_threads parallelism, economy loop, star levels.
 
@@ -45,7 +46,7 @@ function hasFlag(name) { return args.includes(name); }
 const subArg = args[0] && !args[0].startsWith('--') ? args[0] : 'full';
 if (subArg === 'help') {
   console.log('Usage: node scripts/sim-balance.mjs [subcommand] [flags]');
-  console.log('Subcommands: per-unit | matchup-matrix | class-synergy | faction-synergy | merchant-impact | full');
+  console.log('Subcommands: per-unit | matchup-matrix | class-synergy | faction-synergy | merchant-impact | archetype-matrix | full');
   console.log('Flags: --reps N  --seed N  --tier 0,1  --out <dir>');
   process.exit(0);
 }
@@ -372,6 +373,113 @@ async function cmdMerchantImpact({ reps = 200, dir }) {
   return { results };
 }
 
+// ─── Subcommand: archetype-matrix ────────────────────────────────────────────
+//
+// Round-robin between predefined 5v5 archetypes (mono-class, mono-faction,
+// balanced, random baseline). Cheaper and more direct than team-random for
+// confirming which archetypes dominate after a tuning pass — random teams
+// rarely activate synergies, so they understate the gap between committed
+// compositions. Reps re-roll the filler/picks each comparison so a single
+// pair averages over many distinct teams.
+
+function _buildArchetypes() {
+  const classes  = [...new Set(pool.map((u) => u.class))].filter(Boolean);
+  const factions = [...new Set(pool.map((u) => u.faction))].filter(Boolean);
+  const archetypes = [];
+  for (const cls of classes) archetypes.push({ id: `mono-class:${cls}`,    theme: `class:${cls}` });
+  for (const fac of factions) archetypes.push({ id: `mono-faction:${fac}`, theme: `faction:${fac}` });
+  archetypes.push({ id: 'balanced-2-2-1', theme: 'balanced-2-2-1' });
+  archetypes.push({ id: 'random',         theme: 'mixed' });
+  return archetypes;
+}
+
+async function cmdArchetypeMatrix({ reps = 60, dir }) {
+  const SEED_BASE = seedBase + 800_000;
+  const archetypes = _buildArchetypes();
+  const pairs = archetypes.length * archetypes.length;
+  const total = pairs * reps * 2; // ×2 for side-swap inside runPair
+  const prog = makeProgress('archetype-matrix', total);
+
+  // matrix[aId][bId] = { aWins, draws, total }
+  const matrix = {};
+  for (const a of archetypes) {
+    matrix[a.id] = {};
+    for (const b of archetypes) matrix[a.id][b.id] = { aWins: 0, draws: 0, total: 0 };
+  }
+
+  let comparison = 0;
+  for (const a of archetypes) {
+    for (const b of archetypes) {
+      for (let r = 0; r < reps; r++) {
+        const base = SEED_BASE + comparison * reps * 2 + r * 2;
+        const rngA = new RNG(base);
+        const rngB = new RNG(base + 1);
+        const teamA = themedTeam({ theme: a.theme, pool, fillerPool: pool, rng: rngA, teamId: 'p' });
+        const teamB = themedTeam({ theme: b.theme, pool, fillerPool: pool, rng: rngB, teamId: 'e' });
+        const pr = runPair(teamA, teamB, base);
+        matrix[a.id][b.id].aWins  += pr.aWins;
+        matrix[a.id][b.id].draws  += pr.draws;
+        matrix[a.id][b.id].total  += pr.total;
+        prog.tick(pr.total);
+      }
+      comparison++;
+    }
+  }
+
+  // Per-archetype average WR vs everyone (excluding self-mirror — symmetric and
+  // always near 50% with side-swap, but it dilutes the signal).
+  const avgWr = {};
+  for (const a of archetypes) {
+    let wins = 0, totalBattles = 0;
+    for (const b of archetypes) {
+      if (a.id === b.id) continue;
+      const cell = matrix[a.id][b.id];
+      wins += cell.aWins;
+      totalBattles += cell.total;
+    }
+    avgWr[a.id] = totalBattles > 0 ? (wins / totalBattles * 100) : 50;
+  }
+
+  // CSV: aId × bId WR%
+  const ids = archetypes.map((a) => a.id);
+  const csvRows = ids.map((aId) => {
+    const row = { 'A\\B': aId };
+    for (const bId of ids) {
+      const cell = matrix[aId][bId];
+      row[bId] = cell.total > 0 ? (cell.aWins / cell.total * 100).toFixed(1) : '-';
+    }
+    return row;
+  });
+  const csvPath = join(dir, 'archetype-matrix.csv');
+  writeCsv(csvPath, csvRows, ['A\\B', ...ids]);
+
+  // Markdown summary: avg WR table + flagged dominators
+  const sorted = [...archetypes].sort((a, b) => avgWr[b.id] - avgWr[a.id]);
+  const summaryRows = sorted.map((a) => {
+    const wr = avgWr[a.id];
+    const flag = wr > 60 ? '← dominant' : wr < 40 ? '← weak' : '';
+    return `| ${a.id} | ${wr.toFixed(1)}% | ${(wr - 50).toFixed(1)} | ${flag} |`;
+  });
+  const md = [
+    '# Archetype Matrix (5v5)',
+    '',
+    `*${archetypes.length} archetypes × round-robin × ${reps} reps × side-swap = ${total.toLocaleString()} battles.*`,
+    `*Theme picks re-rolled per rep, so each cell averages over distinct teams sharing the same composition rule.*`,
+    '',
+    '## Average WR (vs all other archetypes, mirror excluded)',
+    '',
+    '| Archetype | Avg WR | Delta | |',
+    '|---|---|---|---|',
+    ...summaryRows,
+    '',
+    `Full pairwise grid: [archetype-matrix.csv](./archetype-matrix.csv)`,
+  ].join('\n');
+  const mdPath = join(dir, 'archetype-matrix-report.md');
+  writeMarkdown(mdPath, md);
+  prog.done(mdPath);
+  return { matrix, archetypes, avgWr };
+}
+
 // ─── Subcommand: full ────────────────────────────────────────────────────────
 
 async function cmdFull() {
@@ -382,11 +490,12 @@ async function cmdFull() {
   const started = Date.now();
   console.log(`[Balance] full starting — output: ${dir}`);
 
-  const r1 = await cmdPerUnit({        reps: repsArg || 200,  dir });
-  const r2 = await cmdMatchupMatrix({  reps: repsArg || 50,   dir });
-  const r3 = await cmdClassSynergy({   reps: repsArg || 100,  dir });
-  const r4 = await cmdFactionSynergy({ reps: repsArg || 100,  dir });
-  const r5 = await cmdMerchantImpact({ reps: repsArg || 200,  dir });
+  const r1 = await cmdPerUnit({         reps: repsArg || 200,  dir });
+  const r2 = await cmdMatchupMatrix({   reps: repsArg || 50,   dir });
+  const r3 = await cmdClassSynergy({    reps: repsArg || 100,  dir });
+  const r4 = await cmdFactionSynergy({  reps: repsArg || 100,  dir });
+  const r5 = await cmdMerchantImpact({  reps: repsArg || 200,  dir });
+  const r6 = await cmdArchetypeMatrix({ reps: repsArg || 60,   dir });
 
   // Write summary.md
   const duration = ((Date.now() - started) / 1000 / 60).toFixed(1);
@@ -394,7 +503,8 @@ async function cmdFull() {
     (r2.unitIds.length ** 2 * (repsArg || 50) * 2) +
     (r3.results.reduce((s, x) => s + parseInt(x.samples), 0)) +
     (r4.results.reduce((s, x) => s + parseInt(x.samples), 0)) +
-    (r5.results.reduce((s, x) => s + x.samplesEach * 2, 0));
+    (r5.results.reduce((s, x) => s + x.samplesEach * 2, 0)) +
+    (r6.archetypes.length ** 2 * (repsArg || 60) * 2);
 
   // Outliers: derive from matchup-matrix average win rate across all opponents,
   // not mirror matches (mirrors always draw for symmetric units).
@@ -442,6 +552,19 @@ async function cmdFull() {
     ...merchantRows,
   ].join('\n');
 
+  const archetypeRows = [...r6.archetypes]
+    .sort((a, b) => r6.avgWr[b.id] - r6.avgWr[a.id])
+    .map((a) => {
+      const wr = r6.avgWr[a.id];
+      const flag = wr > 60 ? '← dominant' : wr < 40 ? '← weak' : '';
+      return `| ${a.id} | ${wr.toFixed(1)}% | ${(wr - 50).toFixed(1)} | ${flag} |`;
+    });
+  const archetypeTable = [
+    '| Archetype | Avg WR | Delta | |',
+    '|---|---|---|---|',
+    ...archetypeRows,
+  ].join('\n');
+
   const summary = [
     `# Balance Report`,
     ``,
@@ -455,6 +578,10 @@ async function cmdFull() {
     ``,
     synergyTable,
     ``,
+    `## Archetype matrix (5v5, mirror excluded)`,
+    ``,
+    archetypeTable,
+    ``,
     `## Merchant favor impact`,
     ``,
     merchantTable,
@@ -466,6 +593,8 @@ async function cmdFull() {
     `- [class-synergy-report.md](./class-synergy-report.md)`,
     `- [faction-synergy-report.md](./faction-synergy-report.md)`,
     `- [merchant-impact-report.md](./merchant-impact-report.md)`,
+    `- [archetype-matrix-report.md](./archetype-matrix-report.md)`,
+    `- [archetype-matrix.csv](./archetype-matrix.csv)`,
     `- [raw-runs.jsonl](./raw-runs.jsonl) — matchup-matrix only`,
   ].join('\n');
 
@@ -495,6 +624,9 @@ switch (subArg) {
     break;
   case 'merchant-impact':
     await cmdMerchantImpact({ reps: repsArg || 200, dir: reportDir });
+    break;
+  case 'archetype-matrix':
+    await cmdArchetypeMatrix({ reps: repsArg || 60, dir: reportDir });
     break;
   case 'full':
     await cmdFull();

@@ -79,7 +79,7 @@ export class MerchantSelectScene extends Scene {
         headerTitle: 'SELECT A MERCHANT',
         actionLabels: {
           back:           'BACK',
-          confirm:        'VISIT SHOP',
+          confirm:        'CONTRACT MERCHANT',
           primary:        'MOVE IN',
           secondaryLeft:  'PREV',
           secondaryRight: 'NEXT',

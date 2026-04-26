@@ -1,1 +1,4 @@
-{}
+{
+  "MerchantSelect.confirmBtn": { "x": 480, "y": 115 },
+  "CommanderSelect.confirmBtn": { "x": 480, "y": 64 }
+}

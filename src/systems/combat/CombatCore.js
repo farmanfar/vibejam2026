@@ -570,7 +570,7 @@ export class CombatCore {
       if (u === source) continue;
       if (!u.alive || u.dying) continue;
       if (u.class !== 'Ancient') continue;
-      if (u.resonanceStacks >= 5) continue;
+      if (u.resonanceStacks >= 3) continue;
       u.resonanceStacks++;
       u.atk = u.baseAtk + u.resonanceStacks + (u.flags._staticBonusAtk || 0);
       this.log.push('resonance_stack', {

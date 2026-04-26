@@ -51,7 +51,7 @@ laser, Archer's volley, Blood King's death Heart Slam).
 
 **Ancient Resonance (Ancient class synergy).** Whenever any Ancient-class
 unit on the team deals damage (basic attack OR ability), every OTHER
-Ancient on that team gains +1 Resonance stack, capped at 5 stacks per
+Ancient on that team gains +1 Resonance stack, capped at 3 stacks per
 Ancient. Resonance stacks add directly to effective ATK for damage
 calculations. An Ancient never gains a stack from her own action — only
 from other Ancients'. Stack gain is one per action, not per damage

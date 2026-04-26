@@ -6,7 +6,12 @@
       "mcp__Claude_Preview__preview_start",
       "Bash(git add:*)",
       "Bash(git commit -m ':*)",
-      "Bash(curl -s -o /dev/null -w \"%{http_code}\\\\n\" --max-time 3 http://192.168.77.29/)"
+      "Bash(curl -s -o /dev/null -w \"%{http_code}\\\\n\" --max-time 3 http://192.168.77.29/)",
+      "Bash(awk -F= '/^VITE_SUPABASE_URL=/ { print \"URL: \" \\(length\\($2\\) > 0 && $2 !~ /your-project-ref/ ? \"real value \\(\" length\\($2\\) \" chars\\)\" : \"PLACEHOLDER or empty\"\\) } /^VITE_SUPABASE_ANON_KEY=/ { print \"KEY: \" \\(length\\($2\\) > 30 && $2 !~ /your-publishable/ ? \"real value \\(\" length\\($2\\) \" chars\\)\" : \"PLACEHOLDER or empty\"\\) }' .env)",
+      "Bash(node scripts/seed-ghosts.mjs)",
+      "Bash(echo \"exit=$?\")",
+      "Bash(node --input-type=module -e ' *)",
+      "Bash(awk -F= '/^[A-Z_]+=/ { print $1 \" = \" \\(length\\($2\\) > 0 ? \"\\(set, \" length\\($2\\) \" chars\\)\" : \"\\(empty\\)\"\\) }' .env)"
     ]
   },
   "enableAllProjectMcpServers": true,

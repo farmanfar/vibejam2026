@@ -237,7 +237,11 @@ export class WarriorCard extends GameObjects.Container {
       this.teamAccent = scene.add.graphics();
       this.teamAccent.lineStyle(2, Theme.fantasyBorderGold, 1);
       this.teamAccent.strokeRoundedRect(-this.cardW / 2, -this.cardH / 2, this.cardW, this.cardH, 4);
-      this.frontLayer.add(this.teamAccent);
+      // Sit above the card frame/sprite but BELOW front-layer UI (stat badge,
+      // star bar) so the gold border doesn't clip badges/stars that extend
+      // past the card edge on the z-axis.
+      this.midLayer.add(this.teamAccent);
+      console.log(`[WarriorCard] ${warrior.name} team accent attached to midLayer (behind front UI)`);
     }
 
     this._drawStarBar(warrior.stars ?? 1, this.frontLayer);

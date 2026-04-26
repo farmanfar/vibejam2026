@@ -1,11 +1,12 @@
 import { Scene } from 'phaser';
-import { Theme } from '../ui/index.js';
+import { Theme, FONT_KEY } from '../ui/index.js';
 import { finalizeCaptureScene } from '../systems/CaptureSupport.js';
 import { getCommanders, pickRandomCommanders } from '../config/commanders.js';
 import { SelectionMenuWidget } from '../widgets/SelectionMenuWidget.js';
 import { SceneCrt, startSceneWithCrtPolicy } from '../rendering/SceneCrt.js';
 import { SceneDust } from '../rendering/SceneDust.js';
 import { attachOutlineToSprite } from '../rendering/OutlineController.js';
+import { GhostManager } from '../systems/GhostManager.js';
 
 // Translate legacy capture --view names to current widget view IDs
 const LEGACY_VIEW_MAP = {
@@ -33,6 +34,8 @@ export class CommanderSelectScene extends Scene {
     this._hoverLight     = null
     this._litSprite      = null
     this._lightState     = { baseIntensity: 0, flickerTime: 0 }
+    this._archiveTopFive = null
+    this._archiveTopTen  = null
     console.log(`[Commander] Init - runId: ${this._runId}, fixed: ${!!this._fixedCommanders}`)
   }
 
@@ -156,10 +159,65 @@ export class CommanderSelectScene extends Scene {
           console.log(`[Commander] featured sprite ${item?.name}: lighting=${sprite.lighting} ` +
                       `hasNormalMap=${hasNormal} texKey=${sprite.texture?.key}`)
         },
+        previewContentBuilder: (scene, container, { screenX, screenY, screenW, screenH }) => {
+          const textX = screenX
+          const textY = screenY - screenH / 2 + 6
+
+          this._archiveTopFive = scene.add.bitmapText(textX, textY, FONT_KEY, 'LOADING ARCHIVE...', 8)
+            .setOrigin(0.5, 0)
+            .setTint(Theme.mutedText)
+            .setMaxWidth(screenW - 8)
+          container.add(this._archiveTopFive)
+
+          this._archiveTopTen = scene.add.bitmapText(textX, textY, FONT_KEY, 'LOADING ARCHIVE...', 10)
+            .setOrigin(0.5, 0)
+            .setTint(Theme.mutedText)
+            .setMaxWidth(screenW - 8)
+            .setVisible(false)
+          container.add(this._archiveTopTen)
+
+          console.log('[Archive] Preview content built — fetching top ghosts')
+          GhostManager.fetchTopGhosts().then(rows => {
+            if (!this.scene.isActive() || !this._archiveTopFive || !this._archiveTopTen) {
+              console.log('[Archive] Fetch resolved after scene shutdown — discarding')
+              return
+            }
+            if (rows === null) {
+              this._archiveTopFive.setText('ARCHIVE OFFLINE')
+              this._archiveTopTen.setText('ARCHIVE OFFLINE')
+              console.warn('[Archive] Fetch failed — showing offline state')
+              return
+            }
+            if (rows.length === 0) {
+              this._archiveTopFive.setText('NO RUNS YET')
+              this._archiveTopTen.setText('NO RUNS YET')
+              console.log('[Archive] No ghost entries yet')
+              return
+            }
+            const fiveLines = rows.slice(0, 5).map((r, i) => {
+              const name = (r.nickname || 'ANON').slice(0, 10)
+              return `${i + 1}. ${name} ${r.wins}W-${r.losses}L`
+            })
+            const tenLines = rows.slice(0, 10).map((r, i) => {
+              const name = (r.nickname || 'ANON').slice(0, 14)
+              return `${i + 1}. ${name} ${r.wins}W-${r.losses}L`
+            })
+            this._archiveTopFive.setText(fiveLines.join('\n'))
+            this._archiveTopTen.setText(tenLines.join('\n'))
+            console.log(`[Archive] Rendered ${fiveLines.length} (small) / ${tenLines.length} (zoom) entries`)
+          })
+        },
       },
       actions: {
         onSelectionChange: (_item) => {
           // Selection state is reflected by panel gold border + EMBARK button enablement
+        },
+        onViewChange: (viewId) => {
+          if (!this._archiveTopFive || !this._archiveTopTen) return
+          const zoom = viewId === 'previewClose'
+          this._archiveTopFive.setVisible(!zoom)
+          this._archiveTopTen.setVisible(zoom)
+          console.log(`[Archive] View → ${viewId} (showing top ${zoom ? 10 : 5})`)
         },
         onFeaturedHoverEnter: (_i, item, sprite) => {
           if (!sprite || !this.sys.renderer.gl) return

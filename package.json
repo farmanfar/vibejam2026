@@ -15,6 +15,7 @@
     "test:watch": "vitest --config vitest.config.js",
     "sim": "node scripts/sim-battle.mjs",
     "sim:balance": "node scripts/sim-balance.mjs",
+    "seed:ghosts": "node scripts/seed-ghosts.mjs",
     "alpha:generate": "node scripts/generate-alpha-units.mjs",
     "alpha:sprites": "node scripts/import-alpha-sprites.mjs",
     "alpha:lint-sprites": "node scripts/lint-aseprite-layers.mjs"

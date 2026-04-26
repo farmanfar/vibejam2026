@@ -60,7 +60,7 @@ describe('Ancient class', () => {
     expect(recipients.has('ancient_a')).toBe(false);
   });
 
-  test('Resonance caps at 5 stacks per Ancient', () => {
+  test('Resonance caps at 3 stacks per Ancient', () => {
     const result = runBattle({
       player: [
         makeUnit('a1', { class: 'Ancient', faction: 'Robot', hp: 9999, atk: 0 }),
@@ -70,12 +70,12 @@ describe('Ancient class', () => {
       seed: 13,
     });
     const stacks = result.log.ofKind('resonance_stack');
-    for (const s of stacks) expect(s.stacks).toBeLessThanOrEqual(5);
+    for (const s of stacks) expect(s.stacks).toBeLessThanOrEqual(3);
   });
 });
 
 describe('Knight class', () => {
-  test('Honorbound Stance applies +1/+1 per other Knight, static at battle start', () => {
+  test('Honorbound Stance applies ceil(otherKnights/2) ATK/HP, static at battle start', () => {
     const result = runBattle({
       player: [
         makeUnit('k1', { class: 'Knight', hp: 3, atk: 2 }),
@@ -88,8 +88,31 @@ describe('Knight class', () => {
     const inits = result.log.ofKind('knight_honorbound_init');
     expect(inits.length).toBe(3);
     for (const init of inits) {
-      // Each Knight sees 2 other Knights -> +2/+2 bonus.
+      // 3-Knight team: each sees 2 other Knights -> ceil(2/2)=1 bonus.
       expect(init.otherKnights).toBe(2);
+      expect(init.bonus).toBe(1);
+      expect(init.newAtk).toBe(3);
+      expect(init.newHp).toBe(4);
+    }
+  });
+
+  test('Honorbound scales slower than N: 5 Knights -> +2/+2 each (not +4/+4)', () => {
+    const result = runBattle({
+      player: [
+        makeUnit('k1', { class: 'Knight', hp: 3, atk: 2 }),
+        makeUnit('k2', { class: 'Knight', hp: 3, atk: 2 }),
+        makeUnit('k3', { class: 'Knight', hp: 3, atk: 2 }),
+        makeUnit('k4', { class: 'Knight', hp: 3, atk: 2 }),
+        makeUnit('k5', { class: 'Knight', hp: 3, atk: 2 }),
+      ],
+      enemy: [makeUnit('dummy', { hp: 999, atk: 0 })],
+      seed: 4,
+    });
+    const inits = result.log.ofKind('knight_honorbound_init');
+    expect(inits.length).toBe(5);
+    for (const init of inits) {
+      expect(init.otherKnights).toBe(4);
+      expect(init.bonus).toBe(2);
       expect(init.newAtk).toBe(4);
       expect(init.newHp).toBe(5);
     }

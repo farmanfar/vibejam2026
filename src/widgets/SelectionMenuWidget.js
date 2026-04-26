@@ -361,6 +361,8 @@ export class SelectionMenuWidget {
       this._layerGroups.featured?.setDepth(5)
     }
 
+    this.config.actions?.onViewChange?.(viewId)
+
     if (!instant) {
       this.scene.time.delayedCall(nextView.duration + 16, () => {
         this.widgetBusy = false

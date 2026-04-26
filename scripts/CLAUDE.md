@@ -73,14 +73,17 @@ Headless balance-analysis suite. Runs thousands of seeded battles and writes rep
 
 **Subcommands:**
 ```
-npm run sim:balance                                              # full run (default)
-npm run sim:balance -- per-unit        [--reps N]               # mirror-match telemetry per unit
-npm run sim:balance -- matchup-matrix  [--reps N] [--tier 1,2]  # NxN win-rate matrix
-npm run sim:balance -- class-synergy   [--reps N]               # themed vs mixed, side-swapped
-npm run sim:balance -- faction-synergy [--reps N]
-npm run sim:balance -- merchant-impact [--reps N]
-npm run sim:balance -- --seed 0 --out reports/balance/golden    # regenerate golden
+npm run sim:balance                                                # full run (default)
+npm run sim:balance -- per-unit          [--reps N]               # mirror-match telemetry per unit
+npm run sim:balance -- matchup-matrix    [--reps N] [--tier 1,2]  # NxN 1v1 win-rate matrix
+npm run sim:balance -- class-synergy     [--reps N]               # themed vs mixed, side-swapped
+npm run sim:balance -- faction-synergy   [--reps N]
+npm run sim:balance -- merchant-impact   [--reps N]
+npm run sim:balance -- archetype-matrix  [--reps N]               # 5v5 archetype round-robin
+npm run sim:balance -- --seed 0 --out reports/balance/golden      # regenerate golden
 ```
+
+`archetype-matrix` is the 5v5 companion to the 1v1 matchup-matrix: predefined archetypes (mono-class, mono-faction, balanced-2-2-1, random baseline) play round-robin with side-swap. Each rep re-rolls picks within the theme so a single cell averages over distinct teams. Tells you which **compositions** dominate, orthogonal to per-unit signal.
 
 **Seed ranges** (non-overlapping, reproducible across runs):
 - `per-unit`: `[0 .. 200_000)`
@@ -88,6 +91,7 @@ npm run sim:balance -- --seed 0 --out reports/balance/golden    # regenerate gol
 - `class-synergy`: `[500_000 .. 600_000)`
 - `faction-synergy`: `[600_000 .. 700_000)`
 - `merchant-impact`: `[700_000 .. 800_000)`
+- `archetype-matrix`: `[800_000 .. 1_000_000)`
 
 **Throughput:** ~10,600 battles/sec on the dev laptop. Full run (~85K battles) completes in ~8 seconds.
 

@@ -18,7 +18,7 @@ export const ancientClass = {
   initialize(ctx, unit) {
     const team = ctx.ownTeamOf(unit);
     if (ctx.favorCount(team, 'class', 'Ancient') <= 0) return;
-    if (unit.resonanceStacks >= 5) return;
+    if (unit.resonanceStacks >= 3) return;
     unit.resonanceStacks += 1;
     unit.atk = unit.baseAtk + unit.resonanceStacks + (unit.flags._staticBonusAtk || 0);
     ctx.log.push('ancient_favor_init', {

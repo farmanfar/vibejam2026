@@ -302,26 +302,32 @@ export function buildPreviewLayer(scene, container, config, callbacks) {
     container.add(scene.add.rectangle(0, y, 196, 1, 0x000000, 0.09))
   }
 
-  const previewItems = config.items?.preview ?? config.items?.featured ?? []
   let previewLeft  = null
   let previewRight = null
 
-  const leftItem  = previewItems[0]
-  const rightItem = previewItems[1]
+  if (config.visuals?.previewContentBuilder) {
+    // Host scene provides custom content — skip the default 2-sprite render.
+    // screenX/screenY are in container-local coordinates (screen rect centered at y=16).
+    config.visuals.previewContentBuilder(scene, container, { screenX: 0, screenY: 16, screenW: 206, screenH: 106 })
+  } else {
+    const previewItems = config.items?.preview ?? config.items?.featured ?? []
+    const leftItem  = previewItems[0]
+    const rightItem = previewItems[1]
 
-  if (leftItem) {
-    previewLeft = buildItemSprite(scene, container, leftItem, -46, 20, 0.28 * spriteScale, config.visuals)
-    if (previewLeft) {
-      previewLeft.setAlpha(0.9)
-      scene.tweens.add({ targets: previewLeft,  x: -62, duration: 800, ease: 'Sine.easeInOut', yoyo: true, repeat: -1 })
+    if (leftItem) {
+      previewLeft = buildItemSprite(scene, container, leftItem, -46, 20, 0.28 * spriteScale, config.visuals)
+      if (previewLeft) {
+        previewLeft.setAlpha(0.9)
+        scene.tweens.add({ targets: previewLeft,  x: -62, duration: 800, ease: 'Sine.easeInOut', yoyo: true, repeat: -1 })
+      }
     }
-  }
 
-  if (rightItem) {
-    previewRight = buildItemSprite(scene, container, rightItem, 48, 24, 0.28 * spriteScale, config.visuals)
-    if (previewRight) {
-      previewRight.setAlpha(0.82)
-      scene.tweens.add({ targets: previewRight, x: 62,  duration: 860, ease: 'Sine.easeInOut', yoyo: true, repeat: -1 })
+    if (rightItem) {
+      previewRight = buildItemSprite(scene, container, rightItem, 48, 24, 0.28 * spriteScale, config.visuals)
+      if (previewRight) {
+        previewRight.setAlpha(0.82)
+        scene.tweens.add({ targets: previewRight, x: 62,  duration: 860, ease: 'Sine.easeInOut', yoyo: true, repeat: -1 })
+      }
     }
   }
 

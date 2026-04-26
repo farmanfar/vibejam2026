@@ -38,6 +38,12 @@ Back (S/ESC/background click): any non-center → center.
 2. The widget handles all input, transitions, and LayoutEditor registration internally — the scene only needs to wire `actions` callbacks.
 3. Do NOT subclass the widget. Use the config contract instead.
 
+## Custom preview content
+
+Supply `config.visuals.previewContentBuilder(scene, container, { screenX, screenY, screenW, screenH })` to replace the default 2-sprite render in the preview slot. The screen rect is centered at `(screenX=0, screenY=16)` in container-local space. The builder adds its own display objects to `container` and is responsible for all layout within those bounds.
+
+Supply `config.actions.onViewChange(viewId)` to be notified on every view transition (including the initial `'center'` at construction). Use it to swap preview content visibility between the small and zoomed states.
+
 ## Positions / layout
 
 Edit `VIEWPOINTS` in `SelectionMenuPresenter.js` for x/y/scale/alpha per view. Runtime F2 editing is NOT available for widget internals (only the UI overlay elements — header, prompt, buttons — are registered with LayoutEditor).

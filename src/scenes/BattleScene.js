@@ -238,6 +238,22 @@ export class BattleScene extends Scene {
     LayoutEditor.register(this, 'enemyCommanderBadge', enemyCommanderBadge, ENEMY_COMMANDER_X, ENEMY_COMMANDER_Y)
     console.log(`[Layout] Battle.enemyCommanderBadge at (${ENEMY_COMMANDER_X}, ${ENEMY_COMMANDER_Y}) — ${this.opponent.commander.name}`)
 
+    // Ghost nickname label — only renders when the opponent came from a
+    // real Supabase snapshot. Synthetic-AI fallback opponents have no
+    // nickname and stay anonymous.
+    if (this.opponent.nickname) {
+      const ENEMY_NICK_X = ENEMY_COMMANDER_X
+      const ENEMY_NICK_Y = 514
+      const enemyNicknameLabel = new PixelLabel(
+        this, ENEMY_NICK_X, ENEMY_NICK_Y, `vs. ${this.opponent.nickname}`,
+        { scale: 1, color: 'muted', align: 'center' },
+      )
+      enemyNicknameLabel.setDepth(battleDepth)
+      this._enemyNicknameLabel = enemyNicknameLabel
+      LayoutEditor.register(this, 'enemyNicknameLabel', enemyNicknameLabel, ENEMY_NICK_X, ENEMY_NICK_Y)
+      console.log(`[Battle] Enemy nickname: "${this.opponent.nickname}"`)
+    }
+
     // Event log state kept so _addLogEntry / _renderLog remain safe no-ops
     // while the visual box is commented out below.
     this._logHistory = []

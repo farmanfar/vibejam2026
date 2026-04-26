@@ -24,10 +24,11 @@ Returns array of 4 warrior objects (cloned from enabled WARRIORS pool, weighted 
 
 ### GhostManager (static module)
 All functions are async. All operations log with `[Ghost]` prefix.
-- `snapshotTeam(runId, wins, losses, stage, roster)` — saves to `ghost_snapshots` table
+- `snapshotTeam(runId, wins, losses, stage, roster)` — saves to `ghost_snapshots` table (includes `nickname` from PlayerConfig, falls back to `'ANON'`)
 - `fetchOpponent(wins, losses, stage)` — returns roster array (ghost or synthetic fallback)
 - `submitChampion(runId, roster, wins, losses)` — inserts into `hall_of_fame` table
-- `fetchLeaderboard()` — returns top 50 by losses asc, then created_at asc
+- `fetchLeaderboard()` — returns top 50 from `hall_of_fame` by losses asc, then created_at asc
+- `fetchTopGhosts()` — returns top 10 from `ghost_snapshots` by wins desc / losses asc, deduped by run_id; used by Battle Archive panel
 
 ## Upcoming Changes
 

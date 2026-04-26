@@ -10,10 +10,14 @@ create table ghost_snapshots (
   stage int not null,
   roster jsonb not null,
   team_size int not null,
+  nickname text,
   created_at timestamptz default now()
 );
 
 create index idx_ghost_matchmaking on ghost_snapshots (wins, losses);
+
+-- Migration for existing instances (run in Supabase SQL Editor if the table already exists):
+-- alter table ghost_snapshots add column if not exists nickname text;
 
 -- 2. Hall of fame table
 create table hall_of_fame (
