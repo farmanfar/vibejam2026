@@ -16,6 +16,14 @@ export class BootScene extends Scene {
   }
 
   preload() {
+    // Visible immediately — before any asset loads complete
+    const { width, height } = this.cameras.main;
+    this.add.text(width / 2, height / 2, 'HIRED SWORDS', {
+      fontFamily: 'monospace',
+      fontSize: '28px',
+      color: '#7cceff',
+    }).setOrigin(0.5);
+
     this.load.on('loaderror', (file) => {
       if (typeof file.key === 'string' && file.key.startsWith('unit-portrait-')) {
         console.warn(`[Boot] Failed to load unit portrait ${file.key} from ${file.src}`);
