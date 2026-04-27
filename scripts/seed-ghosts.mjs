@@ -58,14 +58,29 @@ function parseArgs(argv) {
   return args;
 }
 
-function getSupabaseUrl() {
-  // Read VITE_SUPABASE_URL out of .env — same value the app uses, but the
-  // service-role key lives only in the env, never in source.
+function readEnvFile() {
+  // .env is gitignored and stays on this machine. Vite only inlines vars with
+  // VITE_ prefix into the client bundle, so SUPABASE_SERVICE_ROLE_KEY is safe
+  // to live here alongside the URL.
   const envPath = join(REPO_ROOT, '.env');
-  const raw = readFileSync(envPath, 'utf8');
-  const match = raw.match(/^VITE_SUPABASE_URL\s*=\s*(.+)$/m);
-  if (!match) throw new Error('VITE_SUPABASE_URL not found in .env');
-  return match[1].trim();
+  return readFileSync(envPath, 'utf8');
+}
+
+function getEnvVar(raw, name) {
+  const match = raw.match(new RegExp(`^${name}\\s*=\\s*(.+)$`, 'm'));
+  return match ? match[1].trim() : null;
+}
+
+function getSupabaseUrl(raw) {
+  const url = getEnvVar(raw, 'VITE_SUPABASE_URL');
+  if (!url) throw new Error('VITE_SUPABASE_URL not found in .env');
+  return url;
+}
+
+function getServiceKey(raw) {
+  // Prefer the env var (one-shot inline runs); fall back to .env so users
+  // don't have to re-export the secret on every invocation.
+  return process.env.SUPABASE_SERVICE_ROLE_KEY || getEnvVar(raw, 'SUPABASE_SERVICE_ROLE_KEY');
 }
 
 async function ensureBotUser(client) {
@@ -153,16 +168,19 @@ function rosterToSnapshot(stamped, rng, stage) {
 async function main() {
   const args = parseArgs(process.argv.slice(2));
 
-  const SERVICE_KEY = process.env.SUPABASE_SERVICE_ROLE_KEY;
+  const envRaw = readEnvFile();
+  const SERVICE_KEY = getServiceKey(envRaw);
   if (!SERVICE_KEY) {
-    console.error('\n[Seed] ✗ SUPABASE_SERVICE_ROLE_KEY env var is required.');
-    console.error('Find it at: Supabase Dashboard → Project Settings → API → service_role (secret).');
-    console.error('\nUsage:');
-    console.error('  SUPABASE_SERVICE_ROLE_KEY=eyJ... npm run seed:ghosts\n');
+    console.error('\n[Seed] ✗ SUPABASE_SERVICE_ROLE_KEY not found.');
+    console.error('Find it at: Supabase Dashboard → Project Settings → API → Secret keys (sb_secret_...).');
+    console.error('\nAdd it to .env (preferred):');
+    console.error('  SUPABASE_SERVICE_ROLE_KEY=sb_secret_...');
+    console.error('Or pass inline:');
+    console.error('  SUPABASE_SERVICE_ROLE_KEY=sb_secret_... npm run seed:ghosts\n');
     process.exit(1);
   }
 
-  const SUPABASE_URL = getSupabaseUrl();
+  const SUPABASE_URL = getSupabaseUrl(envRaw);
   console.log(`[Seed] Supabase URL: ${SUPABASE_URL}`);
   console.log(`[Seed] Plan: insert ${args.count} ghosts, seed=${args.seed}, clean=${args.clean}`);
 
