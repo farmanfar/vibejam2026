@@ -8,6 +8,8 @@ Merchants use plain `this.load.spritesheet(...)` — they have only a looping id
 
 Commanders, blank cards, and legacy non-alpha portraits do not use the Aseprite loader either.
 
+Commander sprite normal maps are generated in `CommanderSelectScene.create()` (not BootScene) — deferred because only that scene uses Lights2D against them. A module-scoped flag prevents redundant generation on scene re-entry.
+
 ## Alpha Flow
 
 `BootScene.preload()` loops `getAlphaWarriors()`, skips units without `hasPortrait`, and queues:

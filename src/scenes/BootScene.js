@@ -2,7 +2,6 @@ import { Scene } from 'phaser';
 import { PixelFont, FONT_KEY } from '../ui/PixelFont.js';
 import { Theme } from '../ui/Theme.js';
 import { initAuth } from '../supabase.js';
-import { getAllParallaxAssets } from '../rendering/FactionPalettes.js';
 import { getWarriors } from '../config/warriors.js';
 import { getAlphaWarriors } from '../config/alpha-units.js';
 import { getCommanders } from '../config/commanders.js';
@@ -22,13 +21,6 @@ export class BootScene extends Scene {
         console.warn(`[Boot] Failed to load unit portrait ${file.key} from ${file.src}`);
       }
     });
-
-    // Preload all PENUSBMIC parallax backgrounds (29 sets, ~180 PNGs)
-    const parallaxAssets = getAllParallaxAssets();
-    for (const { key, path } of parallaxAssets) {
-      this.load.image(key, path);
-    }
-    console.log(`[Boot] Queued ${parallaxAssets.length} parallax textures for preload`);
 
     const warriors = getWarriors();
     let queuedPortraits = 0;
@@ -58,13 +50,15 @@ export class BootScene extends Scene {
     }
     console.log(`[Boot] Queued ${queuedAlphas} alpha aseprite atlases`);
 
-    // Preload commander card and trophy-room sprite images (Fantasy Cards pack)
+    // Preload commander sprite images (Fantasy Cards pack).
+    // commander-card-* (unused) intentionally omitted — no reader exists.
+    // commander-sprite-* stays here because CommanderBadge in BattleScene and
+    // ShopScene both need it; normal-map generation is deferred to CommanderSelectScene.
     const commanders = getCommanders();
     for (const cmd of commanders) {
-      this.load.image(`commander-card-${cmd.spriteIndex}`, `assets/commanders/cards/card${cmd.spriteIndex}.png`);
       this.load.image(`commander-sprite-${cmd.spriteIndex}`, `assets/commanders/sprites/Sprite${cmd.spriteIndex}.png`);
     }
-    console.log(`[Boot] Queued ${commanders.length} commander card textures and ${commanders.length} commander sprites for preload`);
+    console.log(`[Boot] Queued ${commanders.length} commander sprites for preload`);
 
     // Merchant spritesheets — pre-exported horizontal (and one vertical) PNG
     // strips from public/assets/merchants/npcs/. Merchants have a single
@@ -175,10 +169,9 @@ export class BootScene extends Scene {
     }
 
     // Generate normal maps for battle unit sprites (WebGL only).
-    // Runs synchronously; 32×32 placeholders are ~1 ms total.
+    // Commander normal maps are generated in CommanderSelectScene.create() instead.
     if (this.sys.renderer.gl) {
       _generateBattleNormalMaps(this);
-      _generateCommanderNormalMaps(this);
     }
 
     // Show a quick loading flash then proceed
@@ -210,7 +203,7 @@ export class BootScene extends Scene {
       return;
     }
 
-    this.time.delayedCall(600, () => {
+    this.time.delayedCall(150, () => {
       this.scene.start('Menu');
     });
   }
@@ -224,8 +217,9 @@ export class BootScene extends Scene {
  *   • unit-portrait-<spriteKey>  — real art from PENUSBMIC packs
  *   • warrior_placeholder_0..4   — generated coloured squares
  *
- * attachGeneratedNormalMap() is a no-op for textures that failed to load,
- * so missing portraits are silently skipped.
+ * Only warriors with art.portraitPath are attempted — matching the same guard
+ * used in preload() so we never call attachGeneratedNormalMap() for a texture
+ * that was never queued (it would warn for every missing unit).
  */
 function _generateBattleNormalMaps(scene) {
   const warriors = getWarriors();
@@ -235,6 +229,7 @@ function _generateBattleNormalMaps(scene) {
   for (const warrior of warriors) {
     const key = warrior.spriteKey;
     if (!key) continue;
+    if (!warrior.art?.portraitPath) continue;
     if (attachGeneratedNormalMap(scene, key)) {
       generated++;
     } else {
@@ -262,25 +257,3 @@ function _generateBattleNormalMaps(scene) {
   console.log(`[Boot] Normal maps: ${generated} generated, ${skipped} skipped (missing art)`);
 }
 
-/**
- * Generate and attach normal maps for commander sprite textures so they can
- * participate in Phaser's Lights2D system in CommanderSelectScene (hover light).
- * Sprites are loaded in preload as `commander-sprite-<spriteIndex>`.
- */
-function _generateCommanderNormalMaps(scene) {
-  const commanders = getCommanders();
-  let generated = 0;
-  let skipped   = 0;
-  // Commander-specific bumpStrength: 3.5 vs the 2.0 default used for
-  // battle units. Commanders are big, hero-framed sprites where per-pixel
-  // crunch is a feature; battle units are small and would look noisy.
-  for (const cmd of commanders) {
-    const key = `commander-sprite-${cmd.spriteIndex}`;
-    if (attachGeneratedNormalMap(scene, key, { bumpStrength: 3.5 })) {
-      generated++;
-    } else {
-      skipped++;
-    }
-  }
-  console.log(`[Boot] Commander normal maps: ${generated} generated, ${skipped} skipped (bumpStrength 3.5)`);
-}

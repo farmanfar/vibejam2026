@@ -5,7 +5,9 @@
  *
  * Architecture: no masks (Phaser 4 GeometryMask is Canvas-only in WebGL).
  * Each side renders as separate half-width TileSprites per layer.
- * Textures are PENUSBMIC parallax PNGs preloaded in BootScene.
+ * Textures are PENUSBMIC parallax PNGs. Parallax is currently disabled (BattleScene
+ * uses a temp tan background). When re-enabled, queue assets in BattleScene.preload()
+ * using a narrowed picker (pickMountainCitySets, ~36 layers) — not getAllParallaxAssets.
  *
  * Scrolling math ported from HammerTime ParallaxRenderer.cs (depth-based speed formula).
  */

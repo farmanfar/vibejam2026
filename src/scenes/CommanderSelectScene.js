@@ -7,6 +7,11 @@ import { SceneCrt, startSceneWithCrtPolicy } from '../rendering/SceneCrt.js';
 import { SceneDust } from '../rendering/SceneDust.js';
 import { attachOutlineToSprite } from '../rendering/OutlineController.js';
 import { GhostManager } from '../systems/GhostManager.js';
+import { attachGeneratedNormalMap } from '../rendering/NormalMapGenerator.js';
+
+// Commander normal maps are generated once per page-load on first visit.
+// Guard prevents redundant canvas work on re-entry (swap-every-3-wins flow).
+let _commanderNormalsAttached = false;
 
 // Translate legacy capture --view names to current widget view IDs
 const LEGACY_VIEW_MAP = {
@@ -72,6 +77,20 @@ export class CommanderSelectScene extends Scene {
       // y=445 center, height 220 → spans y=335..555 (covers both).
       // Without this, the light center lands below the plane in featuredClose
       // and almost none of the halo renders.
+
+      // Generate commander normal maps on first visit. Deferred from BootScene
+      // because only this scene uses Lights2D against these textures.
+      if (!_commanderNormalsAttached) {
+        _commanderNormalsAttached = true
+        const commanders = getCommanders()
+        let generated = 0, skipped = 0
+        for (const cmd of commanders) {
+          const key = `commander-sprite-${cmd.spriteIndex}`
+          if (attachGeneratedNormalMap(this, key, { bumpStrength: 3.5 })) generated++
+          else skipped++
+        }
+        console.log(`[Commander] Normal maps: ${generated} generated, ${skipped} skipped (bumpStrength 3.5)`)
+      }
     }
 
     // Per-frame shimmer: two-sine torch flicker on the hover light intensity.

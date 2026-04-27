@@ -90,7 +90,10 @@ export class BattleScene extends Scene {
     // Ambient dust — windswept arena grit blowing right-to-left
     SceneDust.attach(this, 'battle')
 
-    // TEMP: flat tan background for layout review — swap back to parallax when ready
+    // TEMP: flat tan background for layout review — swap back to parallax when ready.
+    // TODO: when reverting, add BattleScene.preload() and queue assets there via
+    // pickMountainCitySets() (~36 layers across 4 sets). Do NOT restore
+    // getAllParallaxAssets() (187 PNGs, 25 of those sets have no consumer).
     const tempBg = this.add.graphics()
     tempBg.fillStyle(0xC4A882, 1)
     tempBg.fillRect(0, 0, width, height)
