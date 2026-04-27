@@ -154,9 +154,10 @@ export class CommanderSelectScene extends Scene {
           secondaryRight: 'NEXT',
         },
         regionTitles: {
-          leftPanel:  'WEST WING',
-          rightPanel: 'EAST WING',
-          preview:    'BATTLE ARCHIVE',
+          leftPanel:     'WEST WING',
+          rightPanel:    'EAST WING',
+          preview:       'BATTLE ARCHIVE',
+          previewFooter: 'TOP 10 RUNS',
         },
       },
       visuals: {
@@ -180,7 +181,7 @@ export class CommanderSelectScene extends Scene {
           console.log(`[Commander] featured sprite ${item?.name}: lighting=${sprite.lighting} ` +
                       `hasNormalMap=${hasNormal} texKey=${sprite.texture?.key}`)
         },
-        previewContentBuilder: (scene, container, { screenX, screenY, screenW, screenH }) => {
+        previewContentBuilder: (scene, container, { screenX, screenY, screenW, screenH, floorY }) => {
           // Inner padding inside the screen rect — text never draws into the
           // bezel/casing. Names are truncated per-mode so each entry stays a
           // single line (m5x7 char advance ≈ fontSize * 6/7); the rendered
@@ -188,9 +189,13 @@ export class CommanderSelectScene extends Scene {
           const padX     = 4
           const padY     = 6
           const innerW   = screenW - padX * 2
-          const innerH   = screenH - padY * 2
           const innerTop = screenY - screenH / 2 + padY
-          const innerLeft = screenX - innerW / 2
+          // Bottom edge clips above the visual TV floor line so list rows
+          // never appear to spill onto the lower panel below the screen.
+          const screenBottom = screenY + screenH / 2 - padY
+          const innerBottom  = floorY != null ? Math.min(screenBottom, floorY - 2) : screenBottom
+          const innerH       = innerBottom - innerTop
+          const innerLeft    = screenX - innerW / 2
 
           this._archiveLayout = {
             screenX, screenY, screenW, screenH,

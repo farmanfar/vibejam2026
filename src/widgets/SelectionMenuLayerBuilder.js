@@ -293,10 +293,19 @@ export function buildPreviewLayer(scene, container, config, callbacks) {
   const screenGlow = scene.add.rectangle(0, 16, 210, 110, Theme.accent, 0.1)
   const screen     = scene.add.rectangle(0, 16, 206, 106, 0x091018, 1).setStrokeStyle(1, Theme.accentDim, 0.6)
   const lowerPanel = scene.add.rectangle(0, 84, 182, 18, 0x181d26, 1).setStrokeStyle(1, Theme.panelBorder, 0.75)
+  // Lower-strip label is configurable so host scenes can replace the default
+  // "PREVIEW LOOP" copy with something topical (e.g. 'TOP 10 RUNS' for the
+  // Battle Archive). Pass an empty string to hide the label entirely.
+  const footerText = config.text?.regionTitles?.previewFooter ?? 'PREVIEW LOOP'
   const titleText  = scene.add.bitmapText(0, -76, FONT_KEY, regionTitle, 10).setOrigin(0.5).setTint(Theme.fantasyGold)
-  const loopLabel  = scene.add.bitmapText(0, 75, FONT_KEY, 'PREVIEW LOOP', 8).setOrigin(0.5).setTint(Theme.ambientText)
   const floorLine  = scene.add.rectangle(0, 58, 126, 4, Theme.panelBorder, 0.6)
-  container.add([casing, bezel, screenGlow, screen, lowerPanel, titleText, loopLabel, floorLine])
+  container.add([casing, bezel, screenGlow, screen, lowerPanel, titleText, floorLine])
+  if (footerText) {
+    // Centered inside the lowerPanel rect (y=84, h=18) so the label reads as
+    // a caption on the strip rather than floating against its top edge.
+    const loopLabel = scene.add.bitmapText(0, 84, FONT_KEY, footerText, 8).setOrigin(0.5).setTint(Theme.ambientText)
+    container.add(loopLabel)
+  }
 
   for (let y = -30; y <= 58; y += 8) {
     container.add(scene.add.rectangle(0, y, 196, 1, 0x000000, 0.09))
@@ -308,7 +317,9 @@ export function buildPreviewLayer(scene, container, config, callbacks) {
   if (config.visuals?.previewContentBuilder) {
     // Host scene provides custom content — skip the default 2-sprite render.
     // screenX/screenY are in container-local coordinates (screen rect centered at y=16).
-    config.visuals.previewContentBuilder(scene, container, { screenX: 0, screenY: 16, screenW: 206, screenH: 106 })
+    // floorY is the visual TV-floor line — content past it looks like it spills
+    // onto the lower panel, so list-style content should clip above floorY.
+    config.visuals.previewContentBuilder(scene, container, { screenX: 0, screenY: 16, screenW: 206, screenH: 106, floorY: 58 })
   } else {
     const previewItems = config.items?.preview ?? config.items?.featured ?? []
     const leftItem  = previewItems[0]

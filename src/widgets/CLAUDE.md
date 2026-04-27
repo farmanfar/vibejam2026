@@ -41,7 +41,9 @@ Back (S/ESC/background click): any non-center → center.
 
 ## Custom preview content
 
-Supply `config.visuals.previewContentBuilder(scene, container, { screenX, screenY, screenW, screenH })` to replace the default 2-sprite render in the preview slot. The screen rect is centered at `(screenX=0, screenY=16)` in container-local space. The builder adds its own display objects to `container` and is responsible for all layout within those bounds.
+Supply `config.visuals.previewContentBuilder(scene, container, { screenX, screenY, screenW, screenH, floorY })` to replace the default 2-sprite render in the preview slot. The screen rect is centered at `(screenX=0, screenY=16)` in container-local space. `floorY` (≈58) is the visual TV-floor line — list-style content should clip above it so rows do not appear to spill onto the lower panel. The builder adds its own display objects to `container` and is responsible for all layout within those bounds.
+
+The lower-strip label under the screen defaults to `'PREVIEW LOOP'`. Set `config.text.regionTitles.previewFooter` to override it (e.g. `'TOP 10 RUNS'`) or pass an empty string to hide it entirely.
 
 Supply `config.actions.onViewChange(viewId)` to be notified on every view transition (including the initial `'center'` at construction). Use it to swap preview content visibility between the small and zoomed states.
 

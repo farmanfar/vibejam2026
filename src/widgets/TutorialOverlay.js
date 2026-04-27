@@ -267,6 +267,7 @@ export class TutorialOverlay {
     const { width, height } = this.scene.cameras.main
     const titleText = step.title ?? ''
     const bodyText = step.body ?? ''
+    const hasTitle = titleText.length > 0
     const contentMaxW = PANEL_W - PANEL_PAD * 2
 
     // Pre-build body off-screen so Phaser wraps with real m5x7 char advance
@@ -277,7 +278,8 @@ export class TutorialOverlay {
     body.setLineSpacing(2)
     body.setMaxWidth(contentMaxW)
     const bodyHeight = Math.max(10, body.height)
-    const panelH = 76 + bodyHeight + 14
+    const bodyTopOffset = hasTitle ? 38 : 14
+    const panelH = (hasTitle ? 76 : 52) + bodyHeight + 14
     const anchorRect = unionRects(targetRects)
     const isCenter = step.anchor === 'center' || !anchorRect
     const pos = isCenter
@@ -290,12 +292,14 @@ export class TutorialOverlay {
     })
     this._track(panel, DEPTH_PANEL)
 
-    const title = new PixelLabel(this.scene, pos.x + PANEL_PAD, pos.y + 12, titleText, {
-      scale: 2, color: 'critical',
-    })
-    this._track(title, DEPTH_PANEL)
+    if (hasTitle) {
+      const title = new PixelLabel(this.scene, pos.x + PANEL_PAD, pos.y + 12, titleText, {
+        scale: 2, color: 'critical',
+      })
+      this._track(title, DEPTH_PANEL)
+    }
 
-    body.setPosition(pos.x + PANEL_PAD, pos.y + 38)
+    body.setPosition(pos.x + PANEL_PAD, pos.y + bodyTopOffset)
     this._track(body, DEPTH_PANEL)
 
     const singleStep = this.steps.length === 1
