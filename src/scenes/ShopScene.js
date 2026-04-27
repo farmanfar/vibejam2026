@@ -18,6 +18,8 @@ import { SynergyChipStrip } from '../widgets/SynergyChipStrip.js'
 import { SynergyTooltip } from '../widgets/SynergyTooltip.js'
 import { CommanderBadge } from '../widgets/CommanderBadge.js'
 import { LockToggle } from '../widgets/LockToggle.js'
+import { TutorialOverlay } from '../widgets/TutorialOverlay.js'
+import { pickTutorialSeedIds } from './tutorialSeed.js'
 
 // Team card row
 const TEAM_Y        = 122
@@ -61,6 +63,9 @@ export class ShopScene extends Scene {
     this.runId = data.runId
     this.commander = data.commander ?? null
     this.merchant = data.merchant ?? null
+    this.tutorial = data.tutorial === true
+    this._tutorialActive = false
+    this._tutorialOverlay = null
 
     // Per-card lock state — one boolean per shop slot (4). Locked slots preserve
     // their card across manual rerolls AND round transitions. Lock auto-clears
@@ -93,6 +98,20 @@ export class ShopScene extends Scene {
     } else {
       this.shopOffer = this.shop.roll()
       this.shopLocks = [false, false, false, false]
+    }
+
+    if (this.tutorial && this.stage === 1) {
+      const seedIds = pickTutorialSeedIds(this.availableWarriors)
+      if (seedIds.length > 0) {
+        this.shopOffer = seedIds.map((id) => {
+          const proto = this.availableWarriors.find(w => w.id === id)
+          return proto ? { ...proto } : null
+        })
+        this.shopLocks = [false, false, false, false]
+        console.log(`[Tutorial] Seeded stage-1 shop: [${seedIds.join(', ')}]`)
+      } else {
+        console.log('[Tutorial] No tutorial seed available - keeping rolled shop')
+      }
     }
 
     this.goldLabel = null
@@ -178,7 +197,7 @@ export class ShopScene extends Scene {
     const { width, height } = this.cameras.main
 
     const freshTurn = this._freshTurn
-    console.log(`[Shop] Creating shop scene — stage ${this.stage}, credits ${this.gold}${freshTurn ? ' (fresh turn, reset to 10)' : ''}, team size ${this.team.length}`)
+    console.log(`[Shop] Creating shop scene — stage ${this.stage}, credits ${this.gold}${freshTurn ? ' (fresh turn, reset to 10)' : ''}, team size ${this.team.length}, tutorial=${this.tutorial}`)
     console.log(`[Shop] Commander: ${this.commander?.name ?? 'none'}`)
 
     // CRT post-process (softGameplay — interactive scene)
@@ -332,6 +351,14 @@ export class ShopScene extends Scene {
       // Out-of-credits path still plays the spin, but crashes into a red
       // "NO FUNDS" pill instead of rolling — the slot machine refuses to pay out.
       // Locked slots are preserved through the roll; unlocked slots refresh.
+      if (this._tutorialActive) {
+        console.log('[Tutorial] Reroll blocked (tutorial active).')
+        const bounds = this._getRerollButtonBounds()
+        this._showTutorialHint('Locked during tutorial', bounds
+          ? { x: bounds.x + bounds.width / 2, y: bounds.y }
+          : null)
+        return
+      }
       if (this.gold < 1) {
         console.log('[Shop] reroll clicked — no funds, spinning to NO FUNDS')
         this.rerollBtn.btnBg = Theme.error
@@ -388,6 +415,10 @@ export class ShopScene extends Scene {
 
     this._updateFightUrgency()
 
+    if (this.tutorial && this.stage === 1) {
+      this._startStageOneTutorial(livesLabel)
+    }
+
     console.log('[Shop] Scene created successfully')
     finalizeCaptureScene('Shop')
   }
@@ -395,6 +426,312 @@ export class ShopScene extends Scene {
   // ── Fight button urgency (out-of-credits "soft touch" attention) ─────────
   // When credits hit 0, FIGHT! subtly swells, micro-shakes, and a low-alpha
   // shimmer sweeps left → right on loop. Stops the moment credits return.
+
+  _startStageOneTutorial(livesLabel) {
+    if (this._tutorialOverlay) return
+
+    this._tutorialOverlay = new TutorialOverlay(this, {
+      steps: [
+        {
+          id: 'welcome',
+          anchor: 'center',
+          title: 'Welcome to Hired Swords',
+          body: 'Build a team. The team fights. Make it to 9 wins before 3 losses.',
+          advance: 'click',
+        },
+        {
+          id: 'lives',
+          target: () => livesLabel,
+          ring: true,
+          title: '3 strikes and out',
+          body: 'Lose 3 battles and your run ends. Win 9 to claim a spot in the Hall of Fame.',
+          advance: 'click',
+        },
+        {
+          id: 'drag-buy-1',
+          target: () => this._getFirstShopCard(),
+          ring: true,
+          arrow: 'down',
+          pulseHint: () => this._getEmptyBenchSlotBounds(),
+          title: 'Recruit a warrior',
+          body: 'Recruit by dragging from the shop up to your team bench above. Each unit costs credits.',
+          advance: { event: 'tutorial:bought' },
+          condition: () => !!this._getFirstShopCard(),
+        },
+        {
+          id: 'positions',
+          bounds: () => this._getBenchRowBounds(),
+          ring: true,
+          title: 'Position matters',
+          body: 'Front units (right side) fight first. Drag bench cards to reorder. Tanks up front, fragile units in back.',
+          advance: 'click',
+        },
+        {
+          id: 'drag-buy-2',
+          target: () => this._findSameTagNonDuplicateShopCard(),
+          ring: true,
+          arrow: 'down',
+          pulseHint: () => this._getEmptyBenchSlotBounds(),
+          title: 'Units have synergies',
+          body: 'Buy another and place it on your bench. Units that share a class or faction unlock synergies.',
+          advance: { event: 'tutorial:bought' },
+          condition: () => !!this._findSameTagNonDuplicateShopCard(),
+        },
+        {
+          id: 'synergy',
+          bounds: () => this._getSynergyChipBounds(),
+          ring: true,
+          arrow: 'up',
+          title: 'Synergy active',
+          body: 'This chip lit up because 2+ units share a tag. Shared tags often get stronger as you stack them - themed teams beat random ones.',
+          advance: 'click',
+          condition: () => this._hasActiveSynergy(),
+        },
+        {
+          id: 'combine',
+          targets: [
+            () => this._findDuplicateShopCard(),
+            () => this._findMatchingTeamCardForDuplicateShopCard(),
+          ],
+          ring: true,
+          arrow: 'down',
+          title: 'Duplicates -> power spike',
+          body: 'Drag like units on top of each other to level them up. 2 of the same -> 2-star (+1 atk, +1 hp). 4 -> 3-star. The biggest power move in the game.',
+          advance: { event: 'tutorial:combined' },
+          condition: () => this._hasShopBenchCombinePair(),
+          conditionFailureLog: () => {
+            if (this.teamSlots.some(u => u && (u.stars ?? 1) > 1)) {
+              console.log('[Tutorial] Step "combine" skipped (already combined during step 5)')
+            }
+          },
+        },
+        {
+          id: 'fight',
+          target: () => this.fightBtn,
+          ring: true,
+          title: 'Ready when you are',
+          body: "Click FIGHT to battle. Spend your credits - they don't carry over to next round.",
+          advance: 'click',
+        },
+      ],
+      onBlockedPointerDown: (pointer) => this._handleTutorialBlockedPointer(pointer),
+      onComplete: () => {
+        this._tutorialOverlay = null
+        this._updateRerollButtonState()
+      },
+      onSkip: () => {
+        this.tutorial = false
+        this._tutorialOverlay = null
+        this._updateRerollButtonState()
+      },
+    })
+    this._tutorialOverlay.start()
+    this._updateRerollButtonState()
+  }
+
+  _getFirstShopCard() {
+    return this.cards?.find(Boolean) ?? null
+  }
+
+  _unitTags(unit) {
+    return [unit?.faction, unit?.class].filter(Boolean)
+  }
+
+  _sharesAnyTag(a, b) {
+    const tags = new Set(this._unitTags(a))
+    return this._unitTags(b).some(tag => tags.has(tag))
+  }
+
+  _findSameTagNonDuplicateShopCard() {
+    const benchUnits = this.teamSlots.filter(Boolean)
+    if (benchUnits.length === 0) return null
+    const benchIds = new Set(benchUnits.map(u => u.id))
+    const index = this.shopOffer.findIndex(w =>
+      w
+      && !benchIds.has(w.id)
+      && benchUnits.some(unit => this._sharesAnyTag(unit, w)))
+    return index >= 0 ? this.cards?.[index] ?? null : null
+  }
+
+  _findDuplicateShopIndex() {
+    return this.shopOffer.findIndex(w =>
+      w && this.teamSlots.some(s =>
+        s
+        && s.id === w.id
+        && (s.stars ?? 1) === (w.stars ?? 1)
+        && (s.stars ?? 1) < MAX_STARS,
+      ))
+  }
+
+  _findDuplicateShopCard() {
+    const index = this._findDuplicateShopIndex()
+    return index >= 0 ? this.cards?.[index] ?? null : null
+  }
+
+  _findMatchingTeamCardForDuplicateShopCard() {
+    const index = this._findDuplicateShopIndex()
+    if (index < 0) return null
+    const warrior = this.shopOffer[index]
+    const slot = this.teamSlots.findIndex(s =>
+      s
+      && s.id === warrior.id
+      && (s.stars ?? 1) === (warrior.stars ?? 1)
+      && (s.stars ?? 1) < MAX_STARS,
+    )
+    return slot >= 0 ? this._teamCards?.[slot] ?? null : null
+  }
+
+  _hasShopBenchCombinePair() {
+    return this._findDuplicateShopIndex() >= 0
+  }
+
+  _hasActiveSynergy() {
+    const counts = {}
+    this.teamSlots.filter(Boolean).forEach(u => {
+      if (u.faction) counts[u.faction] = (counts[u.faction] || 0) + 1
+      if (u.class)   counts[u.class]   = (counts[u.class]   || 0) + 1
+    })
+    return Object.values(counts).some(n => n >= 2)
+  }
+
+  _getEmptyBenchSlotBounds() {
+    if (!this._teamAnchors) return []
+    return this._teamAnchors
+      .map((anchor, visualIdx) => {
+        if (!anchor) return null
+        const slotIdx = (MAX_BENCH_SLOTS - 1) - visualIdx
+        if (this.teamSlots[slotIdx]) return null
+        return {
+          x: anchor.x - WarriorCard.WIDTH / 2,
+          y: anchor.y - WarriorCard.HEIGHT / 2,
+          width: WarriorCard.WIDTH,
+          height: WarriorCard.HEIGHT,
+        }
+      })
+      .filter(Boolean)
+  }
+
+  _getBenchRowBounds() {
+    const rects = this._teamAnchors
+      .filter(Boolean)
+      .map(anchor => ({
+        x: anchor.x - WarriorCard.WIDTH / 2,
+        y: anchor.y - WarriorCard.HEIGHT / 2,
+        width: WarriorCard.WIDTH,
+        height: WarriorCard.HEIGHT,
+      }))
+    if (!rects.length) return null
+    const x1 = Math.min(...rects.map(r => r.x))
+    const y1 = Math.min(...rects.map(r => r.y))
+    const x2 = Math.max(...rects.map(r => r.x + r.width))
+    const y2 = Math.max(...rects.map(r => r.y + r.height))
+    return { x: x1, y: y1, width: x2 - x1, height: y2 - y1 }
+  }
+
+  _getSynergyChipBounds() {
+    const chips = this.synergyChips?._activeChips ?? []
+    const rects = chips
+      .filter(chip => chip.visible)
+      .map((chip) => {
+        try {
+          const b = chip.getBounds()
+          if (b && b.width > 0 && b.height > 0) return b
+        } catch (e) {
+          console.error('[Tutorial] Synergy chip bounds failed:', e)
+        }
+        return null
+      })
+      .filter(Boolean)
+    if (rects.length) {
+      const x1 = Math.min(...rects.map(r => r.x))
+      const y1 = Math.min(...rects.map(r => r.y))
+      const x2 = Math.max(...rects.map(r => r.x + r.width))
+      const y2 = Math.max(...rects.map(r => r.y + r.height))
+      return { x: x1, y: y1, width: x2 - x1, height: y2 - y1 }
+    }
+    if (!this.synergyChips) return null
+    return {
+      x: this.synergyChips.x - 110,
+      y: this.synergyChips.y - 25,
+      width: 220,
+      height: 50,
+    }
+  }
+
+  _hasUnmergedPairOnBench() {
+    const bench = this.teamSlots.filter(Boolean)
+    return bench.some((a, i) =>
+      bench.slice(i + 1).some(b =>
+        a.id === b.id
+        && (a.stars ?? 1) === (b.stars ?? 1)
+        && (a.stars ?? 1) < MAX_STARS,
+      ),
+    )
+  }
+
+  _showTutorialHint(msg, anchor = null) {
+    const benchBounds = this._getBenchRowBounds()
+    const point = anchor ?? {
+      x: this.cameras.main.width / 2,
+      y: benchBounds?.y ?? TEAM_Y,
+    }
+    const label = new PixelLabel(this, point.x, point.y - 28, msg, {
+      scale: 1, color: 'warning', align: 'center',
+    })
+    label.setDepth(1502)
+    label.setAlpha(0)
+    this.tweens.add({
+      targets: label,
+      alpha: 1,
+      y: label.y - 8,
+      duration: 160,
+      ease: 'Cubic.easeOut',
+      onComplete: () => {
+        this.tweens.add({
+          targets: label,
+          alpha: 0,
+          duration: 360,
+          delay: 1600,
+          ease: 'Cubic.easeIn',
+          onComplete: () => label.destroy(),
+        })
+      },
+    })
+  }
+
+  _handleTutorialBlockedPointer(pointer) {
+    if (!this._tutorialActive || !this.rerollBtn) return
+    const bounds = this._getRerollButtonBounds()
+    if (!bounds) return
+    if (pointer.x < bounds.x || pointer.x > bounds.x + bounds.width
+        || pointer.y < bounds.y || pointer.y > bounds.y + bounds.height) {
+      return
+    }
+    console.log('[Tutorial] Reroll blocked (tutorial active).')
+    this._showTutorialHint('Locked during tutorial', {
+      x: bounds.x + bounds.width / 2,
+      y: bounds.y,
+    })
+  }
+
+  _getRerollButtonBounds() {
+    const btn = this.rerollBtn
+    if (!btn) return null
+    let x = btn.x
+    let y = btn.y
+    let parent = btn.parentContainer
+    while (parent) {
+      x += parent.x ?? 0
+      y += parent.y ?? 0
+      parent = parent.parentContainer
+    }
+    return {
+      x: x - (btn.btnW ?? 160) / 2,
+      y: y - (btn.btnH ?? 40) / 2,
+      width: btn.btnW ?? 160,
+      height: btn.btnH ?? 40,
+    }
+  }
 
   _updateFightUrgency() {
     if (!this.fightBtn) return
@@ -410,6 +747,7 @@ export class ShopScene extends Scene {
   _updateRerollButtonState() {
     const btn = this.rerollBtn
     if (!btn || btn._spinning) return
+    btn.setAlpha(this._tutorialActive ? 0.5 : 1)
     if (this.gold >= 1 && btn.label !== 'REROLL') {
       console.log('[Shop] reroll button reset → REROLL (credits restored)')
       btn.btnBg = Theme.accentDim
@@ -723,6 +1061,8 @@ export class ShopScene extends Scene {
       console.log(`[Shop] vfx slot=${target} stars=${occupant.stars}`)
       logShopBuy({ scene: this, unit: warrior, cost: warrior.cost, creditsAfter: this.gold, starLevel: occupant.stars })
       logShopCombine({ scene: this, unit: occupant, fromSlot: -1, toSlot: target, hostSlotAfter: target, newStars: occupant.stars })
+      this.events.emit('tutorial:bought')
+      this.events.emit('tutorial:combined')
 
     } else if (!occupant) {
       // buy-empty
@@ -739,6 +1079,13 @@ export class ShopScene extends Scene {
       this.cards[shopIndex] = null
       console.log(`[Shop] drop resolution=buy-empty source=shop from=${shopIndex} to=${target}`)
       logShopBuy({ scene: this, unit: warrior, cost: warrior.cost, creditsAfter: this.gold, starLevel: warrior.stars ?? 1 })
+      this.events.emit('tutorial:bought')
+      if (this._tutorialActive && this._hasUnmergedPairOnBench()) {
+        const benchBounds = this._getBenchRowBounds()
+        this._showTutorialHint('Drag them together to combine!', benchBounds
+          ? { x: benchBounds.x + benchBounds.width / 2, y: benchBounds.y }
+          : null)
+      }
 
     } else {
       // reject-no-match
@@ -847,6 +1194,7 @@ export class ShopScene extends Scene {
       console.log(`[Shop] drop resolution=combine source=team from=${fromSlot} to=${target}`)
       console.log(`[Shop] vfx slot=${target} stars=${occupant.stars}`)
       logShopCombine({ scene: this, unit: occupant, fromSlot, toSlot: target, hostSlotAfter: target, newStars: occupant.stars })
+      this.events.emit('tutorial:combined')
 
     } else if (occupant) {
       // swap
@@ -1423,6 +1771,7 @@ export class ShopScene extends Scene {
       this.scene.start('Battle', {
         stage: this.stage, wins: this.wins, losses: this.losses,
         team: this.team, runId: this.runId, commander: this.commander, merchant: this.merchant, opponent,
+        tutorial: this.tutorial,
         shopLocks: this.shopLocks.slice(),
         shopOffer: this.shopLocks.some(Boolean) ? this.shopOffer : null,
       })
@@ -1432,6 +1781,7 @@ export class ShopScene extends Scene {
       this.scene.start('Battle', {
         stage: this.stage, wins: this.wins, losses: this.losses,
         team: this.team, runId: this.runId, commander: this.commander, merchant: this.merchant, opponent,
+        tutorial: this.tutorial,
         shopLocks: this.shopLocks.slice(),
         shopOffer: this.shopLocks.some(Boolean) ? this.shopOffer : null,
       })

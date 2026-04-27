@@ -12,14 +12,18 @@ Boot → Menu → Shop ⟷ Battle → Shop (win/loss, team persists — no perma
                  └→ HallOfFame (leaderboard viewer, no runId)
 ```
 
-Scenes pass state via `init(data)` with: `{ stage, credits, wins, losses, team, runId, opponent, commander, merchant }`.
+Current run start flow is `Menu -> ModeSelect -> CommanderSelect -> Shop`; ModeSelect sets the per-run `tutorial` flag.
+
+Scenes pass state via `init(data)` with: `{ stage, credits, wins, losses, team, runId, opponent, commander, merchant, tutorial }`.
 Dynamic run length: play rounds until 9 wins or 3 losses (not fixed 9 stages).
 
 ## Files
 
 - **BootScene.js** — Preloads parallax textures (29 PENUSBMIC sets, ~180 PNGs via `getAllParallaxAssets()`). Generates placeholder textures for warriors (colored squares with eyes, per tier). Generates merchant placeholder. Initializes PixelFont and Supabase auth. 600ms delay then transitions to Menu.
-- **MenuScene.js** — Title screen with name input (PixelTextInput), typewriter messages, merchant with idle bob/breathing animation + reflection. Buttons: START GAME, HALL OF FAME, FACTION & CLASS RULES, SETTINGS. Passes `{ stage: 1, gold: 10, wins: 0, losses: 0, team: [], runId }` to Shop. Scanline overlay.
-- **ShopScene.js** — Core recruitment UI. Header: stage label, credit label, lives label (3 - losses). Team row (5 full WarriorCards, top of screen) with drag-to-sell via merchant zone (1 credit flat). 4 shop cards at bottom via ShopManager; drag-to-buy onto team row. Merchant strip (right) with sell zone below. Button strip (left): REROLL (1 credit), FIGHT! (triggers ghost snapshot + opponent fetch, then transitions to Battle). Each shop turn begins with exactly 10 credits — no carryover, no W/L variance.
+- **MenuScene.js** — Title screen with name input (PixelTextInput), typewriter messages, merchant with idle bob/breathing animation + reflection. Buttons: START GAME, HALL OF FAME, FACTION & CLASS RULES, SETTINGS. START GAME routes to ModeSelect. Scanline overlay.
+- **ModeSelectScene.js** - opt-in run mode picker. TUTORIAL MODE and NORMAL MODE both route to CommanderSelect with a fresh runId and `tutorial` boolean. BACK returns to Menu.
+- **ShopScene.js** — Core recruitment UI. Header: stage label, credit label, lives label (3 - losses). Team row (5 full WarriorCards, top of screen) with drag-to-sell via merchant zone (1 credit flat). 4 shop cards at bottom via ShopManager; drag-to-buy onto team row. Merchant strip (right) with sell zone below. Button strip (left): REROLL (1 credit), FIGHT! (triggers ghost snapshot + opponent fetch, then transitions to Battle). Each shop turn begins with exactly 10 credits — no carryover, no W/L variance. In tutorial mode, stage 1 seeds the shop and uses TutorialOverlay callouts.
+- **tutorialSeed.js** - pure helper for deterministic tutorial stage-1 shop offers: three copies of one tier-1 unit plus a different same-tag tier-1 unit.
 - **BattleScene.js** — Split parallax backgrounds (left/right random PENUSBMIC sets). Ground grid below parallax. Player team (left, x:100-420) vs enemy team (right, x:540-860) at y=320. Health bars above units. VS text center, battle log center-bottom. Animates at 500ms/step with camera shake. No gold awarded — shop resets to 10 credits each turn regardless of outcome. Full team carries over (no permadeath — dead units re-enter next round at full HP). Routes to appropriate next scene.
 - **GameOverScene.js** — Shown at 3 losses. Displays W-L record. Buttons: PLAY AGAIN, MAIN MENU. Scanline overlay.
 - **HallOfFameScene.js** — Two modes: champion (has runId, submits to Supabase, shows "CHAMPION!") or leaderboard viewer (from menu, shows "HALL OF FAME"). Fetches and displays top 8 as `${wins}W - ${losses}L`. Buttons vary by mode.

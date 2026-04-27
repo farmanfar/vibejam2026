@@ -30,14 +30,14 @@ function _needsPowerOff(scene, targetKey, data) {
       return false;
 
     case 'GameOver':
-      return targetKey === 'CommanderSelect' || targetKey === 'Menu';
+      return targetKey === 'ModeSelect' || targetKey === 'CommanderSelect' || targetKey === 'Menu';
 
     case 'HallOfFame': {
       // fromMenu = leaderboard viewer entered from Menu — no power-off
       // !runId means the scene was started without a run context (fromMenu)
       const fromMenu = !scene.runId;
       if (fromMenu) return false;
-      return targetKey === 'CommanderSelect' || targetKey === 'Menu';
+      return targetKey === 'ModeSelect' || targetKey === 'CommanderSelect' || targetKey === 'Menu';
     }
 
     default:

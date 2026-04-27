@@ -3,6 +3,7 @@ import { FilterCRT } from './rendering/FilterCRT.js';
 import { FilterOutline } from './rendering/FilterOutline.js';
 import { BootScene } from './scenes/BootScene.js';
 import { MenuScene } from './scenes/MenuScene.js';
+import { ModeSelectScene } from './scenes/ModeSelectScene.js';
 import { CommanderSelectScene } from './scenes/CommanderSelectScene.js';
 import { MerchantSelectScene } from './scenes/MerchantSelectScene.js';
 import { ShopScene } from './scenes/ShopScene.js';
@@ -33,7 +34,7 @@ const config = {
     // Reserve up to 12 simultaneous point lights for BattleScene unit lighting
     maxLights: 12,
   },
-  scene: [BootScene, MenuScene, CommanderSelectScene, MerchantSelectScene, ShopScene, BattleScene, GameOverScene, HallOfFameScene, SettingsScene, RulesScene],
+  scene: [BootScene, MenuScene, ModeSelectScene, CommanderSelectScene, MerchantSelectScene, ShopScene, BattleScene, GameOverScene, HallOfFameScene, SettingsScene, RulesScene],
 };
 
 resetCaptureReady();

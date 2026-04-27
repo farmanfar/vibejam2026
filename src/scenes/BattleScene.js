@@ -15,6 +15,7 @@ import { SceneDust } from '../rendering/SceneDust.js'
 import { attachOutlineToSprite } from '../rendering/OutlineController.js'
 import { fitSpriteToPortraitBounds } from '../rendering/SpriteFit.js'
 import { CommanderBadge } from '../widgets/CommanderBadge.js'
+import { TutorialOverlay } from '../widgets/TutorialOverlay.js'
 import { getCommanderRule, pickRandomCommanders } from '../config/commanders.js'
 
 // Minimum on-screen height (in display px) for battle-sprite characters.
@@ -67,6 +68,7 @@ export class BattleScene extends Scene {
     this.opponent = data.opponent || []
     this.commander = data.commander ?? null
     this.merchant = data.merchant ?? null
+    this.tutorial = data.tutorial === true
     this.leftSet = data.leftSet ?? null
     this.rightSet = data.rightSet ?? null
     this.captureFreeze = data.captureFreeze === true
@@ -76,6 +78,7 @@ export class BattleScene extends Scene {
     this.shopOffer = Array.isArray(data.shopOffer)
       ? data.shopOffer.map(w => (w ? { ...w } : null))
       : null
+    console.log(`[Battle] init tutorial=${this.tutorial} stage=${this.stage}`)
   }
 
   create() {
@@ -342,9 +345,39 @@ export class BattleScene extends Scene {
       return
     }
 
-    FloatingBanner.show(this, `STAGE ${this.stage}`, {
+    const banner = FloatingBanner.show(this, `STAGE ${this.stage}`, {
       color: Theme.accent, hold: 600, scale: 6,
-    }).then(() => this._runBattle())
+    })
+    const tutorialGate = (this.tutorial && this.stage === 1)
+      ? banner.then(() => this._showAutoBattleTutorial())
+      : banner
+    tutorialGate.then(() => this._runBattle())
+  }
+
+  _showAutoBattleTutorial() {
+    return new Promise((resolve) => {
+      const overlay = new TutorialOverlay(this, {
+        steps: [
+          {
+            id: 'auto-battle',
+            anchor: 'center',
+            title: 'Battles play themselves',
+            body: "Sit back. Watch what works and what doesn't. The next shop arrives when it's over.",
+            advance: 'click',
+          },
+        ],
+        onComplete: () => {
+          console.log('[Tutorial] Auto-battle modal complete')
+          resolve()
+        },
+        onSkip: () => {
+          console.log('[Tutorial] Auto-battle modal skipped')
+          this.tutorial = false
+          resolve()
+        },
+      })
+      overlay.start()
+    })
   }
 
   update(time, delta) {
@@ -1253,6 +1286,7 @@ export class BattleScene extends Scene {
             wins: newWins, losses: this.losses, team: this.team, runId: this.runId,
             commander: this.commander,
             merchant: this.merchant,
+            tutorial: this.tutorial,
           })
           return
         }
@@ -1268,6 +1302,7 @@ export class BattleScene extends Scene {
             team: this.team,
             runId: this.runId,
             commander: this.commander,
+            tutorial: this.tutorial,
             shopLocks: this.shopLocks.slice(),
             shopOffer: this.shopLocks.some(Boolean) ? this.shopOffer : null,
           })
@@ -1283,6 +1318,7 @@ export class BattleScene extends Scene {
           runId: this.runId,
           commander: this.commander,
           merchant: this.merchant,
+          tutorial: this.tutorial,
           shopLocks: this.shopLocks.slice(),
           shopOffer: this.shopLocks.some(Boolean) ? this.shopOffer : null,
         })
@@ -1294,6 +1330,7 @@ export class BattleScene extends Scene {
             wins: this.wins, losses: newLosses,
             commander: this.commander,
             merchant: this.merchant,
+            tutorial: this.tutorial,
           })
           return
         }
@@ -1307,6 +1344,7 @@ export class BattleScene extends Scene {
           runId: this.runId,
           commander: this.commander,
           merchant: this.merchant,
+          tutorial: this.tutorial,
           shopLocks: this.shopLocks.slice(),
           shopOffer: this.shopLocks.some(Boolean) ? this.shopOffer : null,
         })

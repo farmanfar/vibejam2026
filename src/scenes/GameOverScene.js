@@ -39,7 +39,7 @@ export class GameOverScene extends Scene {
     gfx.lineBetween(width * 0.3, height * 0.48, width * 0.7, height * 0.48)
 
     const playAgainBtn = new PixelButton(this, width / 2, height * 0.58, 'PLAY AGAIN', () => {
-      startSceneWithCrtPolicy(this, 'CommanderSelect', { runId: crypto.randomUUID() })
+      startSceneWithCrtPolicy(this, 'ModeSelect', { runId: crypto.randomUUID() })
     }, { style: 'filled', scale: 3, bg: Theme.accent, width: 200, height: 44 })
     LayoutEditor.register(this, 'playAgainBtn', playAgainBtn, width / 2, height * 0.58)
 

@@ -73,7 +73,7 @@ export class HallOfFameScene extends Scene {
     } else {
       // Champion end-of-run — power-off plays on exit
       const playAgainBtn = new PixelButton(this, width / 2 - 110, height * 0.82, 'PLAY AGAIN', () => {
-        startSceneWithCrtPolicy(this, 'CommanderSelect', { runId: crypto.randomUUID() })
+        startSceneWithCrtPolicy(this, 'ModeSelect', { runId: crypto.randomUUID() })
       }, { style: 'filled', scale: 3, bg: Theme.accent, width: 180, height: 44 })
       LayoutEditor.register(this, 'playAgainBtn', playAgainBtn, width / 2 - 110, height * 0.82)
 

@@ -158,8 +158,8 @@ export class MenuScene extends Scene {
         scale: 3,
         onClick: () => {
           const runId = crypto.randomUUID();
-          console.log(`[Menu] Starting new run: ${runId}`);
-          this.scene.start('CommanderSelect', { runId });
+          console.log(`[Menu] Starting new run mode select: ${runId}`);
+          this.scene.start('ModeSelect', { runId });
         },
       },
       {

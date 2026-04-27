@@ -48,7 +48,7 @@ Log aggressively. The user debugs by pasting console output — silent failures 
 - Every layout-managed element: `[Layout] Scene.ElementId at (x, y)`
 - Every state transition, network call, and fallback path (log WHY the fallback ran)
 - Never `catch (_) {}` — always `catch (e) { console.error('[System] context:', e) }`
-- System prefixes: `[Layout]`, `[Editor]`, `[Auth]`, `[Ghost]`, `[Shop]`, `[Battle]`, `[Menu]`, `[Boot]`
+- System prefixes: `[Layout]`, `[Editor]`, `[Auth]`, `[Ghost]`, `[Shop]`, `[Battle]`, `[Menu]`, `[Boot]`, `[Tutorial]`
 
 ## F2 Layout Editor
 

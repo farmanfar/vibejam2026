@@ -24,6 +24,7 @@ export class CommanderSelectScene extends Scene {
 
   init(data) {
     this._runId            = data.runId
+    this._tutorial         = data.tutorial === true
     this._fixedCommanders  = data.commanders ?? null
     this._captureView      = data.captureView ?? null
     this._widget           = null
@@ -31,12 +32,17 @@ export class CommanderSelectScene extends Scene {
     // _lightState is a plain object used as a Phaser tween target — scenes
     // themselves are NOT reliable tween targets (verified: tween on `this`
     // with numeric property never animated).
-    this._hoverLight     = null
-    this._litSprite      = null
-    this._lightState     = { baseIntensity: 0, flickerTime: 0 }
-    this._archiveTopFive = null
-    this._archiveTopTen  = null
-    console.log(`[Commander] Init - runId: ${this._runId}, fixed: ${!!this._fixedCommanders}`)
+    this._hoverLight       = null
+    this._litSprite        = null
+    this._lightState       = { baseIntensity: 0, flickerTime: 0 }
+    this._archiveText      = null
+    this._archiveScrollBar = null
+    this._archiveRows      = null
+    this._archiveScroll    = 0
+    this._archiveViewMode  = 'center'
+    this._archiveLayout    = null
+    this._archiveWheelHandler = null
+    console.log(`[Commander] Init - runId: ${this._runId}, tutorial: ${this._tutorial}, fixed: ${!!this._fixedCommanders}`)
   }
 
   create() {
@@ -108,6 +114,21 @@ export class CommanderSelectScene extends Scene {
       console.log('[Commander] Lighting teardown complete')
     })
 
+    // Battle Archive teardown: drop wheel/keyboard listeners. The text and
+    // scrollbar GameObjects belong to the widget's preview container, which
+    // Phaser destroys when the scene shuts down.
+    this.events.once('shutdown', () => {
+      if (this._archiveWheelHandler) {
+        this.input.off('wheel', this._archiveWheelHandler)
+        this._archiveWheelHandler = null
+      }
+      this._archiveText      = null
+      this._archiveScrollBar = null
+      this._archiveLayout    = null
+      this._archiveRows      = null
+      console.log('[Archive] Teardown complete')
+    })
+
     const choices   = this._fixedCommanders ?? pickRandomCommanders(3)
     const remaining = getCommanders().filter(c => !choices.some(ch => ch.id === c.id))
     const initialView = LEGACY_VIEW_MAP[this._captureView] ?? this._captureView ?? 'center'
@@ -160,52 +181,72 @@ export class CommanderSelectScene extends Scene {
                       `hasNormalMap=${hasNormal} texKey=${sprite.texture?.key}`)
         },
         previewContentBuilder: (scene, container, { screenX, screenY, screenW, screenH }) => {
-          const textX = screenX
-          const textY = screenY - screenH / 2 + 6
+          // Inner padding inside the screen rect — text never draws into the
+          // bezel/casing. Names are truncated per-mode so each entry stays a
+          // single line (m5x7 char advance ≈ fontSize * 6/7); the rendered
+          // slice is windowed by scroll offset so we never exit the rect.
+          const padX     = 4
+          const padY     = 6
+          const innerW   = screenW - padX * 2
+          const innerH   = screenH - padY * 2
+          const innerTop = screenY - screenH / 2 + padY
+          const innerLeft = screenX - innerW / 2
 
-          this._archiveTopFive = scene.add.bitmapText(textX, textY, FONT_KEY, 'LOADING ARCHIVE...', 8)
+          this._archiveLayout = {
+            screenX, screenY, screenW, screenH,
+            innerW, innerH, innerTop, innerLeft, padX, padY,
+            container,
+          }
+
+          this._archiveText = scene.add.bitmapText(screenX, innerTop, FONT_KEY, 'LOADING ARCHIVE...', 8)
             .setOrigin(0.5, 0)
             .setTint(Theme.mutedText)
-            .setMaxWidth(screenW - 8)
-          container.add(this._archiveTopFive)
+          container.add(this._archiveText)
 
-          this._archiveTopTen = scene.add.bitmapText(textX, textY, FONT_KEY, 'LOADING ARCHIVE...', 10)
-            .setOrigin(0.5, 0)
-            .setTint(Theme.mutedText)
-            .setMaxWidth(screenW - 8)
-            .setVisible(false)
-          container.add(this._archiveTopTen)
+          // Scrollbar thumb — drawn against the right inner edge of the screen.
+          // Hidden by default; shown only when the active view's line count
+          // exceeds the visible window.
+          this._archiveScrollBar = scene.add.rectangle(
+            innerLeft + innerW - 1, innerTop, 2, 8, Theme.accent, 0.7,
+          ).setOrigin(0.5, 0).setVisible(false)
+          container.add(this._archiveScrollBar)
 
           console.log('[Archive] Preview content built — fetching top ghosts')
           GhostManager.fetchTopGhosts().then(rows => {
-            if (!this.scene.isActive() || !this._archiveTopFive || !this._archiveTopTen) {
+            if (!this.scene.isActive() || !this._archiveText) {
               console.log('[Archive] Fetch resolved after scene shutdown — discarding')
               return
             }
             if (rows === null) {
-              this._archiveTopFive.setText('ARCHIVE OFFLINE')
-              this._archiveTopTen.setText('ARCHIVE OFFLINE')
+              this._archiveRows = null
+              this._archiveText.setText('ARCHIVE OFFLINE')
+              this._archiveScrollBar?.setVisible(false)
               console.warn('[Archive] Fetch failed — showing offline state')
               return
             }
             if (rows.length === 0) {
-              this._archiveTopFive.setText('NO RUNS YET')
-              this._archiveTopTen.setText('NO RUNS YET')
+              this._archiveRows = []
+              this._archiveText.setText('NO RUNS YET')
+              this._archiveScrollBar?.setVisible(false)
               console.log('[Archive] No ghost entries yet')
               return
             }
-            const fiveLines = rows.slice(0, 5).map((r, i) => {
-              const name = (r.nickname || 'ANON').slice(0, 10)
-              return `${i + 1}. ${name} ${r.wins}W-${r.losses}L`
-            })
-            const tenLines = rows.slice(0, 10).map((r, i) => {
-              const name = (r.nickname || 'ANON').slice(0, 14)
-              return `${i + 1}. ${name} ${r.wins}W-${r.losses}L`
-            })
-            this._archiveTopFive.setText(fiveLines.join('\n'))
-            this._archiveTopTen.setText(tenLines.join('\n'))
-            console.log(`[Archive] Rendered ${fiveLines.length} (small) / ${tenLines.length} (zoom) entries`)
+            this._archiveRows   = rows.slice(0, 10)
+            this._archiveScroll = 0
+            this._renderArchive()
           })
+
+          // Mouse wheel — only acts while the Battle Archive is the focused
+          // (zoomed) view. Scrolls one entry per notch. Keyboard arrows are
+          // reserved by SelectionMenuWidget for view navigation, so wheel is
+          // the sole input here.
+          this._archiveWheelHandler = (_pointer, _objs, _dx, dy) => {
+            if (this._archiveViewMode !== 'previewClose') return
+            if (!this._archiveRows || this._archiveRows.length === 0) return
+            const dir = dy > 0 ? 1 : -1
+            this._scrollArchive(dir, 'wheel')
+          }
+          scene.input.on('wheel', this._archiveWheelHandler)
         },
       },
       actions: {
@@ -213,11 +254,12 @@ export class CommanderSelectScene extends Scene {
           // Selection state is reflected by panel gold border + EMBARK button enablement
         },
         onViewChange: (viewId) => {
-          if (!this._archiveTopFive || !this._archiveTopTen) return
-          const zoom = viewId === 'previewClose'
-          this._archiveTopFive.setVisible(!zoom)
-          this._archiveTopTen.setVisible(zoom)
-          console.log(`[Archive] View → ${viewId} (showing top ${zoom ? 10 : 5})`)
+          this._archiveViewMode = viewId
+          // Reset scroll when leaving the zoomed view so the user always
+          // re-enters at the top of the list.
+          if (viewId !== 'previewClose') this._archiveScroll = 0
+          if (this._archiveText) this._renderArchive()
+          console.log(`[Archive] View → ${viewId}`)
         },
         onFeaturedHoverEnter: (_i, item, sprite) => {
           if (!sprite || !this.sys.renderer.gl) return
@@ -291,6 +333,7 @@ export class CommanderSelectScene extends Scene {
             stage: 1, gold: 10, wins: 0, losses: 0, team: [],
             runId: this._runId,
             commander: item,
+            tutorial: this._tutorial,
           })
         },
         onBack: () => {
@@ -310,5 +353,94 @@ export class CommanderSelectScene extends Scene {
 
     // Widget self-registers its own shutdown cleanup (LayoutEditor + keyboard)
     finalizeCaptureScene('CommanderSelect')
+  }
+
+  // ---------------------------------------------------------------------------
+  // Battle Archive — windowed scrollable list
+  // ---------------------------------------------------------------------------
+  // Lines render only inside the screen rect (innerW × innerH in container-
+  // local coords). We compute how many lines fit at the active font size and
+  // render only that slice — no overflow can leak into the bezel/casing.
+  // The container's view-driven scale (1.62× in previewClose) propagates to
+  // the text and scrollbar automatically since they're container children.
+
+  _scrollArchive(direction, reason) {
+    if (!this._archiveRows || this._archiveRows.length === 0) return
+    const before = this._archiveScroll
+    this._archiveScroll = before + direction
+    this._renderArchive()
+    if (this._archiveScroll !== before) {
+      console.log(`[Archive] Scroll ${before} → ${this._archiveScroll} (${reason})`)
+    }
+  }
+
+  _renderArchive() {
+    const text = this._archiveText
+    const bar  = this._archiveScrollBar
+    const L    = this._archiveLayout
+    if (!text || !L) return
+
+    const zoomed   = this._archiveViewMode === 'previewClose'
+    const fontSize = zoomed ? 10 : 8
+
+    // Awaiting fetch / status messages — keep current text, just resize and
+    // re-center it so loading / offline / empty placeholders match the view.
+    if (!this._archiveRows || this._archiveRows.length === 0) {
+      text.setFontSize(fontSize)
+      text.setOrigin(0.5, 0)
+      text.setX(L.screenX)
+      text.setY(L.innerTop)
+      bar?.setVisible(false)
+      return
+    }
+    // RetroFont line spacing = (CELL_H / GLYPH_H) * fontSize = (8/7) * fontSize.
+    const lineH    = (8 / 7) * fontSize
+    // Char advance ≈ (CELL_W / GLYPH_H) * fontSize = (6/7) * fontSize.
+    const charW    = (6 / 7) * fontSize
+    const maxChars = Math.max(8, Math.floor(L.innerW / charW))
+    // Reserve right-edge column for the scrollbar so text never sits under it.
+    const lineCharBudget = maxChars - 2
+
+    // Center view shows a teaser (top 5); zoomed view shows the full top 10.
+    // Scrolling is meaningful only when the dataset exceeds what fits in the
+    // visible window — typically in the zoomed view.
+    const dataset      = zoomed ? this._archiveRows : this._archiveRows.slice(0, 5)
+    const visibleLines = Math.max(1, Math.floor(L.innerH / lineH))
+    const total        = dataset.length
+    const maxOffset    = Math.max(0, total - visibleLines)
+    if (this._archiveScroll > maxOffset) this._archiveScroll = maxOffset
+    if (this._archiveScroll < 0)         this._archiveScroll = 0
+
+    const slice = dataset
+      .slice(this._archiveScroll, this._archiveScroll + visibleLines)
+      .map((r, idx) => {
+        const i      = this._archiveScroll + idx + 1
+        const num    = `${i}.`.padEnd(3) // "1. " through "10."
+        const tail   = ` ${r.wins}W-${r.losses}L`
+        const nameBudget = Math.max(3, lineCharBudget - num.length - tail.length)
+        const name   = (r.nickname || 'ANON').slice(0, nameBudget)
+        return `${num}${name}${tail}`
+      })
+
+    text.setFontSize(fontSize)
+    text.setText(slice.join('\n'))
+    text.setOrigin(0, 0)
+    text.setX(L.innerLeft)
+    text.setY(L.innerTop)
+
+    // Scrollbar — only when overflow exists in the active mode.
+    const overflowing = total > visibleLines
+    if (overflowing) {
+      const trackH = L.innerH
+      const thumbH = Math.max(8, Math.floor(trackH * (visibleLines / total)))
+      const travel = trackH - thumbH
+      const t      = maxOffset === 0 ? 0 : this._archiveScroll / maxOffset
+      bar.setVisible(true)
+      bar.setSize(2, thumbH)
+      bar.setX(L.innerLeft + L.innerW - 1)
+      bar.setY(L.innerTop + travel * t)
+    } else {
+      bar.setVisible(false)
+    }
   }
 }

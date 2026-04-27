@@ -8,6 +8,7 @@ Generic, reusable UI widgets. No imports from scene-specific modules (no command
 - **SelectionMenuPresenter.js** — pure motion model. Defines `VIEWPOINTS` (x/y/scale/alpha per layer per view) and `BASE_SLOTS`. No Phaser imports. Edit here to adjust positions/timing.
 - **SelectionMenuLayerBuilder.js** — builds the four Phaser containers (background, panel, featured, preview). Returns named refs (title, header, hitzone, displays, hotspot, etc.) back to the widget. All pointer callbacks injected — no widget dependency.
 - **SelectionMenuFixture.js** — non-scene test data for the widget. Proves widget modularity (no commander or scene imports).
+- **TutorialOverlay.js** - transient guided-callout overlay. Plain class, not a Container. Owns scene-level dim/blocker/highlight/panel objects, supports single target, explicit bounds, or multiple targets, and advances by click or named scene event. Do not register overlay objects with LayoutEditor.
 
 ## SelectionMenuWidget — depth / layering rules
 
