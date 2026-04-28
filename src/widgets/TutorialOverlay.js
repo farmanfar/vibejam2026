@@ -270,19 +270,19 @@ export class TutorialOverlay {
     const hasTitle = titleText.length > 0
     const contentMaxW = PANEL_W - PANEL_PAD * 2
 
-    // Pre-build body off-screen so Phaser wraps with real m5x7 char advance
-    // (manual scale-based math underestimates width — see RulesScene comment).
-    // Use getTextBounds().local.height — Phaser 4 BitmapText `.height` returns
-    // 0 / pre-wrap height before first render, so a title-less step would
-    // collapse the panel and the body would never appear (regression seen in
-    // the stage-1 tutorial after the "lives" step).
-    const body = new PixelLabel(this.scene, -10000, -10000, bodyText, {
+    // Measure body height with a throwaway label so the panel can size
+    // itself before we create the real body. Phaser 4 BitmapText `.height`
+    // returns 0 / pre-wrap height before first render, so use
+    // getTextBounds(false).local.height (same pattern as WarriorCard).
+    const measure = new PixelLabel(this.scene, -10000, -10000, bodyText, {
       scale: 1, color: 'primary',
     })
-    body.setLineSpacing(2)
-    body.setMaxWidth(contentMaxW)
-    const measuredBodyH = body.getTextBounds(false)?.local?.height ?? 0
-    const bodyHeight = Math.max(10, measuredBodyH || body.height || 0)
+    measure.setLineSpacing(2)
+    measure.setMaxWidth(contentMaxW)
+    const measuredBodyH = measure.getTextBounds(false)?.local?.height ?? 0
+    const bodyHeight = Math.max(10, measuredBodyH || measure.height || 0)
+    measure.destroy()
+
     const bodyTopOffset = hasTitle ? 38 : 14
     const panelH = (hasTitle ? 76 : 52) + bodyHeight + 14
     const anchorRect = unionRects(targetRects)
@@ -304,7 +304,16 @@ export class TutorialOverlay {
       this._track(title, DEPTH_PANEL)
     }
 
-    body.setPosition(pos.x + PANEL_PAD, pos.y + bodyTopOffset)
+    // Body MUST be created after the panel: at equal depth, Phaser's
+    // displayList sort preserves insertion order, so a body created first
+    // renders behind the panel and never appears. Title-less steps used
+    // to fail this way because there was no later same-depth child to
+    // mask the bug.
+    const body = new PixelLabel(this.scene, pos.x + PANEL_PAD, pos.y + bodyTopOffset, bodyText, {
+      scale: 1, color: 'primary',
+    })
+    body.setLineSpacing(2)
+    body.setMaxWidth(contentMaxW)
     this._track(body, DEPTH_PANEL)
 
     const singleStep = this.steps.length === 1
