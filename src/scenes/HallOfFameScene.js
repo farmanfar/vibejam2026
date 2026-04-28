@@ -5,6 +5,7 @@ import { finalizeCaptureScene } from '../systems/CaptureSupport.js'
 import { LayoutEditor } from '../systems/LayoutEditor.js'
 import { SceneCrt, startSceneWithCrtPolicy } from '../rendering/SceneCrt.js'
 import { SceneDust } from '../rendering/SceneDust.js'
+import { VibeJamPortal } from '../widgets/VibeJamPortal.js'
 
 export class HallOfFameScene extends Scene {
   constructor() {
@@ -83,8 +84,19 @@ export class HallOfFameScene extends Scene {
       LayoutEditor.register(this, 'menuBtn', menuBtn, width / 2 + 110, height * 0.82)
     }
 
+    let onPortalUpdate = null
+    if (!this.fromMenu) {
+      const portalX = width * 0.85
+      const portalY = height * 0.55
+      const vibejamPortal = new VibeJamPortal(this, portalX, portalY)
+      LayoutEditor.register(this, 'vibejamPortal', vibejamPortal, portalX, portalY)
+      onPortalUpdate = (_t, delta) => vibejamPortal.advance(delta)
+      this.events.on('update', onPortalUpdate)
+    }
+
     this.events.once('shutdown', () => {
       console.log('[HallOfFame] Shutdown')
+      if (onPortalUpdate) this.events.off('update', onPortalUpdate)
       LayoutEditor.unregisterScene('HallOfFame')
     })
 

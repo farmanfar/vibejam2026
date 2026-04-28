@@ -10,3 +10,4 @@ export { PixelTypewriter } from './PixelTypewriter.js';
 export { PixelTextInput } from './PixelTextInput.js';
 export { UnitStatBadge } from './UnitStatBadge.js';
 export { PixelList } from './PixelList.js';
+export { PixelSlider } from './PixelSlider.js';

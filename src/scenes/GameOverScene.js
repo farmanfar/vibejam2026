@@ -4,6 +4,7 @@ import { finalizeCaptureScene } from '../systems/CaptureSupport.js'
 import { LayoutEditor } from '../systems/LayoutEditor.js'
 import { SceneCrt, startSceneWithCrtPolicy } from '../rendering/SceneCrt.js'
 import { SceneDust } from '../rendering/SceneDust.js'
+import { VibeJamPortal } from '../widgets/VibeJamPortal.js'
 
 export class GameOverScene extends Scene {
   constructor() {
@@ -48,8 +49,16 @@ export class GameOverScene extends Scene {
     }, { style: 'text', scale: 2 })
     LayoutEditor.register(this, 'menuBtn', menuBtn, width / 2, height * 0.70)
 
+    const portalX = width * 0.85
+    const portalY = height * 0.55
+    const vibejamPortal = new VibeJamPortal(this, portalX, portalY)
+    LayoutEditor.register(this, 'vibejamPortal', vibejamPortal, portalX, portalY)
+    const onPortalUpdate = (_t, delta) => vibejamPortal.advance(delta)
+    this.events.on('update', onPortalUpdate)
+
     this.events.once('shutdown', () => {
       console.log('[GameOver] Shutdown')
+      this.events.off('update', onPortalUpdate)
       LayoutEditor.unregisterScene('GameOver')
     })
 

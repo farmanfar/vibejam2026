@@ -203,6 +203,18 @@ export class BootScene extends Scene {
       return;
     }
 
+    // Vibe Jam 2026 portal arrival — skip splash delay and land on Menu
+    // immediately so continuity feels instant. Spec requires no loading screens
+    // for incoming portal users; Menu is our chosen landing.
+    if (typeof window !== 'undefined' && window.location && window.location.search) {
+      const params = new URLSearchParams(window.location.search);
+      if (params.get('portal') === 'true') {
+        console.log('[Boot] Incoming Vibe Jam portal arrival, params:', Object.fromEntries(params));
+        this.scene.start('Menu');
+        return;
+      }
+    }
+
     this.time.delayedCall(150, () => {
       this.scene.start('Menu');
     });

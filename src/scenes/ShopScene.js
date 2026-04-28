@@ -495,7 +495,7 @@ export class ShopScene extends Scene {
           ring: true,
           arrow: 'down',
           title: 'Duplicates -> power spike',
-          body: 'Drag like units on top of each other to level them up. 2 of the same -> 2-star (+1 atk, +1 hp). 4 -> 3-star. The biggest power move in the game.',
+          body: 'drag units ontop of each other to level them up',
           advance: { event: 'tutorial:combined' },
           condition: () => this._hasShopBenchCombinePair(),
           conditionFailureLog: () => {
@@ -1769,8 +1769,84 @@ export class ShopScene extends Scene {
     })
   }
 
-  async _startBattle() {
+  _showUnspentCreditsConfirm() {
+    if (this._unspentConfirmOpen) return
+    this._unspentConfirmOpen = true
+
+    const { width, height } = this.cameras.main
+    const panelW = 440
+    const panelH = 200
+    const x = Math.round((width - panelW) / 2)
+    const y = Math.round((height - panelH) / 2)
+    const PAD = 14
+    const DEPTH_DIM = 60
+    const DEPTH_PANEL = 61
+    const DEPTH_CONTENT = 62
+
+    const objects = []
+
+    const dim = this.add.rectangle(0, 0, width, height, 0x000000, 0.55)
+      .setOrigin(0)
+      .setInteractive()
+    dim.setDepth(DEPTH_DIM)
+    objects.push(dim)
+
+    const panel = new PixelPanel(this, x, y, panelW, panelH, {
+      bg: Theme.panelBg,
+      border: Theme.warning,
+    })
+    panel.setDepth(DEPTH_PANEL)
+    objects.push(panel)
+
+    const title = new PixelLabel(this, width / 2, y + 14, 'UNSPENT CREDITS', {
+      scale: 2, color: 'warning', align: 'center',
+    })
+    title.setDepth(DEPTH_CONTENT)
+    objects.push(title)
+
+    const body = new PixelLabel(
+      this,
+      x + PAD,
+      y + 46,
+      "Are you sure you want to fight with unspent credits? They will not be saved. It is optimal to reroll and see if there is a unit you should lock.",
+      { scale: 1, color: 'primary' },
+    )
+    body.setLineSpacing(2)
+    body.setMaxWidth(panelW - PAD * 2)
+    body.setDepth(DEPTH_CONTENT)
+    objects.push(body)
+
+    const close = () => {
+      this._unspentConfirmOpen = false
+      objects.forEach((o) => {
+        try { o.destroy() } catch (e) { console.error('[Shop] confirm cleanup:', e) }
+      })
+    }
+
+    const fight = new PixelButton(this, width / 2 - 78, y + panelH - 28, 'FIGHT', () => {
+      console.log('[Shop] Unspent-credits confirm — user chose FIGHT')
+      close()
+      this._startBattle({ confirmed: true })
+    }, { style: 'filled', scale: 2, bg: Theme.error, width: 120, height: 30, cornerRadius: 4 })
+    fight.setDepth(DEPTH_CONTENT)
+    objects.push(fight)
+
+    const back = new PixelButton(this, width / 2 + 78, y + panelH - 28, 'GO BACK', () => {
+      console.log('[Shop] Unspent-credits confirm — user chose GO BACK')
+      close()
+    }, { style: 'filled', scale: 2, bg: Theme.accentDim, width: 120, height: 30, cornerRadius: 4 })
+    back.setDepth(DEPTH_CONTENT)
+    objects.push(back)
+  }
+
+  async _startBattle(opts = {}) {
     if (this.team.length === 0) return
+
+    if (!opts.confirmed && this.tutorial && this.gold > 0) {
+      console.log(`[Tutorial] FIGHT blocked — unspent credits=${this.gold}, prompting confirm`)
+      this._showUnspentCreditsConfirm()
+      return
+    }
 
     if (this.fightBtn) this.fightBtn.setEnabled(false)
     const { width } = this.cameras.main

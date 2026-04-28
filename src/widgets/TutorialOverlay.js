@@ -283,13 +283,26 @@ export class TutorialOverlay {
     const bodyHeight = Math.max(10, measuredBodyH || measure.height || 0)
     measure.destroy()
 
-    const bodyTopOffset = hasTitle ? 38 : 14
-    const panelH = (hasTitle ? 76 : 52) + bodyHeight + 14
+    // Title-less steps still need to clear the top-right SKIP/STOP button,
+    // which sits at y+10 ~12px tall — start the body below it so wrapped
+    // lines do not collide with the button label.
+    const bodyTopOffset = hasTitle ? 38 : 30
+    const panelH = (hasTitle ? 76 : 68) + bodyHeight + 14
     const anchorRect = unionRects(targetRects)
     const isCenter = step.anchor === 'center' || !anchorRect
-    const pos = isCenter
-      ? { x: Math.round((width - PANEL_W) / 2), y: Math.round((height - panelH) / 2) }
-      : this._positionPanelNear(anchorRect, PANEL_W, panelH, width, height)
+    let pos
+    if (isCenter) {
+      pos = { x: Math.round((width - PANEL_W) / 2), y: Math.round((height - panelH) / 2) }
+    } else {
+      // When multiple targets are stacked vertically with a clear gap between
+      // them (e.g. bench card up top + shop card at bottom), placing the panel
+      // above/below the union of their bounds dumps it on top of one of them.
+      // Prefer the empty band in the middle when it can fit the panel.
+      const gapPos = targetRects.length > 1
+        ? this._positionPanelInVerticalGap(targetRects, PANEL_W, panelH, width, height)
+        : null
+      pos = gapPos ?? this._positionPanelNear(anchorRect, PANEL_W, panelH, width, height)
+    }
 
     const panel = new PixelPanel(this.scene, pos.x, pos.y, PANEL_W, panelH, {
       bg: Theme.panelBg,
@@ -376,6 +389,25 @@ export class TutorialOverlay {
       })
     }, { style: 'filled', scale: 2, bg: Theme.accentDim, width: 78, height: 30, cornerRadius: 4 })
     this._track(no, DEPTH_PANEL + 1)
+  }
+
+  _positionPanelInVerticalGap(rects, panelW, panelH, screenW, screenH) {
+    const sorted = [...rects].sort((a, b) => a.y - b.y)
+    const topRect = sorted[0]
+    const bottomRect = sorted[sorted.length - 1]
+    const gapTop = topRect.y + topRect.height + TARGET_PAD
+    const gapBottom = bottomRect.y - TARGET_PAD
+    const gapHeight = gapBottom - gapTop
+    if (gapHeight < panelH + 8) return null
+    const cx = (topRect.x + topRect.width / 2 + bottomRect.x + bottomRect.width / 2) / 2
+    return {
+      x: clamp(Math.round(cx - panelW / 2), SCREEN_MARGIN, screenW - panelW - SCREEN_MARGIN),
+      y: clamp(
+        Math.round(gapTop + (gapHeight - panelH) / 2),
+        SCREEN_MARGIN,
+        screenH - panelH - SCREEN_MARGIN,
+      ),
+    }
   }
 
   _positionPanelNear(rect, panelW, panelH, screenW, screenH) {
