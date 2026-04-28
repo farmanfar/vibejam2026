@@ -272,12 +272,17 @@ export class TutorialOverlay {
 
     // Pre-build body off-screen so Phaser wraps with real m5x7 char advance
     // (manual scale-based math underestimates width — see RulesScene comment).
+    // Use getTextBounds().local.height — Phaser 4 BitmapText `.height` returns
+    // 0 / pre-wrap height before first render, so a title-less step would
+    // collapse the panel and the body would never appear (regression seen in
+    // the stage-1 tutorial after the "lives" step).
     const body = new PixelLabel(this.scene, -10000, -10000, bodyText, {
       scale: 1, color: 'primary',
     })
     body.setLineSpacing(2)
     body.setMaxWidth(contentMaxW)
-    const bodyHeight = Math.max(10, body.height)
+    const measuredBodyH = body.getTextBounds(false)?.local?.height ?? 0
+    const bodyHeight = Math.max(10, measuredBodyH || body.height || 0)
     const bodyTopOffset = hasTitle ? 38 : 14
     const panelH = (hasTitle ? 76 : 52) + bodyHeight + 14
     const anchorRect = unionRects(targetRects)

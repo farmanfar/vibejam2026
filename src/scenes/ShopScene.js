@@ -505,6 +505,20 @@ export class ShopScene extends Scene {
           },
         },
         {
+          id: 'economy',
+          targets: [
+            () => this.rerollBtn,
+            () => this.lockToggles?.[0],
+            () => this.lockToggles?.[1],
+            () => this.lockToggles?.[2],
+            () => this.lockToggles?.[3],
+          ],
+          ring: true,
+          title: 'Spend it all',
+          body: "Spend all your credits every turn - they aren't saved. Reroll and lock the units you may want to buy.",
+          advance: 'click',
+        },
+        {
           id: 'fight',
           target: () => this.fightBtn,
           ring: true,
