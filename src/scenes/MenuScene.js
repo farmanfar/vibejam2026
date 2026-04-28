@@ -6,6 +6,7 @@ import { LayoutEditor } from '../systems/LayoutEditor.js';
 import { pickRandomMerchants, getMerchantIdleAnimKey } from '../config/merchants.js';
 import { SceneCrt } from '../rendering/SceneCrt.js';
 import { SceneDust } from '../rendering/SceneDust.js';
+import { PixelSounds } from '../systems/PixelSounds.js';
 
 // --- Typewriter message pools ---
 
@@ -247,6 +248,20 @@ export class MenuScene extends Scene {
         .setFlipY(true)
         .setAlpha(0.075);
     }
+
+    // --- Audio unlock: first user gesture resumes AudioContext ---------------
+    // Browser autoplay policy keeps AudioContext suspended until a gesture.
+    // Install a one-shot handler so the first click or keypress on Menu
+    // unlocks audio and applies any SFX volume the user set in Settings.
+    const _audioUnlock = () => {
+      PixelSounds.unlock();
+      const sfxVol = this.game.registry.get('sfxVolume') ?? 1.0;
+      PixelSounds.setVolume(sfxVol);
+      this.input.off('pointerdown', _audioUnlock);
+      this.input.keyboard?.off('keydown', _audioUnlock);
+    };
+    this.input.once('pointerdown', _audioUnlock);
+    this.input.keyboard?.once('keydown', _audioUnlock);
 
     // --- Cleanup on scene shutdown (once, not on) ---
     this.events.once('shutdown', () => {

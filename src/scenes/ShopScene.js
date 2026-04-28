@@ -20,6 +20,7 @@ import { CommanderBadge } from '../widgets/CommanderBadge.js'
 import { LockToggle } from '../widgets/LockToggle.js'
 import { TutorialOverlay } from '../widgets/TutorialOverlay.js'
 import { pickTutorialSeedIds } from './tutorialSeed.js'
+import { SoundManager } from '../systems/SoundManager.js'
 
 // Team card row
 const TEAM_Y        = 122
@@ -361,6 +362,7 @@ export class ShopScene extends Scene {
       }
       if (this.gold < 1) {
         console.log('[Shop] reroll clicked — no funds, spinning to NO FUNDS')
+        SoundManager.shopNoFunds()
         this.rerollBtn.btnBg = Theme.error
         this.rerollBtn._redrawBg(Theme.error)
         this.rerollBtn.spin(() => {
@@ -1019,6 +1021,7 @@ export class ShopScene extends Scene {
         return
       }
       _rejected = false
+      SoundManager.dragPickup()
       this._beginCardDrag(card, 'shop', shopIndex, pointer)
     })
 
@@ -1039,6 +1042,7 @@ export class ShopScene extends Scene {
     const target = this._getLogicalSlotFromPointer(pointer)
 
     if (target === null) {
+      SoundManager.dragInvalid()
       this._returnShopCardHome(card)
       card.snapBack(Theme.error)
       console.log(`[Shop] drop resolution=reject-dead-zone source=shop from=${shopIndex} to=none`)
@@ -1070,6 +1074,7 @@ export class ShopScene extends Scene {
       if (hostCard?.sprite) pulseLevelUp(this, hostCard.sprite)
       if (hostCard) pulseStarLevelUp(this, hostCard)
       hostCard?.playLevelUpWiggle?.()
+      SoundManager.shopCombine()
       console.log(`[Shop] drop resolution=buy-combine source=shop from=${shopIndex} to=${target}`)
       console.log(`[Shop] vfx slot=${target} stars=${occupant.stars}`)
       logShopBuy({ scene: this, unit: warrior, cost: warrior.cost, creditsAfter: this.gold, starLevel: occupant.stars })
@@ -1090,6 +1095,7 @@ export class ShopScene extends Scene {
       // Destroy the dragged shop card — see buy-combine note above.
       this._dragLayer.remove(card, true)
       this.cards[shopIndex] = null
+      SoundManager.shopBuy()
       console.log(`[Shop] drop resolution=buy-empty source=shop from=${shopIndex} to=${target}`)
       logShopBuy({ scene: this, unit: warrior, cost: warrior.cost, creditsAfter: this.gold, starLevel: warrior.stars ?? 1 })
       this.events.emit('tutorial:bought')
@@ -1126,6 +1132,7 @@ export class ShopScene extends Scene {
       if (card._isCelebrating) { card._sellBlocked = true; return }
       card._sellBlocked = false
       this._restackTeamAnchors()
+      SoundManager.dragPickup()
       this._beginCardDrag(card, 'team', slotIndex, pointer)
       // Arm vault: brighten anchor, doors stay closed until hover
       this.tweens.killTweensOf(this.sellAnchor)
@@ -1204,6 +1211,7 @@ export class ShopScene extends Scene {
       if (hostCard?.sprite) pulseLevelUp(this, hostCard.sprite)
       if (hostCard) pulseStarLevelUp(this, hostCard)
       hostCard?.playLevelUpWiggle?.()
+      SoundManager.shopCombine()
       console.log(`[Shop] drop resolution=combine source=team from=${fromSlot} to=${target}`)
       console.log(`[Shop] vfx slot=${target} stars=${occupant.stars}`)
       logShopCombine({ scene: this, unit: occupant, fromSlot, toSlot: target, hostSlotAfter: target, newStars: occupant.stars })
@@ -1344,7 +1352,7 @@ export class ShopScene extends Scene {
 
     // Tooltip line below the pill — reinforces the payout so the player can
     // price the decision without opening the vault.
-    this.sellIdleHint = new PixelLabel(this, 0, H / 2 + 10, 'DRAG HERE FOR 1c REFUND', {
+    this.sellIdleHint = new PixelLabel(this, 0, H / 2 + 10, 'DRAG HERE TO SELL · 1c PER LEVEL', {
       scale: 1, color: 'muted', align: 'center',
     })
     this.sellAnchor.add(this.sellIdleHint)
@@ -1499,13 +1507,15 @@ export class ShopScene extends Scene {
   _consumeSell(fromSlot, card, pointer) {
     if (this._sellInProgress) return
     this._sellInProgress = true
+    SoundManager.shopSell()
     this._endCardDrag(card)
     // Cancel any in-flight alpha tween from the hover-ghost so the fall tween
     // below owns the alpha channel outright.
     this.tweens.killTweensOf(card)
 
     const unit = this.teamSlots[fromSlot]
-    console.log(`[Shop] sellVault consume: slot=${fromSlot} unit=${unit?.id} refund=1`)
+    const refund = Math.max(1, unit?.stars ?? 1)
+    console.log(`[Shop] sellVault consume: slot=${fromSlot} unit=${unit?.id} stars=${unit?.stars ?? 1} refund=${refund}`)
 
     // Reparent dragged card onto vault so we can tween to its local origin.
     // _dragLayer sits at (0,0) so card.x/y are already world coords.
@@ -1541,14 +1551,14 @@ export class ShopScene extends Scene {
         this._closeVaultDoors(() => {
           this.teamSlots[fromSlot] = null
           this._syncDenseTeamFromSlots()
-          this.gold += 1
+          this.gold += refund
           this.goldLabel.setText(`CREDITS: ${this.gold}`)
           this._updateFightUrgency()
           this._drawTeamRow()
           this.tweens.killTweensOf(this.sellAnchor)
           this.tweens.add({ targets: this.sellAnchor, alpha: 0.9, duration: 200 })
           this._sellInProgress = false
-          logShopSell({ scene: this, unit, refund: 1, creditsAfter: this.gold })
+          logShopSell({ scene: this, unit, refund, creditsAfter: this.gold })
           console.log(`[Shop] sellVault consume: animation complete, slot cleared`)
         })
       },
@@ -1616,7 +1626,8 @@ export class ShopScene extends Scene {
   _sellWarrior(index) {
     const warrior = this.teamSlots[index]
     if (!warrior) return
-    const refund = 1
+    const refund = Math.max(1, warrior.stars ?? 1)
+    console.log(`[Shop] _sellWarrior slot=${index} unit=${warrior.id} stars=${warrior.stars ?? 1} refund=${refund}`)
     this.gold += refund
     this.teamSlots[index] = null
     this._syncDenseTeamFromSlots()
@@ -1644,6 +1655,7 @@ export class ShopScene extends Scene {
     this.gold -= 1
     this.goldLabel.setText(`CREDITS: ${this.gold}`)
     this._updateFightUrgency()
+    SoundManager.shopReroll()
     logShopReroll({ scene: this, cost: 1, creditsAfter: this.gold, rolled: null })
     console.log(`[Shop] reroll — refreshing slots [${slotsToRoll.join(',')}], preserving [${[0,1,2,3].filter(i => !slotsToRoll.includes(i)).join(',') || 'none'}]`)
 
@@ -1729,6 +1741,7 @@ export class ShopScene extends Scene {
         if (card.hitZone?.scene) card.hitZone.disableInteractive()
 
         const delay = dealt * IN_STAGGER
+        this.time.delayedCall(delay, () => SoundManager.shopRerollCard())
         this.tweens.add({
           targets: card,
           x: restX,

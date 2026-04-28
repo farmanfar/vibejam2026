@@ -13,6 +13,7 @@
 
 import { Theme, PixelButton, PixelLabel } from '../ui/index.js'
 import { LayoutEditor } from '../systems/LayoutEditor.js'
+import { SoundManager } from '../systems/SoundManager.js'
 import { SelectionMenuPresenter, WIDGET_VIEW_IDS } from './SelectionMenuPresenter.js'
 import {
   buildBackgroundLayer,
@@ -288,6 +289,7 @@ export class SelectionMenuWidget {
     if (this.centerFocus === target) { this._updateSelectionState(); return }
     this.centerFocus = target
     console.log(`[Widget] Center focus -> ${target} (${reason})`)
+    SoundManager.uiHover()
     this._updateSelectionState()
   }
 
@@ -296,6 +298,7 @@ export class SelectionMenuWidget {
     if (this.featuredFocusIndex === index) { this._updateSelectionState(); return }
     this.featuredFocusIndex = index
     console.log(`[Widget] Featured focus -> index ${index} (${reason})`)
+    SoundManager.uiHover()
     this._updateSelectionState()
   }
 
@@ -305,6 +308,7 @@ export class SelectionMenuWidget {
     this.selectedItem       = display.item
     this.featuredFocusIndex = index
     console.log(`[Widget] Selected item: ${display.item.id} via ${reason}`)
+    SoundManager.uiClick()
     this.config.actions?.onSelectionChange?.(this.selectedItem, this.getState())
     this._updateSelectionState()
   }

@@ -7,6 +7,7 @@ import { getAlphaWarriors } from '../config/alpha-units.js';
 import { getCommanders } from '../config/commanders.js';
 import { getMerchants } from '../config/merchants.js';
 import { resetCaptureReady, resolveCaptureRoute } from '../systems/CaptureSupport.js';
+import { PixelSounds } from '../systems/PixelSounds.js';
 import { attachGeneratedNormalMap } from '../rendering/NormalMapGenerator.js';
 import { getAllPreloadEntries as getAllSynergyIconPreloadEntries } from '../config/synergy-icons.js';
 
@@ -157,6 +158,9 @@ export class BootScene extends Scene {
     resetCaptureReady();
 
     initAuth();
+
+    PixelSounds.warmup();
+    console.log('[Boot] PixelSounds warmed up');
 
     // Register one global looping idle animation per merchant. Keys are
     // unique (`merchant-<id>-idle`) so every consumer (MenuScene, ShopScene,

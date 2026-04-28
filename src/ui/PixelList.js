@@ -1,6 +1,7 @@
 import { GameObjects } from 'phaser';
 import { Theme } from './Theme.js';
 import { FONT_KEY } from './PixelFont.js';
+import { SoundManager } from '../systems/SoundManager.js';
 
 /**
  * Vertical uniform-scale menu list. Ported (simplified) from
@@ -87,6 +88,7 @@ export class PixelList extends GameObjects.Container {
 
     hit.on('pointerover', () => {
       if (entry.disabled) return;
+      SoundManager.uiHover();
       this.scene.tweens.add({ targets: text, x: 6, duration: 120, ease: 'Power2' });
       this.scene.tweens.add({ targets: band, alpha: 0.35, duration: 120 });
       text.setTint(Theme.hover);
@@ -98,6 +100,7 @@ export class PixelList extends GameObjects.Container {
     });
     hit.on('pointerdown', () => {
       if (entry.disabled) return;
+      SoundManager.uiClick();
       text.setTint(0xffffff);
       this.scene.time.delayedCall(80, () => text.setTint(Theme.hover));
       entry.onClick?.();

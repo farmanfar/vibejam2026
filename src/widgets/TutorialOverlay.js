@@ -1,4 +1,5 @@
 import { Theme, PixelButton, PixelLabel, PixelPanel } from '../ui/index.js'
+import { SoundManager } from '../systems/SoundManager.js'
 
 const DEPTH_DIM = 998
 const DEPTH_BLOCKER = 999
@@ -122,6 +123,7 @@ export class TutorialOverlay {
   _advance(reason) {
     if (this._destroyed || !this._currentStep) return
     console.log(`[Tutorial] Step "${this._currentStep.id}" advanced (reason=${reason})`)
+    SoundManager.tutorialAdvance()
     this._index += 1
     this._clearStep()
     this._buildNextEligibleStep()

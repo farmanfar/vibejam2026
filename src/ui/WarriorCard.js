@@ -1,6 +1,7 @@
 import { GameObjects } from 'phaser';
 import { Theme } from './Theme.js';
 import { FONT_KEY } from './PixelFont.js';
+import { SoundManager } from '../systems/SoundManager.js';
 import { UnitStatBadge } from './UnitStatBadge.js';
 import { getUnitPortraitRef } from '../rendering/UnitArt.js';
 import { attachOutlineToSprite } from '../rendering/OutlineController.js';
@@ -304,6 +305,7 @@ export class WarriorCard extends GameObjects.Container {
       if (this._isHeld) return;
       if (this._isHovered) return;
       this._isHovered = true;
+      SoundManager.uiHover();
       this.setDepth(10);
       this._playWiggle();
     });
