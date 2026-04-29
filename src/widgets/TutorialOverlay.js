@@ -495,15 +495,6 @@ export class TutorialOverlay {
   _boundsForObject(obj) {
     if (!obj) return null
 
-    try {
-      const b = obj.getBounds?.()
-      if (b && b.width > 0 && b.height > 0) {
-        return { x: b.x, y: b.y, width: b.width, height: b.height }
-      }
-    } catch (e) {
-      console.error('[Tutorial] getBounds failed:', e)
-    }
-
     const p = this._worldPos(obj)
     if (obj.cardW && obj.cardH) {
       return {
@@ -531,6 +522,16 @@ export class TutorialOverlay {
         height: obj.height * sy,
       }
     }
+
+    try {
+      const b = obj.getBounds?.()
+      if (b && b.width > 0 && b.height > 0) {
+        return { x: b.x, y: b.y, width: b.width, height: b.height }
+      }
+    } catch (e) {
+      console.error('[Tutorial] getBounds failed:', e)
+    }
+
     return null
   }
 
