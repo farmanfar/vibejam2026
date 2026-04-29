@@ -15,6 +15,7 @@ import { SettingsScene } from './scenes/SettingsScene.js';
 import { RulesScene } from './scenes/RulesScene.js';
 import { LayoutEditor } from './systems/LayoutEditor.js';
 import { DebugCapture } from './systems/DebugCapture.js';
+import { ViewportManager } from './systems/ViewportManager.js';
 import { resetCaptureReady } from './systems/CaptureSupport.js';
 
 const config = {
@@ -42,3 +43,4 @@ resetCaptureReady();
 const game = new Game(config);
 LayoutEditor.init(game);
 DebugCapture.init(game);
+ViewportManager.init(game);
