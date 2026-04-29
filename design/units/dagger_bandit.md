@@ -1,6 +1,6 @@
 ---
 id: dagger_bandit
-name: Cloaked Dagger
+name: CLKD DAGGR
 faction: Folk
 class: Assassin
 tier: 1

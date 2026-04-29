@@ -1,6 +1,6 @@
 ---
 id: electrocutioner
-name: Electrocutioner
+name: Electro
 faction: Robot
 class: Knight
 tier: 2

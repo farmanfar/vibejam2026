@@ -1,5 +1,6 @@
 import { GameObjects } from 'phaser';
 import { Theme } from '../ui/Theme.js';
+import { SoundManager } from '../systems/SoundManager.js';
 
 // Tiny 3D padlock. Subtle by default — low resting alpha so it doesn't fight
 // the cards for attention.
@@ -161,6 +162,7 @@ export class LockToggle extends GameObjects.Container {
     const nextLocked = !this._locked;
     this._locked    = nextLocked;
     this._animating = true;
+    SoundManager.shopLock();
     console.log(`[LockToggle] toggle → ${nextLocked ? 'LOCKED' : 'UNLOCKED'}`);
 
     const targetLen  = nextLocked ? LEG_FULL_LEN : 0;

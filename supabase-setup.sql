@@ -51,3 +51,25 @@ create policy "Anyone can read hall of fame"
 create policy "Users can insert own hall of fame entries"
   on hall_of_fame for insert
   with check (auth.uid() = player_id);
+
+-- player_progress: achievements + lifetime stats mirror
+create table player_progress (
+  player_id  uuid primary key references auth.users(id),
+  unlocked   jsonb not null default '{}'::jsonb,
+  stats      jsonb not null default '{}'::jsonb,
+  updated_at timestamptz not null default now()
+);
+
+alter table player_progress enable row level security;
+
+create policy "Users can read own progress"
+  on player_progress for select
+  using (auth.uid() = player_id);
+
+create policy "Users can upsert own progress"
+  on player_progress for insert
+  with check (auth.uid() = player_id);
+
+create policy "Users can update own progress"
+  on player_progress for update
+  using (auth.uid() = player_id);

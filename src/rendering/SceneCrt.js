@@ -11,6 +11,7 @@
  */
 
 import { CrtController } from './CrtController.js';
+import { SoundManager } from '../systems/SoundManager.js';
 
 // ─── Power-off transition policy ─────────────────────────────────────────────
 // Returns true when this scene→target route should play the power-off animation.
@@ -174,6 +175,7 @@ export const SceneCrt = {
  */
 export function startSceneWithCrtPolicy(scene, targetKey, data = {}) {
   if (_needsPowerOff(scene, targetKey, data)) {
+    SoundManager.sceneTransition();
     SceneCrt.playPowerOff(scene, () => scene.scene.start(targetKey, data));
   } else {
     scene.scene.start(targetKey, data);

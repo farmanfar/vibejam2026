@@ -7,6 +7,7 @@
  */
 
 import { Theme, FONT_KEY } from '../ui/index.js'
+import { SoundManager } from '../systems/SoundManager.js'
 
 // ---------------------------------------------------------------------------
 // Background
@@ -58,7 +59,10 @@ export function buildPanelLayer(scene, container, side, items, slots, config, ca
     hitzone.on('pointerover', () => {
       if (callbacks.isBusy()) return
       const view = callbacks.getView()
-      if (view === 'center' || view === 'featuredClose') hoverRect.setAlpha(0.06)
+      if (view === 'center' || view === 'featuredClose') {
+        SoundManager.uiHover()
+        hoverRect.setAlpha(0.06)
+      }
     })
     hitzone.on('pointerout', () => hoverRect.setAlpha(0))
     hitzone.on('pointerdown', () => {
@@ -66,6 +70,7 @@ export function buildPanelLayer(scene, container, side, items, slots, config, ca
       if (callbacks.isBusy()) return
       const view = callbacks.getView()
       if (view === 'center' || view === 'featuredClose') {
+        SoundManager.uiClick()
         callbacks.changeView(targetView, { reason: `clicked ${side} panel` })
       }
     })

@@ -1,14 +1,12 @@
 import { Scene } from 'phaser';
-import { PixelFont, FONT_KEY } from '../ui/PixelFont.js';
+import { PixelFont } from '../ui/PixelFont.js';
 import { Theme } from '../ui/Theme.js';
 import { initAuth } from '../supabase.js';
-import { getWarriors } from '../config/warriors.js';
-import { getAlphaWarriors } from '../config/alpha-units.js';
+import { AchievementManager } from '../systems/AchievementManager.js';
 import { getCommanders } from '../config/commanders.js';
 import { getMerchants } from '../config/merchants.js';
 import { resetCaptureReady, resolveCaptureRoute } from '../systems/CaptureSupport.js';
-import { attachGeneratedNormalMap } from '../rendering/NormalMapGenerator.js';
-import { getAllPreloadEntries as getAllSynergyIconPreloadEntries } from '../config/synergy-icons.js';
+import { PixelSounds } from '../systems/PixelSounds.js';
 
 export class BootScene extends Scene {
   constructor() {
@@ -16,17 +14,8 @@ export class BootScene extends Scene {
   }
 
   preload() {
-    // PixelFont is pure canvas — init here so the bitmap font is available
-    // immediately for the loading splash, before any file loads complete.
+    // PixelFont is pure canvas, so keep it available before any scene renders.
     PixelFont.init(this);
-
-    const { width, height } = this.cameras.main;
-    this.add.bitmapText(width / 2, height / 2 - 15, FONT_KEY, 'THE HIRED SWORDS', 7 * 4)
-      .setOrigin(0.5)
-      .setTint(Theme.accent);
-    this.add.bitmapText(width / 2, height / 2 + 20, FONT_KEY, 'An Auto-Battler Roguelike', 7 * 2)
-      .setOrigin(0.5)
-      .setTint(Theme.mutedText);
 
     this.load.on('loaderror', (file) => {
       if (typeof file.key === 'string' && file.key.startsWith('unit-portrait-')) {
@@ -34,91 +23,27 @@ export class BootScene extends Scene {
       }
     });
 
-    const warriors = getWarriors();
-    let queuedPortraits = 0;
-    for (const warrior of warriors) {
-      if (!warrior.art?.portraitPath) continue;
-      this.load.image(warrior.spriteKey, warrior.art.portraitPath);
-      queuedPortraits++;
-    }
-    console.log(`[Boot] Queued ${queuedPortraits} unit portraits for preload`);
-
-    // Alpha units — Aseprite-baked multi-tag atlases. Animation creation
-    // happens per-sprite in BattleScene via createFromAseprite(key, null, sprite),
-    // so we only queue the atlas load here. Global createFromAseprite would
-    // collide on raw tag names (idle/attack/death) across units.
-    const alphas = getAlphaWarriors();
-    let queuedAlphas = 0;
-    for (const w of alphas) {
-      if (!w.hasPortrait) continue;
-      const pngPath = w.art?.pngPath;
-      const dataPath = w.art?.dataPath;
-      if (!pngPath || !dataPath) {
-        console.warn(`[Boot] Alpha ${w.id} has art entry but missing pngPath/dataPath — skipped`);
-        continue;
-      }
-      this.load.aseprite(w.spriteKey, pngPath, dataPath);
-      queuedAlphas++;
-    }
-    console.log(`[Boot] Queued ${queuedAlphas} alpha aseprite atlases`);
-
-    // Preload commander sprite images (Fantasy Cards pack).
-    // commander-card-* (unused) intentionally omitted — no reader exists.
-    // commander-sprite-* stays here because CommanderBadge in BattleScene and
-    // ShopScene both need it; normal-map generation is deferred to CommanderSelectScene.
+    // Commander sprites are shared by Shop, Battle, and CommanderSelect.
     const commanders = getCommanders();
     for (const cmd of commanders) {
       this.load.image(`commander-sprite-${cmd.spriteIndex}`, `assets/commanders/sprites/Sprite${cmd.spriteIndex}.png`);
     }
     console.log(`[Boot] Queued ${commanders.length} commander sprites for preload`);
 
-    // Merchant spritesheets — pre-exported horizontal (and one vertical) PNG
-    // strips from public/assets/merchants/npcs/. Merchants have a single
-    // looping idle each, so no atlas JSON, tag data, or createFromAseprite is
-    // needed. One global `<spriteKey>-idle` anim per merchant is registered
-    // below in `create()` after loads complete.
+    // Merchant spritesheets are the only image assets Menu needs.
     const merchants = getMerchants();
     for (const m of merchants) {
       this.load.spritesheet(m.spriteKey, m.asset, {
-        frameWidth:  m.frameWidth,
+        frameWidth: m.frameWidth,
         frameHeight: m.frameHeight,
       });
     }
     console.log(`[Boot] Queued ${merchants.length} merchant spritesheets`);
 
-    // Preload blank fantasy card frames (PENUSBMIC Fantasy Cards pack) used by
-    // WarriorCard. NOTE: file #11 has an extra space in its filename.
-    const blankCardFiles = [
-      'blank cards1.png', 'blank cards2.png', 'blank cards3.png',
-      'blank cards4.png', 'blank cards5.png', 'blank cards6.png',
-      'blank cards7.png', 'blank cards8.png', 'blank cards9.png',
-      'blank cards10.png', 'blank cards 11.png',
-    ];
-    blankCardFiles.forEach((file, i) => {
-      this.load.image(`card-blank-${i + 1}`, `assets/cards/blanks/${file}`);
-    });
-    console.log(`[Boot] Queued ${blankCardFiles.length} blank fantasy card frames for preload`);
+    // Generic achievement icon (Icon1 = first slot — specific icons deferred to polish pass).
+    this.load.image('card-icon-Icon1', 'assets/cards/icons/Icon1.png');
 
-    // Card stat icons (9x9 PENUSBMIC, drawn over blank card frames next to
-    // ATK/HP numbers). To swap the sword pick, change ICON_ATK_FILE to another
-    // number in public/assets/cards/icons/Icon#.png.
-    const ICON_HP_FILE  = 'Icon5';  // confirmed red heart
-    const ICON_ATK_FILE = 'Icon3';  // tentative sword — verify in-game
-    this.load.image('card-icon-hp',  `assets/cards/icons/${ICON_HP_FILE}.png`);
-    this.load.image('card-icon-atk', `assets/cards/icons/${ICON_ATK_FILE}.png`);
-    console.log(`[Boot] Card stat icons: hp=${ICON_HP_FILE}, atk=${ICON_ATK_FILE}`);
-
-    // Synergy chip icons (shop scene faction/class chips). See
-    // src/config/synergy-icons.js for the texture-key → file mapping. Swap any
-    // PNG in public/assets/ui/synergies/ to change the visual; no code change
-    // needed unless adding a new tag.
-    const synergyIconEntries = getAllSynergyIconPreloadEntries();
-    synergyIconEntries.forEach(({ textureKey, file }) => {
-      this.load.image(textureKey, `assets/ui/synergies/${file}`);
-    });
-    console.log(`[Boot] Queued ${synergyIconEntries.length} synergy chip icons for preload`);
-
-    // Generate placeholder textures for warriors (before font is ready)
+    // Generate placeholder textures for warriors.
     const colors = [0x64b4d2, 0x7cceff, 0x66cc66, 0xffcc78, 0xcc66ff];
     colors.forEach((color, i) => {
       const gfx = this.add.graphics();
@@ -139,7 +64,7 @@ export class BootScene extends Scene {
     });
 
     // Generated merchant stand-in. Real merchant sheets in public/assets/merchants
-    // are multi-frame strips, so keep menu/shop on a safe single-frame texture for now.
+    // are multi-frame strips, so keep menu/shop on a safe single-frame texture.
     const mgfx = this.add.graphics();
     mgfx.fillStyle(Theme.fantasyPurpleDark, 1);
     mgfx.fillRect(0, 0, 48, 64);
@@ -153,15 +78,19 @@ export class BootScene extends Scene {
     mgfx.destroy();
   }
 
-  create() {
+  async create() {
     resetCaptureReady();
 
-    initAuth();
+    await initAuth();
+    await AchievementManager.init();
 
-    // Register one global looping idle animation per merchant. Keys are
-    // unique (`merchant-<id>-idle`) so every consumer (MenuScene, ShopScene,
-    // MerchantSelectScene) can just call sprite.play(getMerchantIdleAnimKey(m))
-    // without per-sprite createFromAseprite setup.
+    PixelSounds.warmup();
+    console.log('[Boot] PixelSounds warmed up');
+    PixelSounds.installAutoUnlock(window);
+    const sfxVol = this.game.registry.get('sfxVolume') ?? 1.0;
+    PixelSounds.setVolume(sfxVol);
+
+    // Register one global looping idle animation per merchant.
     for (const merchant of getMerchants()) {
       if (!this.textures.exists(merchant.spriteKey)) {
         console.warn(`[Boot] Merchant texture missing: ${merchant.spriteKey}`);
@@ -176,12 +105,6 @@ export class BootScene extends Scene {
         repeat: -1,
       });
       console.log(`[Boot] Registered anim '${key}' (${merchant.frameCount} frames)`);
-    }
-
-    // Generate normal maps for battle unit sprites (WebGL only).
-    // Commander normal maps are generated in CommanderSelectScene.create() instead.
-    if (this.sys.renderer.gl) {
-      _generateBattleNormalMaps(this);
     }
 
     let captureRoute = null;
@@ -203,69 +126,18 @@ export class BootScene extends Scene {
       return;
     }
 
-    // Vibe Jam 2026 portal arrival — skip splash delay and land on Menu
-    // immediately so continuity feels instant. Spec requires no loading screens
-    // for incoming portal users; Menu is our chosen landing.
+    // Vibe Jam 2026 portal arrival - land on Menu immediately.
     if (typeof window !== 'undefined' && window.location && window.location.search) {
       const params = new URLSearchParams(window.location.search);
       if (params.get('portal') === 'true') {
         console.log('[Boot] Incoming Vibe Jam portal arrival, params:', Object.fromEntries(params));
+        this.registry.set('portalArrival', true);
+        console.log('[Portal] Registry flag portalArrival=true set');
         this.scene.start('Menu');
         return;
       }
     }
 
-    this.time.delayedCall(150, () => {
-      this.scene.start('Menu');
-    });
+    this.scene.start('Menu');
   }
 }
-
-// ─── Normal-map generation at boot ───────────────────────────────────────────
-
-/**
- * Generate and attach Phaser normal-map data sources for every battle unit
- * texture loaded during preload.  This covers:
- *   • unit-portrait-<spriteKey>  — real art from PENUSBMIC packs
- *   • warrior_placeholder_0..4   — generated coloured squares
- *
- * Only warriors with art.portraitPath are attempted — matching the same guard
- * used in preload() so we never call attachGeneratedNormalMap() for a texture
- * that was never queued (it would warn for every missing unit).
- */
-function _generateBattleNormalMaps(scene) {
-  const warriors = getWarriors();
-  let generated = 0;
-  let skipped   = 0;
-
-  for (const warrior of warriors) {
-    const key = warrior.spriteKey;
-    if (!key) continue;
-    if (!warrior.art?.portraitPath) continue;
-    if (attachGeneratedNormalMap(scene, key)) {
-      generated++;
-    } else {
-      skipped++;
-    }
-  }
-
-  // Alpha unit atlases — mapped alpha warriors with baked Aseprite art.
-  const alphas = getAlphaWarriors();
-  for (const w of alphas) {
-    if (!w.hasPortrait || !w.spriteKey) continue;
-    if (attachGeneratedNormalMap(scene, w.spriteKey)) {
-      generated++;
-    } else {
-      skipped++;
-    }
-  }
-
-  // Placeholder textures (always present)
-  for (let i = 0; i < 5; i++) {
-    const key = `warrior_placeholder_${i}`;
-    if (attachGeneratedNormalMap(scene, key)) generated++;
-  }
-
-  console.log(`[Boot] Normal maps: ${generated} generated, ${skipped} skipped (missing art)`);
-}
-

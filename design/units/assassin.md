@@ -1,6 +1,6 @@
 ---
 id: assassin
-name: Sneaky Swords
+name: Swordknight
 faction: Folk
 class: Knight
 tier: 3
@@ -56,7 +56,7 @@ From AnimTester readout (tag — frame count):
 
 ## Abilities
 
-**Sweeping Strikes.** Sneaky Swords attacks all 3 frontmost living enemies for
+**Sweeping Strikes.** Swordknight attacks all 3 frontmost living enemies for
 1 damage each, hitting them **simultaneously** using the `sweep attack`
 animation. The range-3 mechanic means her sword swing arcs across the first,
 second, and third enemy positions in the opposing lineup.

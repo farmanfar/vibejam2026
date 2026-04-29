@@ -1,6 +1,7 @@
 import { GameObjects } from 'phaser';
 import { Theme, brighten, drawPill3D } from './Theme.js';
 import { FONT_KEY, PixelFont } from './PixelFont.js';
+import { SoundManager } from '../systems/SoundManager.js';
 
 /**
  * Two button styles ported from TorchWars PixelButton:
@@ -155,6 +156,7 @@ export class PixelButton extends GameObjects.Container {
 
     zone.on('pointerover', () => {
       if (!this.enabled) return;
+      SoundManager.uiHover();
       // Slide text right + focus band fade in
       this.scene.tweens.add({
         targets: this.text,
@@ -187,6 +189,7 @@ export class PixelButton extends GameObjects.Container {
 
     zone.on('pointerdown', () => {
       if (!this.enabled) return;
+      SoundManager.uiClick();
       this.text.setTint(0xffffff);
       this.scene.time.delayedCall(80, () => {
         this.text.setTint(Theme.hover);
@@ -219,6 +222,7 @@ export class PixelButton extends GameObjects.Container {
 
     bg.on('pointerover', () => {
       if (!this.enabled || this._spinning) return;
+      SoundManager.uiHover();
       this._redrawBg(brighten(this.btnBg));
     });
 
@@ -231,6 +235,7 @@ export class PixelButton extends GameObjects.Container {
 
     bg.on('pointerdown', () => {
       if (!this.enabled || this._spinning) return;
+      SoundManager.uiClick();
       // Depress: cap sinks, label drops — the press IS the feedback, replacing
       // the old white flash with an arcade-pad depress.
       this._pressed = true;

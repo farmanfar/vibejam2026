@@ -74,6 +74,15 @@ export default defineConfig(({ command, mode }) => {
     build: {
       target: 'esnext',
       assetsInlineLimit: 0,
+      rollupOptions: {
+        output: {
+          manualChunks(id) {
+            if (id.includes('/node_modules/phaser/') || id.includes('\\node_modules\\phaser\\')) {
+              return 'phaser';
+            }
+          },
+        },
+      },
     },
     server: {
       open: true,

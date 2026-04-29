@@ -186,11 +186,11 @@ function main() {
   }
 
   // Special known issue: assassin.md has class: Knight in frontmatter.
-  // Per grill pass, Sneaky Swords (assassin) should be Assassin class.
+  // Per grill pass, the assassin unit should be class: Assassin.
   // The doc was not updated in Phase 0 — flagging here so user can correct.
   const assassinUnit = units.find((u) => u.id === 'assassin');
   if (assassinUnit && assassinUnit.class === 'Knight') {
-    console.log('\n[generator] ⚠️  assassin (Sneaky Swords) has class:Knight in frontmatter');
+    console.log(`\n[generator] ⚠️  assassin (${assassinUnit.name}) has class:Knight in frontmatter`);
     console.log('[generator]    Per grill pass, this unit should be class:Assassin.');
     console.log('[generator]    Edit design/units/assassin.md to fix.');
   }

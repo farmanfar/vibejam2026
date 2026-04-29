@@ -1,4 +1,5 @@
 import { Theme, PixelButton, PixelLabel, PixelPanel } from '../ui/index.js'
+import { SoundManager } from '../systems/SoundManager.js'
 
 const DEPTH_DIM = 998
 const DEPTH_BLOCKER = 999
@@ -8,6 +9,12 @@ const SCREEN_MARGIN = 10
 const TARGET_PAD = 8
 const PANEL_W = 430
 const PANEL_PAD = 14
+// Space reserved at the top-right of the panel for the SKIP/STOP button so
+// the wrapped title text never collides with it.
+const SKIP_RESERVED_W = 78
+const TITLE_TOP_PAD = 12
+const TITLE_BODY_GAP = 10
+const BODY_BOTTOM_PAD = 52
 
 function clamp(v, min, max) {
   return Math.max(min, Math.min(max, v))
@@ -106,6 +113,17 @@ export class TutorialOverlay {
       const hintRects = step.pulseHint() ?? []
       if (hintRects.length) this._addPulseHints(hintRects)
     }
+    if (typeof step.pulseAction === 'function') {
+      try { step.pulseAction() } catch (e) { console.error('[Tutorial] pulseAction failed:', e) }
+      this._pulseTimer = this.scene.time.addEvent({
+        delay: 1200,
+        loop: true,
+        callback: () => {
+          try { step.pulseAction() } catch (e) { console.error('[Tutorial] pulseAction loop failed:', e) }
+        },
+      })
+      console.log(`[Tutorial] Step "${step.id}" pulseAction installed`)
+    }
 
     this._addPanel(step, targetRects)
 
@@ -122,6 +140,7 @@ export class TutorialOverlay {
   _advance(reason) {
     if (this._destroyed || !this._currentStep) return
     console.log(`[Tutorial] Step "${this._currentStep.id}" advanced (reason=${reason})`)
+    SoundManager.tutorialAdvance()
     this._index += 1
     this._clearStep()
     this._buildNextEligibleStep()
@@ -138,6 +157,10 @@ export class TutorialOverlay {
 
   _clearStep() {
     this._removeListeners()
+    if (this._pulseTimer) {
+      this._pulseTimer.remove(false)
+      this._pulseTimer = null
+    }
     const scene = this.scene
     this._objects.forEach((obj) => {
       try {
@@ -268,17 +291,32 @@ export class TutorialOverlay {
     const titleText = step.title ?? ''
     const bodyText = step.body ?? ''
     const hasTitle = titleText.length > 0
-    const contentMaxW = PANEL_W - PANEL_PAD * 2
+    const bodyMaxW = PANEL_W - PANEL_PAD * 2
+    // Title shares its top row with the SKIP/STOP button; reserve room for it
+    // so a wrapped title line never overprints the button label.
+    const titleMaxW = PANEL_W - PANEL_PAD - SKIP_RESERVED_W
 
-    // Measure body height with a throwaway label so the panel can size
-    // itself before we create the real body. Phaser 4 BitmapText `.height`
+    // Measure title + body with throwaway labels so the panel can size itself
+    // before we create the real children. Phaser 4 BitmapText `.height`
     // returns 0 / pre-wrap height before first render, so use
     // getTextBounds(false).local.height (same pattern as WarriorCard).
+    let titleHeight = 0
+    if (hasTitle) {
+      const titleMeasure = new PixelLabel(this.scene, -10000, -10000, titleText, {
+        scale: 2, color: 'critical',
+      })
+      titleMeasure.setLineSpacing(2)
+      titleMeasure.setMaxWidth(titleMaxW)
+      const measuredTitleH = titleMeasure.getTextBounds(false)?.local?.height ?? 0
+      titleHeight = Math.max(14, measuredTitleH || titleMeasure.height || 14)
+      titleMeasure.destroy()
+    }
+
     const measure = new PixelLabel(this.scene, -10000, -10000, bodyText, {
       scale: 1, color: 'primary',
     })
     measure.setLineSpacing(2)
-    measure.setMaxWidth(contentMaxW)
+    measure.setMaxWidth(bodyMaxW)
     const measuredBodyH = measure.getTextBounds(false)?.local?.height ?? 0
     const bodyHeight = Math.max(10, measuredBodyH || measure.height || 0)
     measure.destroy()
@@ -286,8 +324,10 @@ export class TutorialOverlay {
     // Title-less steps still need to clear the top-right SKIP/STOP button,
     // which sits at y+10 ~12px tall — start the body below it so wrapped
     // lines do not collide with the button label.
-    const bodyTopOffset = hasTitle ? 38 : 30
-    const panelH = (hasTitle ? 76 : 68) + bodyHeight + 14
+    const bodyTopOffset = hasTitle
+      ? TITLE_TOP_PAD + titleHeight + TITLE_BODY_GAP
+      : 30
+    const panelH = bodyTopOffset + bodyHeight + BODY_BOTTOM_PAD
     const anchorRect = unionRects(targetRects)
     const isCenter = step.anchor === 'center' || !anchorRect
     let pos
@@ -311,9 +351,11 @@ export class TutorialOverlay {
     this._track(panel, DEPTH_PANEL)
 
     if (hasTitle) {
-      const title = new PixelLabel(this.scene, pos.x + PANEL_PAD, pos.y + 12, titleText, {
+      const title = new PixelLabel(this.scene, pos.x + PANEL_PAD, pos.y + TITLE_TOP_PAD, titleText, {
         scale: 2, color: 'critical',
       })
+      title.setLineSpacing(2)
+      title.setMaxWidth(titleMaxW)
       this._track(title, DEPTH_PANEL)
     }
 
@@ -326,7 +368,7 @@ export class TutorialOverlay {
       scale: 1, color: 'primary',
     })
     body.setLineSpacing(2)
-    body.setMaxWidth(contentMaxW)
+    body.setMaxWidth(bodyMaxW)
     this._track(body, DEPTH_PANEL)
 
     const singleStep = this.steps.length === 1
@@ -395,10 +437,15 @@ export class TutorialOverlay {
     const sorted = [...rects].sort((a, b) => a.y - b.y)
     const topRect = sorted[0]
     const bottomRect = sorted[sorted.length - 1]
-    const gapTop = topRect.y + topRect.height + TARGET_PAD
-    const gapBottom = bottomRect.y - TARGET_PAD
+    // Measure card-edge to card-edge so we get the full available band.
+    // The old code trimmed TARGET_PAD off both sides and required panelH+8
+    // headroom, which rejected workable gaps and dumped the panel onto a
+    // target via _positionPanelNear. A few px nudge into the ring area is
+    // far better than covering an entire row.
+    const gapTop = topRect.y + topRect.height
+    const gapBottom = bottomRect.y
     const gapHeight = gapBottom - gapTop
-    if (gapHeight < panelH + 8) return null
+    if (gapHeight < 40) return null
     const cx = (topRect.x + topRect.width / 2 + bottomRect.x + bottomRect.width / 2) / 2
     return {
       x: clamp(Math.round(cx - panelW / 2), SCREEN_MARGIN, screenW - panelW - SCREEN_MARGIN),

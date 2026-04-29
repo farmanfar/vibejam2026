@@ -1,6 +1,6 @@
 ---
 id: relic_guardian_3
-name: Relic Guardian 3
+name: Relic Guardian
 faction: Robot
 class: Knight
 tier: 3

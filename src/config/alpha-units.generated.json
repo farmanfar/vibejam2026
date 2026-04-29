@@ -44,7 +44,7 @@
     },
     {
       "id": "assassin",
-      "name": "Sneaky Swords",
+      "name": "Swordknight",
       "faction": "Folk",
       "class": "Knight",
       "tier": 3,
@@ -129,7 +129,7 @@
     },
     {
       "id": "dagger_bandit",
-      "name": "Cloaked Dagger",
+      "name": "CLKD DAGGR",
       "faction": "Folk",
       "class": "Assassin",
       "tier": 1,
@@ -171,7 +171,7 @@
     },
     {
       "id": "electrocutioner",
-      "name": "Electrocutioner",
+      "name": "Electro",
       "faction": "Robot",
       "class": "Knight",
       "tier": 2,
@@ -199,7 +199,7 @@
     },
     {
       "id": "glitch_samurai",
-      "name": "Glitch Samurai",
+      "name": "Glitchurai",
       "faction": "Robot",
       "class": "Knight",
       "tier": 2,
@@ -297,7 +297,7 @@
     },
     {
       "id": "relic_guardian_3",
-      "name": "Relic Guardian 3",
+      "name": "Relic Guardian",
       "faction": "Robot",
       "class": "Knight",
       "tier": 3,
@@ -339,7 +339,7 @@
     },
     {
       "id": "starter_warrior",
-      "name": "Starter Warrior",
+      "name": "Warrior",
       "faction": "Folk",
       "class": "Grunt",
       "tier": 1,
@@ -353,7 +353,7 @@
     },
     {
       "id": "tribal_chopper",
-      "name": "Tribal Chopper",
+      "name": "Chopper",
       "faction": "Folk",
       "class": "Berserker",
       "tier": 2,

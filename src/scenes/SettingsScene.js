@@ -1,5 +1,6 @@
 import { Scene } from 'phaser';
 import { Theme, FONT_KEY, PixelLabel, PixelButton, PixelSlider } from '../ui/index.js';
+import { PixelSounds } from '../systems/PixelSounds.js';
 import { finalizeCaptureScene } from '../systems/CaptureSupport.js';
 import { LayoutEditor } from '../systems/LayoutEditor.js';
 import { SceneCrt } from '../rendering/SceneCrt.js';
@@ -57,6 +58,7 @@ export class SettingsScene extends Scene {
       value: initialSfx,
       onChange: (v) => {
         this.game.registry.set('sfxVolume', v);
+        PixelSounds.setVolume(v);
         console.log('[Settings] SFX volume:', v.toFixed(2));
       },
     });

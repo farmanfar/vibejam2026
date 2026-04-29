@@ -22,6 +22,7 @@ This repo intentionally ignores paid art assets in Git. Because of that, Git-bas
    `VITE_SUPABASE_URL` and `VITE_SUPABASE_ANON_KEY`
 2. In Supabase, enable anonymous auth.
 3. Run the SQL in [supabase-setup.sql](/c:/Users/bigto/Documents/GitHub/hired-swords/supabase-setup.sql) if you have not already created the tables and policies.
+   This creates three tables: `ghost_snapshots`, `hall_of_fame`, and `player_progress` (achievements + lifetime stats).
 
 You can copy `.env.example` to `.env` and fill in your values.
 
