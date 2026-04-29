@@ -1,5 +1,6 @@
 import { Scene } from 'phaser'
 import { Theme, PixelButton, PixelLabel, PixelPanel } from '../ui/index.js'
+import { PortalTooltip } from '../widgets/PortalTooltip.js'
 import { finalizeCaptureScene } from '../systems/CaptureSupport.js'
 import { LayoutEditor } from '../systems/LayoutEditor.js'
 import { SceneCrt, startSceneWithCrtPolicy } from '../rendering/SceneCrt.js'
@@ -8,6 +9,15 @@ import { SceneDust } from '../rendering/SceneDust.js'
 export class ModeSelectScene extends Scene {
   constructor() {
     super('ModeSelect')
+  }
+
+  _clearPortalState() {
+    if (this.registry.get('portalArrival')) {
+      this.registry.set('portalArrival', false)
+      this.registry.set('portalWelcomeShown', false) // reset for future portal visits
+      console.log('[Portal] portalArrival flag cleared')
+    }
+    if (this._portalHint?.visible) this._portalHint.hide()
   }
 
   init(data = {}) {
@@ -36,6 +46,7 @@ export class ModeSelectScene extends Scene {
 
     const tutorialBtn = new PixelButton(this, width / 2, 205, 'TUTORIAL MODE', () => {
       console.log(`[ModeSelect] Tutorial mode selected - runId: ${this._runId}`)
+      this._clearPortalState()
       startSceneWithCrtPolicy(this, 'CommanderSelect', {
         runId: this._runId,
         tutorial: true,
@@ -50,8 +61,22 @@ export class ModeSelectScene extends Scene {
     tutorialCopy.setDepth(2)
     LayoutEditor.register(this, 'tutorialCopy', tutorialCopy, width / 2, 236)
 
+    // --- Portal arrival tutorial hint ---
+    const isPortalArrival = this.registry.get('portalArrival') === true
+    const portalHintText = 'TRAVELERS SHOULD PLAY THE TUTORIAL'
+    this._portalHint = new PortalTooltip(
+      this, PortalTooltip.centeredX(this, width / 2, portalHintText), 152,
+      portalHintText,
+      'portalTutorialHint',
+    )
+    if (isPortalArrival) {
+      console.log('[Portal] Portal arrival detected in ModeSelectScene — showing tutorial hint')
+      this._portalHint.show()
+    }
+
     const normalBtn = new PixelButton(this, width / 2, 290, 'NORMAL MODE', () => {
       console.log(`[ModeSelect] Normal mode selected - runId: ${this._runId}`)
+      this._clearPortalState()
       startSceneWithCrtPolicy(this, 'CommanderSelect', {
         runId: this._runId,
         tutorial: false,
@@ -68,6 +93,7 @@ export class ModeSelectScene extends Scene {
 
     const backBtn = new PixelButton(this, 68, height - 50, 'BACK', () => {
       console.log('[ModeSelect] Returning to menu')
+      this._clearPortalState()
       this.scene.start('Menu')
     }, { style: 'filled', scale: 2, bg: Theme.error, pill: true, width: 92, height: 32 })
     LayoutEditor.register(this, 'backBtn', backBtn, 68, height - 50)
@@ -75,6 +101,7 @@ export class ModeSelectScene extends Scene {
     this.events.once('shutdown', () => {
       console.log('[ModeSelect] Shutdown')
       LayoutEditor.unregisterScene('ModeSelect')
+      if (this._portalHint) { this._portalHint.destroy(); this._portalHint = null }
     })
 
     console.log('[ModeSelect] Scene created successfully')

@@ -1,12 +1,13 @@
 import { Scene } from 'phaser';
 import { Theme, FONT_KEY, PixelLabel, PixelList, PixelTypewriter, PixelTextInput } from '../ui/index.js';
+import { PortalTooltip } from '../widgets/PortalTooltip.js';
 import { PlayerConfig } from '../systems/PlayerConfig.js';
 import { finalizeCaptureScene } from '../systems/CaptureSupport.js';
 import { LayoutEditor } from '../systems/LayoutEditor.js';
 import { pickRandomMerchants, getMerchantIdleAnimKey } from '../config/merchants.js';
 import { SceneCrt } from '../rendering/SceneCrt.js';
 import { SceneDust } from '../rendering/SceneDust.js';
-import { PixelSounds } from '../systems/PixelSounds.js';
+import { AchievementToast } from '../widgets/AchievementToast.js';
 
 // --- Typewriter message pools ---
 
@@ -89,22 +90,22 @@ export class MenuScene extends Scene {
     // --- Full-width header ---
 
     // Title: centered, scale 4
-    const title = new PixelLabel(this, width / 2, 24, 'THE HIRED SWORDS', {
+    const title = new PixelLabel(this, width / 2, 8, 'THE HIRED SWORDS', {
       scale: 4, color: 'accent', align: 'center',
     });
-    LayoutEditor.register(this, 'title', title, width / 2, 24);
+    LayoutEditor.register(this, 'title', title, width / 2, 8);
 
     // Subtitle: centered, scale 2
-    const subtitle = new PixelLabel(this, width / 2, 60, 'An Auto-Battler Roguelike', {
+    const subtitle = new PixelLabel(this, width / 2, 50, 'An Auto-Battler Roguelike', {
       scale: 2, color: 'muted', align: 'center',
     });
-    LayoutEditor.register(this, 'subtitle', subtitle, width / 2, 60);
+    LayoutEditor.register(this, 'subtitle', subtitle, width / 2, 50);
 
-    // Decorative divider
+    // Decorative divider — sits below the title+subtitle block
     const divGfx = this.add.graphics();
     divGfx.lineStyle(1, Theme.panelBorder, 0.6);
-    divGfx.lineBetween(width * 0.15, 82, width * 0.85, 82);
-    this.add.bitmapText(width / 2, 82 - 5, FONT_KEY, '*', 14)
+    divGfx.lineBetween(width * 0.15, 92, width * 0.85, 92);
+    this.add.bitmapText(width / 2, 92 - 5, FONT_KEY, '*', 14)
       .setOrigin(0.5).setTint(Theme.accentDim);
 
     // --- Left column (x: 32) ---
@@ -160,6 +161,8 @@ export class MenuScene extends Scene {
         onClick: () => {
           const runId = crypto.randomUUID();
           console.log(`[Menu] Starting new run mode select: ${runId}`);
+          if (this._portalTooltip?.visible) this._portalTooltip.hide();
+          if (this._portalDismissTimer) { this._portalDismissTimer.remove(false); this._portalDismissTimer = null; }
           this.scene.start('ModeSelect', { runId });
         },
       },
@@ -187,8 +190,40 @@ export class MenuScene extends Scene {
           this.scene.start('Rules');
         },
       },
+      {
+        label: 'ACHIEVEMENTS',
+        scale: 2,
+        onClick: () => {
+          console.log('[Menu] Opening Achievements');
+          this.scene.start('Achievements');
+        },
+      },
     ], { scale: 2, itemPadding: 6 });
     LayoutEditor.register(this, 'menuList', menuList, menuX, menuStartY);
+
+    // --- Portal arrival welcome banner (fires once per portal session) ---
+    const isPortalArrival = this.registry.get('portalArrival') === true;
+    const alreadyWelcomed = this.registry.get('portalWelcomeShown') === true;
+    const portalText = 'WELCOME PORTAL TRAVELER! CLICK START GAME!';
+    this._portalTooltip = new PortalTooltip(
+      this,
+      PortalTooltip.centeredX(this, width / 2, portalText),
+      102,
+      portalText,
+      'portalWelcome',
+    );
+    if (isPortalArrival && !alreadyWelcomed) {
+      console.log('[Portal] Portal arrival detected — scheduling welcome banner');
+      this._portalShowTimer = this.time.delayedCall(800, () => {
+        this._portalShowTimer = null;
+        this.registry.set('portalWelcomeShown', true);
+        this._portalTooltip.show();
+        this._portalDismissTimer = this.time.delayedCall(4000, () => {
+          this._portalDismissTimer = null;
+          this._portalTooltip.hide();
+        });
+      });
+    }
 
     // --- Credits footer ---
     const vibeJam = new PixelLabel(this, leftX, height - 36, 'VibeJam2026 Entry by Farman.Farout', {
@@ -227,6 +262,8 @@ export class MenuScene extends Scene {
       this._merchant = this.add.image(merchantX, merchantY, fallbackKey).setScale(merchantScale);
       console.log(`[Menu] Merchant: no catalog pick available, using placeholder '${fallbackKey}'`);
     }
+    // Render merchant beneath menu text (default depth 0). Text/UI overlays him.
+    this._merchant.setDepth(-1);
     LayoutEditor.register(this, 'merchant', this._merchant, merchantX, merchantY);
 
     // Merchant reflection (flipped, low alpha). A second sprite playing the
@@ -248,20 +285,7 @@ export class MenuScene extends Scene {
         .setFlipY(true)
         .setAlpha(0.075);
     }
-
-    // --- Audio unlock: first user gesture resumes AudioContext ---------------
-    // Browser autoplay policy keeps AudioContext suspended until a gesture.
-    // Install a one-shot handler so the first click or keypress on Menu
-    // unlocks audio and applies any SFX volume the user set in Settings.
-    const _audioUnlock = () => {
-      PixelSounds.unlock();
-      const sfxVol = this.game.registry.get('sfxVolume') ?? 1.0;
-      PixelSounds.setVolume(sfxVol);
-      this.input.off('pointerdown', _audioUnlock);
-      this.input.keyboard?.off('keydown', _audioUnlock);
-    };
-    this.input.once('pointerdown', _audioUnlock);
-    this.input.keyboard?.once('keydown', _audioUnlock);
+    this._reflection.setDepth(-1);
 
     // --- Cleanup on scene shutdown (once, not on) ---
     this.events.once('shutdown', () => {
@@ -269,9 +293,24 @@ export class MenuScene extends Scene {
       LayoutEditor.unregisterScene('Menu');
       if (this._typewriter) this._typewriter.destroy();
       if (this._nameInput) this._nameInput.destroy();
+      if (this._portalShowTimer) { this._portalShowTimer.remove(false); this._portalShowTimer = null; }
+      if (this._portalDismissTimer) { this._portalDismissTimer.remove(false); this._portalDismissTimer = null; }
+      if (this._portalTooltip) { this._portalTooltip.destroy(); this._portalTooltip = null; }
     });
 
+    AchievementToast.flushPending(this);
     console.log('[Menu] Scene created successfully');
     finalizeCaptureScene('Menu');
+
+    // Hide the HTML instant shell after the first rendered Phaser frame.
+    this.game.events.once('postrender', () => {
+      const shell = document.getElementById('instant-shell');
+      if (shell) {
+        shell.classList.add('hidden');
+        setTimeout(() => shell.remove(), 200);
+      }
+      window.__menuReady = true;
+      console.log('[Menu] First render complete, shell hidden');
+    });
   }
 }

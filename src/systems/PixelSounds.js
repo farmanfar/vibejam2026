@@ -10,6 +10,7 @@ let _muted = false;
 let _volume = 1.0;
 let _buffers = {};
 let _warnedLocked = false;
+let _unlockPending = false;
 
 function _getCtx() {
   if (!_ctx) {
@@ -244,13 +245,74 @@ export const PixelSounds = {
     console.log('[Sound] PixelSounds warmed up');
   },
 
-  // Phase 2: resume AudioContext. MUST be called from a user-gesture handler.
+  // Phase 2: resume AudioContext. Returns Promise<boolean> — true if the
+  // context is confirmed running after this call. MUST be called from a
+  // user-gesture handler (or installAutoUnlock will do it automatically).
   unlock() {
     const ctx = _getCtx();
-    if (ctx.state === 'running') return;
-    ctx.resume()
-      .then(() => console.log('[Sound] AudioContext unlocked'))
-      .catch(e => console.error('[Sound] AudioContext resume failed:', e));
+    // Silent-tap warmup — parks output device even when state is already running.
+    try {
+      const silent = ctx.createBuffer(1, 1, SAMPLE_RATE);
+      const src = ctx.createBufferSource();
+      src.buffer = silent;
+      src.connect(_masterGain);
+      src.start(0);
+    } catch (e) {
+      console.error('[Sound] silent-tap failed:', e);
+    }
+    if (ctx.state === 'running') {
+      console.log('[Sound] AudioContext already running — silent tap fired');
+      return Promise.resolve(true);
+    }
+    _unlockPending = true;
+    return ctx.resume()
+      .then(() => {
+        _unlockPending = false;
+        console.log('[Sound] AudioContext unlocked');
+        return true;
+      })
+      .catch(e => {
+        _unlockPending = false;
+        console.error('[Sound] AudioContext resume failed:', e);
+        return false;
+      });
+  },
+
+  // Install a DOM capture-phase unlock listener on `target` (defaults to
+  // window). Stays attached until a resume() actually succeeds so a failed
+  // first gesture automatically arms a retry on the next valid gesture.
+  installAutoUnlock(target) {
+    const el = target || window;
+    let inFlight = false;
+    let done = false;
+    const detach = () => {
+      el.removeEventListener('pointerdown', handler, true);
+      el.removeEventListener('mousedown',   handler, true);
+      el.removeEventListener('touchstart',  handler, true);
+      el.removeEventListener('touchend',    handler, true);
+      el.removeEventListener('keydown',     handler, true);
+    };
+    const handler = () => {
+      if (done || inFlight) return;
+      inFlight = true;
+      Promise.resolve(this.unlock()).then(ok => {
+        inFlight = false;
+        if (ok) {
+          done = true;
+          detach();
+        } else {
+          console.log('[Sound] Auto-unlock retry armed for next gesture');
+        }
+      });
+    };
+    // capture:true fires before Phaser's bubble-phase GameObject handlers so
+    // the click that unlocks audio also gets to produce its sound.
+    el.addEventListener('pointerdown', handler, true);
+    el.addEventListener('mousedown',   handler, true);
+    el.addEventListener('touchstart',  handler, true);
+    el.addEventListener('touchend',    handler, true);
+    el.addEventListener('keydown',     handler, true);
+    console.log('[Sound] Auto-unlock installed on', el === window ? 'window' : 'element');
   },
 
   // Generic dispatcher. opts: { volume, pitchJitter (semitones), detune (cents) }
@@ -258,7 +320,7 @@ export const PixelSounds = {
     const buf = _buffers[id];
     if (!buf) { console.warn(`[Sound] Unknown id: ${id}`); return; }
     const ctx = _getCtx();
-    if (ctx.state !== 'running') {
+    if (ctx.state !== 'running' && !_unlockPending) {
       if (!_warnedLocked) {
         console.log('[Sound] AudioContext not running — call unlock() from a user gesture first');
         _warnedLocked = true;

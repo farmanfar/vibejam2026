@@ -1,6 +1,6 @@
 ---
 id: starter_warrior
-name: Starter Warrior
+name: Warrior
 faction: Folk
 class: Grunt
 tier: 1

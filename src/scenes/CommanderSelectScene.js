@@ -8,6 +8,8 @@ import { SceneDust } from '../rendering/SceneDust.js';
 import { attachOutlineToSprite } from '../rendering/OutlineController.js';
 import { GhostManager } from '../systems/GhostManager.js';
 import { attachGeneratedNormalMap } from '../rendering/NormalMapGenerator.js';
+import { TutorialOverlay } from '../widgets/TutorialOverlay.js';
+import { AchievementManager } from '../systems/AchievementManager.js';
 
 // Commander normal maps are generated once per page-load on first visit.
 // Guard prevents redundant canvas work on re-entry (swap-every-3-wins flow).
@@ -25,6 +27,15 @@ const LEGACY_VIEW_MAP = {
 export class CommanderSelectScene extends Scene {
   constructor() {
     super('CommanderSelect')
+  }
+
+  preload() {
+    for (const cmd of getCommanders()) {
+      const key = `commander-sprite-${cmd.spriteIndex}`
+      if (!this.textures.exists(key)) {
+        this.load.image(key, `assets/commanders/sprites/Sprite${cmd.spriteIndex}.png`)
+      }
+    }
   }
 
   init(data) {
@@ -352,6 +363,7 @@ export class CommanderSelectScene extends Scene {
         },
         onConfirm: (item) => {
           console.log(`[Commander] Embarking with ${item.name} (${item.id})`)
+          AchievementManager.onRunStart({ runId: this._runId, mode: this._tutorial ? 'tutorial' : 'standard' })
           // Power-off plays on run start (CommanderSelect → Shop)
           startSceneWithCrtPolicy(this, 'Shop', {
             stage: 1, gold: 10, wins: 0, losses: 0, team: [],
@@ -377,6 +389,33 @@ export class CommanderSelectScene extends Scene {
 
     // Widget self-registers its own shutdown cleanup (LayoutEditor + keyboard)
     finalizeCaptureScene('CommanderSelect')
+
+    if (this._tutorial) this._startCommanderTutorial()
+  }
+
+  _startCommanderTutorial() {
+    if (this._tutorialOverlay) return
+    console.log('[Tutorial] CommanderSelect overlay starting (tutorial mode)')
+
+    this._tutorialOverlay = new TutorialOverlay(this, {
+      steps: [
+        {
+          id: 'pick-commander',
+          anchor: 'center',
+          body: 'just pick a dude',
+          advance: 'click',
+        },
+      ],
+      onComplete: () => {
+        this._tutorialOverlay = null
+        console.log('[Tutorial] CommanderSelect overlay complete')
+      },
+      onSkip: () => {
+        this._tutorialOverlay = null
+        console.log('[Tutorial] CommanderSelect overlay skipped')
+      },
+    })
+    this._tutorialOverlay.start()
   }
 
   // ---------------------------------------------------------------------------

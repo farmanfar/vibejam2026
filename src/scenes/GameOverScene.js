@@ -5,6 +5,8 @@ import { LayoutEditor } from '../systems/LayoutEditor.js'
 import { SceneCrt, startSceneWithCrtPolicy } from '../rendering/SceneCrt.js'
 import { SceneDust } from '../rendering/SceneDust.js'
 import { VibeJamPortal } from '../widgets/VibeJamPortal.js'
+import { AchievementManager } from '../systems/AchievementManager.js'
+import { AchievementToast }   from '../widgets/AchievementToast.js'
 
 export class GameOverScene extends Scene {
   constructor() {
@@ -15,6 +17,7 @@ export class GameOverScene extends Scene {
     this.wins = data.wins || 0
     this.losses = data.losses || 3
     this.commander = data.commander ?? null
+    this.runId = data.runId ?? null
   }
 
   create() {
@@ -62,6 +65,8 @@ export class GameOverScene extends Scene {
       LayoutEditor.unregisterScene('GameOver')
     })
 
+    AchievementManager.onRunEnd({ scene: this, won: false })
+    AchievementToast.flushPending(this)
     console.log(`[GameOver] Scene created - ${this.wins}W ${this.losses}L`)
     finalizeCaptureScene('GameOver')
   }

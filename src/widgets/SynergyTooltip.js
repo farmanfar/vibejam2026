@@ -24,7 +24,7 @@ import {
 } from '../config/synergy-icons.js';
 
 const TOOLTIP_W_MIN   = 180;
-const TOOLTIP_W_MAX   = 320;
+const TOOLTIP_W_MAX   = 360;
 const PADDING         = 8;
 const HEADER_H        = 28;
 const ROW_H           = 14;
@@ -158,8 +158,11 @@ export class SynergyTooltip extends GameObjects.Container {
         hintText: '',
         rowTint: Theme.primaryText,
         hintTint: Theme.warning,
+        rowFontPx: HINT_FONT_PX,
+        rowScale: 1,
+        rowLineH: 8,
       });
-      bands.push(this._measureWidth(customEntry.description, 2));
+      bands.push(this._measureWidth(customEntry.description, 1) + 8);
     } else {
       rows.push({
         rowText: 'No bonus yet.',
@@ -185,7 +188,8 @@ export class SynergyTooltip extends GameObjects.Container {
 
     // Body rows
     this._hideAllRows();
-    const bodyTop = HEADER_H + 6;
+    const iconBottom = headerIconVisible ? PADDING + ICON_SIZE * ICON_SCALE : 0;
+    const bodyTop = Math.max(HEADER_H + 6, iconBottom + 6);
     let cursor = bodyTop;
     let lineCount = 0;
     let wrapped = false;
@@ -194,26 +198,30 @@ export class SynergyTooltip extends GameObjects.Container {
     rows.forEach((rowSpec, i) => {
       const row = this._getRow(i);
       const hint = rowSpec.hintText ? this._getHint(i) : null;
+      const rowScale = rowSpec.rowScale ?? 2;
+      const rowFontPx = rowSpec.rowFontPx ?? ROW_FONT_PX;
+      const rowLineH = rowSpec.rowLineH ?? ROW_H;
+      row.setFontSize(rowFontPx);
       let renderedRowText = rowSpec.rowText;
       let hintOnOwnLine = false;
 
       if (rowSpec.hintText) {
         const combinedW =
-          this._measureWidth(renderedRowText, 2)
+          this._measureWidth(renderedRowText, rowScale)
           + HINT_GUTTER
           + this._measureWidth(rowSpec.hintText, 1);
         if (combinedW > innerW) {
           renderedRowText = this._wrapText(
             renderedRowText,
-            this._maxCharsPerLine(innerW, 2),
+            this._maxCharsPerLine(innerW, rowScale),
           );
           hintOnOwnLine = true;
           hintBelow = true;
         }
-      } else if (this._measureWidth(renderedRowText, 2) > innerW) {
+      } else if (this._measureWidth(renderedRowText, rowScale) > innerW) {
         renderedRowText = this._wrapText(
           renderedRowText,
-          this._maxCharsPerLine(innerW, 2),
+          this._maxCharsPerLine(innerW, rowScale),
         );
       }
 
@@ -231,22 +239,22 @@ export class SynergyTooltip extends GameObjects.Container {
         hint.setVisible(true);
 
         if (hintOnOwnLine) {
-          hint.setPosition(panelW - PADDING, cursor + rowLines * ROW_H + HINT_LINE_OFFSET);
-          cursor += (rowLines + 1) * ROW_H;
+          hint.setPosition(panelW - PADDING, cursor + rowLines * rowLineH + HINT_LINE_OFFSET);
+          cursor += (rowLines + 1) * rowLineH;
           lineCount += rowLines + 1;
         } else {
           hint.setPosition(panelW - PADDING, cursor + HINT_LINE_OFFSET);
-          cursor += ROW_H;
+          cursor += rowLineH;
           lineCount += 1;
         }
       } else {
-        cursor += rowLines * ROW_H;
+        cursor += rowLines * rowLineH;
         lineCount += rowLines;
       }
     });
 
     // Resize the panel to fit content height.
-    const contentH = bodyTop + lineCount * ROW_H + PADDING;
+    const contentH = cursor + PADDING;
     this._bg.setSize(panelW, contentH);
     this._border.clear();
     this._border.lineStyle(1, Theme.panelBorder, 1);

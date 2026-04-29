@@ -1,6 +1,6 @@
 ---
 id: tribal_chopper
-name: Tribal Chopper
+name: Chopper
 faction: Folk
 class: Berserker
 tier: 2

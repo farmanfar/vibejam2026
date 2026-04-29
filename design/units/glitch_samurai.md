@@ -1,6 +1,6 @@
 ---
 id: glitch_samurai
-name: Glitch Samurai
+name: Glitchurai
 faction: Robot
 class: Knight
 tier: 2

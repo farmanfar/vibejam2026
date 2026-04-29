@@ -18,6 +18,9 @@ import { CommanderBadge } from '../widgets/CommanderBadge.js'
 import { TutorialOverlay } from '../widgets/TutorialOverlay.js'
 import { getCommanderRule, pickRandomCommanders } from '../config/commanders.js'
 import { SoundManager } from '../systems/SoundManager.js'
+import { loadWarriorTexture } from '../systems/AssetLoaders.js'
+import { AchievementManager } from '../systems/AchievementManager.js'
+import { AchievementToast }   from '../widgets/AchievementToast.js'
 
 // Minimum on-screen height (in display px) for battle-sprite characters.
 // PENUSBMIC atlases vary wildly in how much of the 192x192 frame is actually
@@ -58,6 +61,18 @@ const REACT_MS      = 240   // window for defender hit anim before frame ends
 export class BattleScene extends Scene {
   constructor() {
     super('Battle')
+  }
+
+  preload() {
+    for (const warrior of [...(this.team || []), ...(this.opponent || [])]) {
+      loadWarriorTexture(this, warrior)
+    }
+    if (this.commander) {
+      const key = `commander-sprite-${this.commander.spriteIndex}`
+      if (!this.textures.exists(key)) {
+        this.load.image(key, `assets/commanders/sprites/Sprite${this.commander.spriteIndex}.png`)
+      }
+    }
   }
 
   init(data) {
@@ -625,6 +640,8 @@ export class BattleScene extends Scene {
     // objects (which are held by Shop/ghost snapshots and next-round rebuilds).
     const playerDefs = this.playerSprites.map(s => ({ ...s.warrior }))
     const enemyDefs = this.enemySprites.map(s => ({ ...s.warrior }))
+    this._initialPlayerSize = playerDefs.length
+    this._initialEnemySize  = enemyDefs.length
 
     // Enemy commander was assigned in create() so the badge could render; the
     // rule is read straight off this.opponent.commander here.
@@ -1302,6 +1319,8 @@ export class BattleScene extends Scene {
     FloatingBanner.show(this, bannerText, {
       color: bannerColor, hold: 1500,
     }).then(() => {
+      AchievementManager.onBattleResolved(this)
+      AchievementToast.flushPending(this)
       if (won) {
         const newWins = this.wins + 1
         if (newWins === 9) {

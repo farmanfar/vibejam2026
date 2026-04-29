@@ -6,6 +6,10 @@ import { UnitStatBadge } from './UnitStatBadge.js';
 import { getUnitPortraitRef } from '../rendering/UnitArt.js';
 import { attachOutlineToSprite } from '../rendering/OutlineController.js';
 import { fitSpriteToPortraitBounds } from '../rendering/SpriteFit.js';
+import CardTooltip from '../widgets/CardTooltip.js';
+import { LayoutEditor } from '../systems/LayoutEditor.js';
+
+const HOVER_DELAY_MS = 250;
 
 // Faction -> blank card frame texture key. Robot/Folk/Monster are the only
 // factions in the live alpha roster; the others are mapped for future use.
@@ -34,10 +38,50 @@ const TITLE_BANNER = {
   y: -68,
   w: 80,
   h: 14,
-  textY: -69,
-  fontSize: 7,
+  // Banner center is y=-68. m5x7 cell is 8px tall; with origin (0.5, 0.5)
+  // the text bounding box is geometrically centered at the banner center.
+  textY: -68,
+  // m5x7 is pixel-perfect only at multiples of 7. fontSize 6 = ~0.857x
+  // scaling (intentionally non-native) so the title doesn't kiss the
+  // banner border on long names like "MINION #002".
+  fontSize: 6,
 };
-const TITLE_MAX_CHARS = 14;
+// At fontSize 6, m5x7 glyph cell scales to ~5.14px (5px glyph + 1px gap, * 6/7).
+// Round down to 5px for a conservative char budget.
+const TITLE_CELL_W = 5;
+const TITLE_PAD_PX = 5;
+const TITLE_MAX_CHARS = Math.floor((TITLE_BANNER.w - TITLE_PAD_PX * 2) / TITLE_CELL_W);
+
+// Abbreviate a unit name to fit the title banner without overflowing.
+// Strategies, in order:
+//   1. Full name as-is if it already fits.
+//   2. Strip a leading "THE " prefix.
+//   3. Multi-word: keep the first word, replace the rest with initials
+//      ("CLOAKED DAGGER" -> "CLOAKED D").
+//   4. If still too long, truncate the first word but preserve the initials.
+//   5. Final fallback: hard-truncate and append "." (ellipsis, single dot — "..."
+//      is too costly in a 12-char budget).
+function abbreviateTitle(rawName, maxChars) {
+  const upper = String(rawName ?? 'UNKNOWN').toUpperCase().trim();
+  if (upper.length <= maxChars) return upper;
+
+  let candidate = upper.replace(/^THE\s+/, '');
+  if (candidate.length <= maxChars) return candidate;
+
+  const words = candidate.split(/\s+/).filter(Boolean);
+  if (words.length > 1) {
+    const initials = words.slice(1).map((w) => w[0]).join('');
+    const folded = `${words[0]} ${initials}`;
+    if (folded.length <= maxChars) return folded;
+
+    const room = maxChars - initials.length - 1; // -1 for the space
+    if (room >= 3) {
+      return `${words[0].slice(0, room)} ${initials}`;
+    }
+  }
+
+  return upper.slice(0, Math.max(1, maxChars - 1)) + '.';
+}
 
 const ART_WINDOW = {
   cx: 0,
@@ -104,6 +148,7 @@ export class WarriorCard extends GameObjects.Container {
     this._isHeld = false;
     this._isCelebrating = false;
     this._haloNode = null;
+    this._tooltipShowTimer = null;
     this._sceneShutdownHandler = () => this._onSceneShutdown();
 
     this.backLayer = scene.add.container(0, 0);
@@ -167,10 +212,14 @@ export class WarriorCard extends GameObjects.Container {
     this.titleBanner.strokeRoundedRect(bx, by, TITLE_BANNER.w, TITLE_BANNER.h, 4);
     this.frontLayer.add(this.titleBanner);
 
-    const rawName = (warrior.name ?? 'Unknown').toUpperCase();
-    const displayName = rawName.length > TITLE_MAX_CHARS
-      ? rawName.slice(0, TITLE_MAX_CHARS - 1) + '...'
-      : rawName;
+    const rawName = String(warrior.name ?? 'Unknown').toUpperCase();
+    const displayName = abbreviateTitle(rawName, TITLE_MAX_CHARS);
+    if (displayName !== rawName) {
+      console.log(
+        `[WarriorCard] title abbreviated "${rawName}" -> "${displayName}" `
+        + `(max ${TITLE_MAX_CHARS} chars in ${TITLE_BANNER.w}px banner)`,
+      );
+    }
     this.nameLabel = scene.add.bitmapText(
       TITLE_BANNER.x, TITLE_BANNER.textY, FONT_KEY, displayName, TITLE_BANNER.fontSize,
     ).setOrigin(0.5, 0.5).setTint(Theme.fantasyGoldBright);
@@ -299,6 +348,26 @@ export class WarriorCard extends GameObjects.Container {
     this._restY = this.y;
   }
 
+  _cancelTooltipTimer() {
+    if (this._tooltipShowTimer) {
+      this._tooltipShowTimer.remove(false);
+      this._tooltipShowTimer = null;
+    }
+  }
+
+  _showTooltip() {
+    if (!this.scene || LayoutEditor._enabled) return;
+    if (this._isHeld || this._isCelebrating) return;
+    if (this.scene.input?.activePointer?.isDown) return;
+    this.scene.cardTooltip ||= new CardTooltip(this.scene);
+    this.scene.cardTooltip.show(this, this.warrior);
+  }
+
+  _hideTooltip() {
+    this._cancelTooltipTimer();
+    this.scene?.cardTooltip?.hide();
+  }
+
   _setupHover() {
     this.hitZone.on('pointerover', () => {
       if (this._isCelebrating) return;
@@ -308,9 +377,20 @@ export class WarriorCard extends GameObjects.Container {
       SoundManager.uiHover();
       this.setDepth(10);
       this._playWiggle();
+      if (LayoutEditor._enabled) return;
+      if (this._isCelebrating) return;
+      if (this.scene.input?.activePointer?.isDown) return;
+      this._cancelTooltipTimer();
+      this._tooltipShowTimer = this.scene.time.delayedCall(HOVER_DELAY_MS, () => {
+        this._tooltipShowTimer = null;
+        this._showTooltip();
+      });
     });
 
     this.hitZone.on('pointerout', () => {
+      // Always release the tooltip before any early-return
+      this._cancelTooltipTimer();
+      this.scene?.cardTooltip?.hide();
       if (this._isCelebrating) return;
       if (this._isHeld) return;
       if (!this._isHovered) return;
@@ -519,6 +599,7 @@ export class WarriorCard extends GameObjects.Container {
   }
 
   snapBack(flashColor = null) {
+    this._hideTooltip();
     if (this._isCelebrating) return;
     this._isHeld = false;
     this.cancelHoverTween();
@@ -548,6 +629,8 @@ export class WarriorCard extends GameObjects.Container {
   }
 
   _onSceneShutdown() {
+    this._cancelTooltipTimer();
+    this.scene?.cardTooltip?.hide();
     this._cancelCelebration();
     this._isHovered = false;
     this._isHeld = false;

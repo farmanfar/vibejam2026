@@ -1,6 +1,8 @@
 import { Scene } from 'phaser'
 import { Theme, FONT_KEY, PixelLabel, PixelButton, FloatingBanner } from '../ui/index.js'
 import { GhostManager } from '../systems/GhostManager.js'
+import { AchievementManager } from '../systems/AchievementManager.js'
+import { AchievementToast }   from '../widgets/AchievementToast.js'
 import { finalizeCaptureScene } from '../systems/CaptureSupport.js'
 import { LayoutEditor } from '../systems/LayoutEditor.js'
 import { SceneCrt, startSceneWithCrtPolicy } from '../rendering/SceneCrt.js'
@@ -49,6 +51,8 @@ export class HallOfFameScene extends Scene {
       LayoutEditor.register(this, 'record', record, width / 2, height * 0.34)
 
       if (!this.fixtureLeaderboard) {
+        AchievementManager.onChampion({ scene: this, roster: this.team })
+        AchievementToast.flushPending(this)
         GhostManager.submitChampion(this.runId, this.team, this.wins, this.losses)
       }
     }
